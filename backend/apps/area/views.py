@@ -1,3 +1,13 @@
-from django.shortcuts import render
+from .models import Area
+from .serializers import AreaSerializer
+from utils.transactionals import ListCreateAPIView, RetrieveUpdateAPIView 
 
-# Create your views here.
+class AreaListCreateView(ListCreateAPIView):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+
+
+class AreaRetrieveUpdateView(RetrieveUpdateAPIView):
+    queryset = Area.objects.all()
+    serializer_class = AreaSerializer
+    lookup_field = 'pk'
