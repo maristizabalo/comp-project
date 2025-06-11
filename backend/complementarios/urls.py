@@ -8,6 +8,7 @@ urlpatterns = [
     #Gestion apps URLs
     path('api/', include('apps.area.urls')),
     path('api/', include('apps.categoria.urls')),
+    path('api/', include('apps.modulo.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
