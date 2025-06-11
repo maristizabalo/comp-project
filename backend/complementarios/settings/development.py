@@ -26,7 +26,7 @@ CACHES = {
 
 CORS_ALLOW_ALL_ORIGINS = True
 
-AUTH_ENABLED = True
+AUTH_ENABLED = False #CAmbiar a True para activar autenticación LDAP
 
 LDAP_SETTINGS = {
     'server': '172.25.1.121',
