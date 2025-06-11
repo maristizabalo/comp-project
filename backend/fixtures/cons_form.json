@@ -1,0 +1,197 @@
+[
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 1,
+    "fields": {
+      "tipo": "texto",
+      "nombre": "Texto",
+      "descripcion": "Campo de texto libre",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 2,
+    "fields": {
+      "tipo": "numero",
+      "nombre": "Número",
+      "descripcion": "Campo numérico",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 3,
+    "fields": {
+      "tipo": "fecha",
+      "nombre": "Fecha",
+      "descripcion": "Campo para selección de fecha",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 4,
+    "fields": {
+      "tipo": "seleccion",
+      "nombre": "Selección",
+      "descripcion": "Campo con opciones seleccionables",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 5,
+    "fields": {
+      "tipo": "geometrico",
+      "nombre": "Geométrico",
+      "descripcion": "Campo espacial (PostGIS)",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.campo",
+    "pk": 1,
+    "fields": {
+      "nombre": "nombre",
+      "etiqueta": "Nombre completo",
+      "requerido": true,
+      "orden": 1,
+      "tipo": 1,
+      "formulario": 1,
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.campo",
+    "pk": 2,
+    "fields": {
+      "nombre": "edad",
+      "etiqueta": "Edad",
+      "requerido": false,
+      "orden": 2,
+      "tipo": 2,
+      "formulario": 1,
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.campo",
+    "pk": 3,
+    "fields": {
+      "nombre": "fecha_nacimiento",
+      "etiqueta": "Fecha de nacimiento",
+      "requerido": true,
+      "orden": 1,
+      "tipo": 3,
+      "formulario": 2,
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.campo",
+    "pk": 4,
+    "fields": {
+      "nombre": "genero",
+      "etiqueta": "Género",
+      "requerido": true,
+      "orden": 2,
+      "tipo": 4,
+      "formulario": 2,
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.campo",
+    "pk": 5,
+    "fields": {
+      "nombre": "ubicacion",
+      "etiqueta": "Ubicación en el mapa",
+      "requerido": true,
+      "orden": 1,
+      "tipo": 5,
+      "formulario": 3,
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.opcion",
+    "pk": 1,
+    "fields": {
+      "campo": 4,
+      "valor": "M",
+      "etiqueta": "Masculino",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.opcion",
+    "pk": 2,
+    "fields": {
+      "campo": 4,
+      "valor": "F",
+      "etiqueta": "Femenino",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  }
+]

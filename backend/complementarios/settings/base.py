@@ -20,6 +20,7 @@ INSTALLED_APPS = [
     'apps.categoria',
     'apps.modulo',
     'apps.formulario',
+    'apps.construccion_formulario',
 ]
 
 MIDDLEWARE = [
