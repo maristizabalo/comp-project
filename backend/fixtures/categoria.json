@@ -3,8 +3,8 @@
     "model": "categoria.categoria",
     "pk": 1,
     "fields": {
-      "nombre": "Espacios Bajo Puentes",
-      "descripcion": "Categoría que agrupa los módulos encargados de los espacios ubicados bajo puentes.",
+      "nombre": "Administración de Espacios Públicos",
+      "descripcion": "Categoría que agrupa los módulos encargados de la administracion de espacios públicos.",
       "area": 4,
       "usuario_creo": "localhost",
       "ip_creo": "127.0.0.1",

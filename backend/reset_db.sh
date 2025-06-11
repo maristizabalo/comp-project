@@ -27,7 +27,14 @@ echo "📦 Ejecutando migrate..."
 python3 manage.py migrate
 
 echo "📥 Cargando datos iniciales..."
-python3 manage.py loaddata fixtures/*
+# python3 manage.py loaddata fixtures/permisos.json
+python3 manage.py loaddata fixtures/rol.json
+python3 manage.py loaddata fixtures/usuario.json
+python3 manage.py loaddata fixtures/area.json
+python3 manage.py loaddata fixtures/categoria.json
+python3 manage.py loaddata fixtures/modulo.json
+python3 manage.py loaddata fixtures/tipo_de_dato.json
+
 
 # echo "🛑 Desactivando entorno virtual..."
 # deactivate

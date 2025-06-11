@@ -1,7 +1,7 @@
 from django.contrib.gis.db import models as gis_models
 from django.db import models
 from apps.formulario.models import Formulario
-from apps.construccion_formulario.models import Campo
+from apps.construccion_formulario.models import Campo, Opcion
 
 class RespuestaFormulario(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_RESPUESTA')
@@ -21,6 +21,14 @@ class RespuestaCampo(models.Model):
     valor_numero = models.FloatField(null=True, blank=True, db_column='VALOR_NUMERO')
     valor_fecha = models.DateField(null=True, blank=True, db_column='VALOR_FECHA')
     valor_geom = gis_models.PointField(null=True, blank=True, db_column='VALOR_GEOM', geography=True)
+    valor_booleano = models.BooleanField(null=True, blank=True, db_column='VALOR_BOOLEANO')
+    valor_opcion = models.ForeignKey(
+        Opcion,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        db_column='VALOR_OPCION'
+    )
 
     class Meta:
         db_table = 'RESPUESTA_CAMPO'

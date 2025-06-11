@@ -13,5 +13,20 @@
       "fecha_creacion": "2025-05-29T18:05:51.247Z",
       "fecha_modificacion": "2025-05-29T18:05:51.247Z"
     }
+  },
+  {
+    "model": "modulo.modulo",
+    "pk": 2,
+    "fields": {
+      "nombre": "Defensores del Espacio Público",
+      "descripcion": "Módulo encargado de gestionar, monitorear y hacer seguimiento a las actividades de los defensores del espacio público, quienes son los encargados de velar por el cumplimiento de las normas y regulaciones relacionadas con el uso del espacio público.",
+      "categoria": 1,
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T18:05:51.247Z",
+      "fecha_modificacion": "2025-05-29T18:05:51.247Z"
+    }
   }
 ]

@@ -1,0 +1,92 @@
+[
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 1,
+    "fields": {
+      "tipo": "texto",
+      "nombre": "Texto",
+      "descripcion": "Campo de texto libre",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 2,
+    "fields": {
+      "tipo": "numero",
+      "nombre": "Número",
+      "descripcion": "Campo numérico",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 3,
+    "fields": {
+      "tipo": "booleano",
+      "nombre": "Booleano (Verdadero/Falso)",
+      "descripcion": "Campo booleano (verdadero/falso)",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 4,
+    "fields": {
+      "tipo": "fecha",
+      "nombre": "Fecha",
+      "descripcion": "Campo para selección de fecha",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 5,
+    "fields": {
+      "tipo": "seleccion",
+      "nombre": "Selección",
+      "descripcion": "Campo con opciones seleccionables",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 6,
+    "fields": {
+      "tipo": "geometrico",
+      "nombre": "Geométrico",
+      "descripcion": "Campo espacial (PostGIS)",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-06-11T07:17:52.009392",
+      "fecha_modificacion": "2025-06-11T07:17:52.009392"
+    }
+  }
+]

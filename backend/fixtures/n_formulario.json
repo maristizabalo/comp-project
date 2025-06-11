@@ -19,7 +19,7 @@
     "model": "formulario.formulario",
     "pk": 2,
     "fields": {
-      "nombre": "Formulario de postman2",
+      "nombre": "Defensores",
       "descripcion": "Este formulario se creo desde postman2",
       "modulo": 2,
       "id_padre": 1,
