@@ -3,8 +3,8 @@
     "model": "formulario.formulario",
     "pk": 1,
     "fields": {
-      "nombre": "Formulario de Evaluación",
-      "descripcion": "Este formulario se utiliza para evaluar el desempeño del personal.",
+      "nombre": "Ficha tecnica",
+      "descripcion": "Este formulario se utiliza para la recolección de datos técnicos de bajo puentes.",
       "modulo": 1,
       "id_padre": null,
       "usuario_creo": "jack.aristizabal",

@@ -10,6 +10,10 @@ urlpatterns = [
     path('api/', include('apps.categoria.urls')),
     path('api/', include('apps.modulo.urls')),
     path('api/', include('apps.formulario.urls')),
+    
+    #Gestion de creacion de formularios URLs
+    path('api/construccion-formulario/', include('apps.construccion_formulario.urls')),
+    
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

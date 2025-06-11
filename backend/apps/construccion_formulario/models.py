@@ -1,6 +1,7 @@
 # models.py dentro de la app `construccion_formulario`
 
 from django.db import models
+from apps.formulario.models import Formulario
 
 class Tipo(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_TIPO')
@@ -32,7 +33,7 @@ class Campo(models.Model):
     orden = models.PositiveIntegerField(default=0, db_column='ORDEN')
 
     tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT, db_column='ID_TIPO', related_name='campos')
-    formulario = models.ForeignKey('formulario.Formulario', on_delete=models.CASCADE, db_column='ID_FORMULARIO', related_name='campos')
+    formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE, db_column='ID_FORMULARIO', related_name='campos')
 
     usuario_creo = models.CharField(max_length=100, db_column='USUARIO_CREO')
     ip_creo = models.CharField(max_length=100, db_column='IP_CREO')
