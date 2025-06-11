@@ -1,0 +1,25 @@
+from rest_framework import serializers
+from .models import RespuestaFormulario, RespuestaCampo
+from rest_framework_gis.serializers import GeometryField
+
+class RespuestaCampoSerializer(serializers.ModelSerializer):
+    valor_geom = GeometryField(required=False)
+
+    class Meta:
+        model = RespuestaCampo
+        fields = ['campo', 'valor_texto', 'valor_numero', 'valor_fecha', 'valor_geom']
+
+class RespuestaFormularioSerializer(serializers.ModelSerializer):
+    respuestas_campo = RespuestaCampoSerializer(many=True)
+
+    class Meta:
+        model = RespuestaFormulario
+        fields = ['id', 'formulario', 'usuario', 'ip', 'fecha_creacion', 'respuestas_campo']
+        read_only_fields = ['id', 'fecha_creacion']
+
+    def create(self, validated_data):
+        respuestas_data = validated_data.pop('respuestas_campo')
+        respuesta_formulario = RespuestaFormulario.objects.create(**validated_data)
+        for r_data in respuestas_data:
+            RespuestaCampo.objects.create(respuesta_formulario=respuesta_formulario, **r_data)
+        return respuesta_formulario
