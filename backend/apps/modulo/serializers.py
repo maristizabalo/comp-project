@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from .models import Modulo
 from apps.categoria.models import Categoria
+from apps.categoria.serializers import CategoriaLiteSerializer
 
-class CategoriaLiteSerializer(serializers.ModelSerializer):
+class ModuloLiteSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Categoria
+        model = Modulo
         fields = ['id', 'nombre']
-
-
+        
 class ModuloSerializer(serializers.ModelSerializer):
     categoria = CategoriaLiteSerializer(read_only=True)
     categoria_id = serializers.PrimaryKeyRelatedField(
