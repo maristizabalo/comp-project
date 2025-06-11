@@ -1,0 +1,20 @@
+[
+  {
+    "model": "usuario.usuario",
+    "pk": 1,
+    "fields": {
+      "nombre_completo": "Maicol Jacobo Aristizabal Obando",
+      "usuario": "mjaristizabal",
+      "activo": true,
+      "activo_ldap": true,
+      "correo": "mjaristizabal@dadep.gov.co",
+      "rol": 1,
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T03:02:44.073Z",
+      "fecha_modificacion": "2025-05-29T03:02:44.073Z"
+    }
+  }
+]

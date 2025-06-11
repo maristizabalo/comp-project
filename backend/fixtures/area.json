@@ -1,0 +1,128 @@
+[
+  {
+    "model": "area.area",
+    "pk": 1,
+    "fields": {
+      "nombre": "Oficina de Control Disciplinario Interno",
+      "siglas": "OCDI",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 2,
+    "fields": {
+      "nombre": "Oficina Asesora de Planeación",
+      "siglas": "OAP",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 3,
+    "fields": {
+      "nombre": "Oficina de Control Interno",
+      "siglas": "OCI",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 4,
+    "fields": {
+      "nombre": "Subdirección de Gestión Inmobiliaria",
+      "siglas": "SGIEP",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 5,
+    "fields": {
+      "nombre": "Subdirección de Registro Inmobiliario",
+      "siglas": "SRI",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 6,
+    "fields": {
+      "nombre": "Subdirección de Gestión Corporativa",
+      "siglas": "SGC",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 7,
+    "fields": {
+      "nombre": "Oficina Jurídica",
+      "siglas": "OJ",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 8,
+    "fields": {
+      "nombre": "Oficina de Tecnologías de la Información y las Comunicaciones",
+      "siglas": "OTIC",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "area.area",
+    "pk": 9,
+    "fields": {
+      "nombre": "Oficina Asesora de Comunicaciones",
+      "siglas": "OAC",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  }
+]

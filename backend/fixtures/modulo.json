@@ -1,0 +1,24 @@
+[
+  {
+    "model": "modulo.modulo",
+    "pk": 1,
+    "fields": {
+      "nombre": "Bajo Puentes",
+      "descripcion": "Módulo encargado de gestionar, monitorear y hacer seguimiento a los espacios ubicados debajo de los puentes vehiculares y peatonales, en el marco de las competencias de la Defensoría del Espacio Público.",
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T18:05:51.247Z",
+      "fecha_modificacion": "2025-05-29T18:05:51.247Z"
+    }
+  },
+  {
+    "model": "modulo.moduloarea",
+    "pk": 1,
+    "fields": {
+      "area": 4,
+      "modulo": 1
+    }
+  }
+]
