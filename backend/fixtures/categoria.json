@@ -1,0 +1,17 @@
+[
+  {
+    "model": "categoria.categoria",
+    "pk": 1,
+    "fields": {
+      "nombre": "Espacios Bajo Puentes",
+      "descripcion": "Categoría que agrupa los módulos encargados de los espacios ubicados bajo puentes.",
+      "area": 4,
+      "usuario_creo": "localhost",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "localhost",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T18:02:00.000Z",
+      "fecha_modificacion": "2025-05-29T18:02:00.000Z"
+    }
+  }
+]

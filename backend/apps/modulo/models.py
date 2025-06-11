@@ -1,16 +1,12 @@
 from django.db import models
-from apps.area.models import Area
+from apps.categoria.models import Categoria  
 
 class Modulo(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_MODULO')
     nombre = models.CharField(max_length=100, db_column='NOMBRE')
     descripcion = models.TextField(db_column='DESCRIPCION')
 
-    areas = models.ManyToManyField(
-        Area,
-        through='ModuloArea',
-        related_name='modulos'
-    )
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, db_column='ID_CATEGORIA', related_name='modulos')
 
     usuario_creo = models.CharField(max_length=100, db_column='USUARIO_CREO')
     ip_creo = models.CharField(max_length=100, db_column='IP_CREO')
@@ -27,12 +23,3 @@ class Modulo(models.Model):
 
     def __str__(self):
         return f'id: {self.id} - {self.nombre}'
-
-
-class ModuloArea(models.Model):
-    area = models.ForeignKey(Area, on_delete=models.CASCADE, db_column='ID_AREA')
-    modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE, db_column='ID_MODULO')
-
-    class Meta:
-        db_table = 'MODULO_AREA'
-        unique_together = ('area', 'modulo')

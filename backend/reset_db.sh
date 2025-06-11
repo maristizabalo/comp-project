@@ -4,7 +4,7 @@
 # source venv/bin/activate
 
 echo "🧹 Eliminando carpetas de migrations..."
-for app in auth area modulo rol permiso usuario formulario; do
+for app in auth area categoria modulo rol permiso usuario formulario; do
     rm -rf apps/$app/migrations
     mkdir apps/$app/migrations
     touch apps/$app/migrations/__init__.py
@@ -14,6 +14,7 @@ done
 echo "🛠️ Ejecutando makemigrations para cada app..."
 python3 manage.py makemigrations auth
 python3 manage.py makemigrations area
+python3 manage.py makemigrations categoria
 python3 manage.py makemigrations modulo
 python3 manage.py makemigrations rol
 python3 manage.py makemigrations permiso
