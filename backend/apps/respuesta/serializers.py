@@ -32,6 +32,7 @@ class RespuestaFormularioTablaSerializer(serializers.ModelSerializer):
         model = RespuestaFormulario
         fields = ['id', 'usuario', 'ip', 'fecha_creacion', 'datos']
 
+    
     def get_datos(self, obj):
         campos = Campo.objects.filter(formulario=obj.formulario)
         respuestas = obj.respuestas_campo.all()
@@ -40,16 +41,20 @@ class RespuestaFormularioTablaSerializer(serializers.ModelSerializer):
         for campo in campos:
             r = respuestas.filter(campo=campo).first()
             if r:
-                valor = (
-                    r.valor_texto or
-                    r.valor_numero or
-                    r.valor_fecha or
-                    r.valor_opcion or
-                    r.valor_booleano or
-                    (r.valor_geom.wkt if r.valor_geom else None)
-                )
+                if r.valor_opcion:
+                    valor = r.valor_opcion.etiqueta 
+                elif r.valor_geom:
+                    valor = r.valor_geom.wkt
+                else:
+                    valor = (
+                        r.valor_texto or
+                        r.valor_numero or
+                        r.valor_fecha or
+                        r.valor_booleano
+                    )
                 datos[campo.nombre] = valor
             else:
                 datos[campo.nombre] = None
         return datos
+
 
