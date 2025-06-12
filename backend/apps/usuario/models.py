@@ -74,7 +74,7 @@ class Usuario(models.Model):
     roles = models.ManyToManyField(
         Rol,
         through='UsuarioRol',
-        related_name='usuarios'  # Esto permite hacer rol.usuarios.all()
+        related_name='usuarios'
     )
     
     usuario_creo = models.CharField(max_length=100, db_column='USUARIO_CREO')
@@ -129,5 +129,5 @@ class UsuarioRol(models.Model):
 
     class Meta:
         db_table = 'USUARIO_ROL'
-        unique_together = ('usuario', 'rol')  # Evitar duplicados
+        unique_together = ('usuario', 'rol')
 
