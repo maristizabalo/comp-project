@@ -13,7 +13,7 @@ urlpatterns = [
     
     #Gestion de creacion de formularios y respuestas URLs
     path('api/construccion-formulario/', include('apps.construccion_formulario.urls')),
-    path('api/', include('apps.respuesta.urls')),
+    path('api/respuesta/', include('apps.respuesta.urls')),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
