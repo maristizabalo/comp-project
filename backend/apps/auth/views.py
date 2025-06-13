@@ -13,25 +13,26 @@ from utils import transactionals
 from apps.usuario.models import Usuario
 from utils.ldap import Ldap
 from .authentication import create_or_update_custom_token
-from apps.rol.serializers import RolSerializer
+from apps.rol.models import Rol
+from apps.rol.serializers import RolLiteSerializer
 
 
-def user_credentials(token, token_date, user, rol):
-
-  rol_serializer = RolSerializer(rol)
+def user_credentials(token, token_date, user, roles):
+  roles = Rol.objects.filter(usuarios=user)
+  rol_serializer = RolLiteSerializer(roles, many=True)
+  
   return Response({
-    'token': token,
-    'token_created': token_date,
-    'user': {
-      'id': user.id,
-      'usuario': user.usuario,
-      'rol': rol_serializer.data,
-      'nombre_completo': user.nombre_completo,
-      'activo': user.activo,
-      'activo_ldap': user.activo_ldap,
+      'token': token,
+      'token_created': token_date,
+      'user': {
+          'id': user.id,
+          'usuario': user.usuario,
+          'roles': rol_serializer.data,
+          'nombre_completo': user.nombre_completo,
+          'activo': user.activo,
+          'activo_ldap': user.activo_ldap,
       }
-    })
-
+  })
 
 class LoginUser(transactionals.CreateAPIView):
   authentication_classes = []

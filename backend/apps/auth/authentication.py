@@ -5,58 +5,68 @@ from django.utils import timezone
 from rest_framework.authentication import BaseAuthentication
 from rest_framework import exceptions
 from django.conf import settings
-from apps.usuario.models import Usuario
+from apps.usuario.models import Usuario, UsuarioRol
 from apps.rol.models import Rol
 from complementarios.settings.base import AUTH_TOKEN_EXPIRACY_MINUTES
 
 
 AUTH_TOKEN_EXPIRACY_MINUTES = settings.AUTH_TOKEN_EXPIRACY_MINUTES
 
-
 def create_or_update_custom_token(user, is_user_model=False, token=None, token_created=None):
+    if not token:
+        token = str(uuid4().hex)
 
-  if not token:
-    token = str(uuid4().hex)
+    if not token_created:
+        token_created = timezone.now().isoformat()
 
-  if not token_created:
-    token_created = timezone.now().isoformat()
+    if is_user_model:
+        user_roles = UsuarioRol.objects.filter(usuario_id=user.id).select_related("rol")
+    else:
+        user_roles = user.roles_usuario.select_related("rol")
 
-  if is_user_model:
-    user_rol = Rol.objects.get(id=user.rol.id)
-  else:
-    user_rol = user.rol
+    roles_data = []
+    for ur in user_roles:
+        roles_data.append({
+            "id": ur.rol.id,
+            "nombre": ur.rol.nombre,
+            "descripcion": ur.rol.descripcion,
+            "activo": ur.rol.activo,
+        })
 
-  data = {
-    "token_created": token_created,
-    'user': {
-      'id': user.pk,
-      'token': token,
-      'nombre_completo': user.nombre_completo,
-      'usuario': user.usuario,
-      'activo': user.activo,
-      'activo_ldap': user.activo_ldap,
-      'rol': user_rol,
+    data = {
+        "token_created": token_created,
+        'user': {
+            'id': user.pk,
+            'token': token,
+            'nombre_completo': user.nombre_completo,
+            'usuario': user.usuario,
+            'activo': user.activo,
+            'activo_ldap': user.activo_ldap,
+            'roles': roles_data,
+        }
     }
-  }
-  cache.set(token, data)
 
-  return token, token_created, user_rol
+    cache.set(token, data)
 
+    return token, token_created, roles_data
 
 
 def create_auth_user(user_token):
-  user = Usuario(
-    id=user_token['user']['id'],
-    nombre_completo=user_token['user']['nombre_completo'],
-    usuario=user_token['user']['usuario'],
-    activo=user_token['user']['activo'],
-    activo_ldap=user_token['user']['activo_ldap'],
-  )
-  user.token = user_token['user']['token']
-  rol_id = user_token['user']['rol'].id
-  user.rol = Rol.objects.get(id=rol_id)
+    user = Usuario(
+        id=user_token['user']['id'],
+        nombre_completo=user_token['user']['nombre_completo'],
+        usuario=user_token['user']['usuario'],
+        activo=user_token['user']['activo'],
+        activo_ldap=user_token['user']['activo_ldap'],
+    )
+    user.token = user_token['user']['token']
 
-  return user
+    # En lugar de asignar a user.roles, lo guardamos como atributo temporal
+    roles = Rol.objects.filter(id__in=[r['id'] for r in user_token['user']['roles']])
+    user._roles_cache = roles  # propiedad temporal personalizada
+
+    return user
+
 
 
 class CustomAuthentication(BaseAuthentication):

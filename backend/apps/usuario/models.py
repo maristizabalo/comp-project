@@ -116,7 +116,7 @@ class Usuario(models.Model):
 
 class UsuarioRol(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_USUARIO_ROL')
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='ID_USUARIO')
+    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE, db_column='ID_USUARIO', related_name='roles_usuario')
     rol = models.ForeignKey(Rol, on_delete=models.CASCADE, db_column='ID_ROL')
 
     usuario_creo = models.CharField(max_length=100, db_column='USUARIO_CREO')
