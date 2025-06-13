@@ -27,7 +27,7 @@ class UsuarioList(transactionals.ListCreateAPIView):
   def get_permissions(self):
         if self.request.method == "GET":
             return [permissions.AllowAny()]
-        return [partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value])()]
+        return [partial(CheckPermissions, [PermisoAdminEnum.ADMIN_USUARIO.value])()]
 
   def get_serializer_class(self, *args, **kwargs):
     if self.request.method == 'GET':
@@ -85,7 +85,7 @@ class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
 
     def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH']:
-            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)]
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_USUARIO.value]),)]
         return [permissions.AllowAny()]
 
     def get_serializer_class(self, *args, **kwargs):

@@ -17,8 +17,8 @@ class PermisoList(transactionals.ListCreateAPIView):
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.request.method == 'POST':
-            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.CREAR_ROL.value]),)]
-        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.OBTENER_ROL.value]),)]
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
 
     @transactionals.transactional()
     def post(self, request, *args, **kwargs):
@@ -40,8 +40,8 @@ class PermisoDetail(transactionals.RetrieveUpdateDestroyAPIView):
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.request.method in ['PUT', 'PATCH']:
-            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_ROL.value]),)]
-        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.OBTENER_ROL.value]),)]
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
 
     def put(self, request, *args, **kwargs):
         return self.update(request, *args, **kwargs)

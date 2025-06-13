@@ -12,15 +12,15 @@
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "localhost",
       "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-05-29T03:02:44.073Z",
-      "fecha_modificacion": "2025-05-29T03:02:44.073Z"
+      "fecha_creacion": "2025-06-12T20:24:50.810291",
+      "fecha_modificacion": "2025-06-12T20:24:50.810291"
     }
   },
   {
     "model": "permiso.permiso",
     "pk": 1,
     "fields": {
-      "nombre": "EDITAR_USUARIO",
+      "nombre": "ADMINISTRAR USUARIOS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -33,7 +33,7 @@
     "model": "permiso.permiso",
     "pk": 2,
     "fields": {
-      "nombre": "OBTENER_ROL",
+      "nombre": "ADMINISTRAR AREAS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -46,7 +46,7 @@
     "model": "permiso.permiso",
     "pk": 3,
     "fields": {
-      "nombre": "CREAR_ROL",
+      "nombre": "ADMINISTRAR ROLES Y PERMISOS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -59,7 +59,7 @@
     "model": "permiso.permiso",
     "pk": 4,
     "fields": {
-      "nombre": "EDITAR_ROL",
+      "nombre": "ADMINISTRAR CATEGORIAS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -72,7 +72,7 @@
     "model": "permiso.permiso",
     "pk": 5,
     "fields": {
-      "nombre": "CREAR_AREA",
+      "nombre": "ADMINISTRAR MODULOS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -85,124 +85,7 @@
     "model": "permiso.permiso",
     "pk": 6,
     "fields": {
-      "nombre": "EDITAR_AREA",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 7,
-    "fields": {
-      "nombre": "OBTENER_CATEGORIAS",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 8,
-    "fields": {
-      "nombre": "CREAR_CATEGORIA",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 9,
-    "fields": {
-      "nombre": "EDITAR_CATEGORIA",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 10,
-    "fields": {
-      "nombre": "OBTENER_MODULOS",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 11,
-    "fields": {
-      "nombre": "CREAR_MODULO",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 12,
-    "fields": {
-      "nombre": "EDITAR_MODULO",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 13,
-    "fields": {
-      "nombre": "OBTENER_FORMULARIOS",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 14,
-    "fields": {
-      "nombre": "CREAR_FORMULARIO",
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "permiso.permiso",
-    "pk": 15,
-    "fields": {
-      "nombre": "EDITAR_FORMULARIO",
+      "nombre": "ADMINISTRAR FORMULARIOS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -302,146 +185,6 @@
     "fields": {
       "rol": 1,
       "permiso": 6,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 7,
-    "fields": {
-      "rol": 1,
-      "permiso": 7,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 8,
-    "fields": {
-      "rol": 1,
-      "permiso": 8,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 9,
-    "fields": {
-      "rol": 1,
-      "permiso": 9,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 10,
-    "fields": {
-      "rol": 1,
-      "permiso": 10,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 11,
-    "fields": {
-      "rol": 1,
-      "permiso": 11,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 12,
-    "fields": {
-      "rol": 1,
-      "permiso": 12,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 13,
-    "fields": {
-      "rol": 1,
-      "permiso": 13,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 14,
-    "fields": {
-      "rol": 1,
-      "permiso": 14,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "rol.rolpermiso",
-    "pk": 15,
-    "fields": {
-      "rol": 1,
-      "permiso": 15,
-      "usuario_creo": "admin",
-      "ip_creo": "127.0.0.1",
-      "usuario_modifico": "admin",
-      "ip_modifico": "127.0.0.1",
-      "fecha_creacion": "2025-06-12T20:24:50.810291",
-      "fecha_modificacion": "2025-06-12T20:24:50.810291"
-    }
-  },
-  {
-    "model": "usuario.usuariorol",
-    "pk": 1,
-    "fields": {
-      "usuario": 1,
-      "rol": 1,
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
