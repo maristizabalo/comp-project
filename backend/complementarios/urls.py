@@ -6,10 +6,10 @@ urlpatterns = [
     path('api/auth/', include('apps.auth.urls')),
     
     #Gestion apps de administradores URLs
-    path('api/', include('apps.area.urls')),
-    path('api/', include('apps.categoria.urls')),
-    path('api/', include('apps.modulo.urls')),
-    path('api/', include('apps.formulario.urls')),
+    path('api/area/', include('apps.area.urls')),
+    path('api/categoria/', include('apps.categoria.urls')),
+    path('api/modulo/', include('apps.modulo.urls')),
+    path('api/formulario/', include('apps.formulario.urls')),
     
     #Gestion de creacion de formularios y respuestas URLs
     path('api/construccion-formulario/', include('apps.construccion_formulario.urls')),

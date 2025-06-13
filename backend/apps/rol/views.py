@@ -1,7 +1,7 @@
 from .models import Rol
 from .serializers import RolSerializer, RolListSerializer
 from utils import transactionals
-from utils.utils.constants import PermisoEnum
+from utils.constants import PermisoEnum
 from functools import partial
 from utils.permissions import CheckPermissions
 from rest_framework.response import Response
