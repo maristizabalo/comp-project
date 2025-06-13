@@ -80,34 +80,54 @@ class UsuarioList(transactionals.ListCreateAPIView):
 
   
 class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
-  queryset = Usuario.objects.all()
-  serializer_class = UsuarioSerializer
-  
-  def get_permissions(self):
-        """
-        Instantiates and returns the list of permissions that this view requires.
-        """
+    queryset = Usuario.objects.all()
+    serializer_class = UsuarioSerializer
+
+    def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH']:
             return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)]
-        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)]
+        return [permissions.AllowAny()]
 
-  def get_serializer_class(self, *args, **kwargs):
-    if self.request.method in ['PUT', 'PATCH']:
-      return UsuarioUpdateSerializer
-    elif self.request.method == 'GET':
-      return UsuarioDetailSerializer
-    return UsuarioSerializer
+    def get_serializer_class(self, *args, **kwargs):
+        if self.request.method in ['PUT', 'PATCH']:
+            return UsuarioUpdateSerializer
+        elif self.request.method == 'GET':
+            return UsuarioDetailSerializer
+        return UsuarioSerializer
 
-  def put(self, request, *args, **kwargs):
-    return self.update(request, *args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        # Captura IP del usuario como en UsuarioList
+        request = self.request
+        ip_user = (
+            request.META.get("X_REAL_IP")
+            or request.META.get("HTTP_X_REAL_IP")
+            or request.META.get("X_FORWARDED_FOR")
+            or request.META.get("HTTP_X_FORWARDED_FOR")
+            or request.META.get("REMOTE_ADDR")
+        )
 
-  def patch(self, request, *args, **kwargs):
-    return self.partial_update(request, *args, **kwargs)
+        if ip_user in ["127.0.0.1", "localhost"]:
+            ip_user = request.META.get("REMOTE_ADDR")
 
+        kwargs.setdefault('context', self.get_serializer_context())
+        kwargs['context'].update({
+            "request": request,
+            "ip_user": ip_user
+        })
+
+        return super().get_serializer(*args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+      
+      
 class UsuarioLdapSearch(APIView):
 
-  permission_classes = (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)
-
+  permission_classes = [permissions.AllowAny]
+  
   def get(self, request, format=None):
     ldap = Ldap()
     busqueda_raw = self.request.query_params.get('busqueda')
