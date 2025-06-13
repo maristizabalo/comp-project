@@ -6,6 +6,7 @@ urlpatterns = [
     path('api/auth/', include('apps.auth.urls')),
     
     #Gestion apps de administradores URLs
+    path('api/usuario/', include('apps.usuario.urls')),
     path('api/area/', include('apps.area.urls')),
     path('api/categoria/', include('apps.categoria.urls')),
     path('api/modulo/', include('apps.modulo.urls')),

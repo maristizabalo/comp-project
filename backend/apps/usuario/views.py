@@ -1,7 +1,7 @@
 import re
 from functools import partial
 from django.db.models import Q
-from utils.utils.constants import PermisoEnum, RolEnum
+from utils.constants import PermisoAdminEnum, RolEnum
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,20 +9,25 @@ from utils import transactionals
 from apps.rol.models import Rol
 from apps.usuario.models import Usuario
 from apps.usuario.serializers import UsuarioBasicListSerializer, UsuarioDetailSerializer, UsuarioListSerializer, UsuarioSerializer, UsuarioCreateSerializer, UsuarioUpdateSerializer
-from utils.utils.ldap import Ldap
+from utils.ldap import Ldap
 from utils.permissions import CheckPermissions
+from rest_framework import permissions
+
 
 
 class UsuarioActivosList(transactionals.ListAPIView):
   serializer_class = UsuarioBasicListSerializer
   queryset = Usuario.objects.filter(activo=True, activo_ldap=True)
-  permission_classes = (partial(CheckPermissions, [PermisoEnum.ADMIN_USUARIOS.value]),)
+  permission_classes = [permissions.AllowAny]
 
 
 class UsuarioList(transactionals.ListCreateAPIView):
 
   serializer_class = UsuarioSerializer
-  permission_classes = (partial(CheckPermissions, [PermisoEnum.ADMIN_USUARIOS.value]),)
+  def get_permissions(self):
+        if self.request.method == "GET":
+            return [permissions.AllowAny()]
+        return [partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value])()]
 
   def get_serializer_class(self, *args, **kwargs):
     if self.request.method == 'GET':
@@ -38,25 +43,41 @@ class UsuarioList(transactionals.ListCreateAPIView):
 
   @transactionals.transactional()
   def post(self, request, *args, **kwargs):
-    data = request.data.copy()
-    ldap = Ldap()
-    result = ldap.search_exact_user(data.get('usuario'))
-    if result == None:
-      raise Exception("Usuario no encontrado en el directorio activo")
+      data = request.data.copy()
 
-    data['usuario'] = result.get('usuario')
-    data['correo'] = result.get('correo')
-    data['nombre_completo'] = result.get('nombre_completo')
-    data['activo_ldap'] = result.get('activo')
+      ldap = Ldap()
+      result = ldap.search_exact_user(data.get('usuario'))
+      if result is None:
+          raise Exception("Usuario no encontrado en el directorio activo")
 
-    
-    serializer = UsuarioCreateSerializer(data=data)
-    if serializer.is_valid():
-      serializer.save()
-      
-      return Response(serializer.data, status=status.HTTP_201_CREATED)
+      data['usuario'] = result.get('usuario')
+      data['correo'] = result.get('correo')
+      data['nombre_completo'] = result.get('nombre_completo')
+      data['activo_ldap'] = result.get('activo')
 
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+      # Capturar IP real del usuario
+      ip_user = (
+          request.META.get("X_REAL_IP")
+          or request.META.get("HTTP_X_REAL_IP")
+          or request.META.get("X_FORWARDED_FOR")
+          or request.META.get("HTTP_X_FORWARDED_FOR")
+          or request.META.get("REMOTE_ADDR")
+      )
+
+      if ip_user in ["127.0.0.1", "localhost"]:
+          ip_user = request.META.get("REMOTE_ADDR")
+
+      serializer = UsuarioCreateSerializer(
+          data=data,
+          context={"request": request, "ip_user": ip_user}
+      )
+
+      if serializer.is_valid():
+          serializer.save()
+          return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+      return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
   
 class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
   queryset = Usuario.objects.all()
@@ -67,8 +88,8 @@ class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
         Instantiates and returns the list of permissions that this view requires.
         """
         if self.request.method in ['PUT', 'PATCH']:
-            return [permission() for permission in (partial(CheckPermissions, [PermisoEnum.ADMIN_USUARIOS.value]),)]
-        return [permission() for permission in (partial(CheckPermissions, [PermisoEnum.ADMIN_USUARIOS.value]),)]
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)]
+        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)]
 
   def get_serializer_class(self, *args, **kwargs):
     if self.request.method in ['PUT', 'PATCH']:
@@ -85,7 +106,7 @@ class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
 
 class UsuarioLdapSearch(APIView):
 
-  permission_classes = (partial(CheckPermissions, [PermisoEnum.ADMIN_USUARIOS.value]),)
+  permission_classes = (partial(CheckPermissions, [PermisoAdminEnum.EDITAR_USUARIO.value]),)
 
   def get(self, request, format=None):
     ldap = Ldap()

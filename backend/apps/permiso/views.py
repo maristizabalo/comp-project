@@ -5,7 +5,7 @@ from functools import partial
 from utils.permissions import CheckPermissions
 from rest_framework.response import Response
 from rest_framework import status
-from utils.utils.constants import PermisoEnum
+from utils.constants import PermisoEnum
 
 
 class PermisoList(transactionals.ListCreateAPIView):

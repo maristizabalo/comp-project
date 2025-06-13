@@ -1,4 +1,4 @@
-from apps.usuario.models import Usuario
+from apps.usuario.models import Usuario, UsuarioRol
 from apps.rol.models import Rol
 from rest_framework import serializers
 
@@ -40,16 +40,37 @@ class UsuarioSerializer(UsuarioListSerializer):
 
 class UsuarioCreateSerializer(UsuarioListSerializer):
 
-  rol = serializers.PrimaryKeyRelatedField(read_only=False, queryset=Rol.objects.all())
+    rol = serializers.PrimaryKeyRelatedField(queryset=Rol.objects.all(), write_only=True)
 
-  class Meta(UsuarioListSerializer.Meta):
-    fields = UsuarioListSerializer.Meta.fields + [
-      "rol",
-      "usuario_creo",
-      "ip_creo",
-      "usuario_modifico",
-      "ip_modifico"
-    ]
+    class Meta(UsuarioListSerializer.Meta):
+        fields = UsuarioListSerializer.Meta.fields + [
+            "rol"
+        ]
+
+    def create(self, validated_data):
+      rol = validated_data.pop("rol")
+      request = self.context.get("request")
+      ip = self.context.get("ip_user", "0.0.0.0")
+      user = request.user if request else None
+
+      usuario = Usuario.objects.create(
+          **validated_data,
+          usuario_creo=user.usuario if user else "anon",
+          ip_creo=ip,
+          usuario_modifico=user.usuario if user else "anon",
+          ip_modifico=ip
+      )
+
+      UsuarioRol.objects.create(
+          usuario=usuario,
+          rol=rol,
+          usuario_creo=user.usuario if user else "anon",
+          ip_creo=ip,
+          usuario_modifico=user.usuario if user else "anon",
+          ip_modifico=ip
+      )
+
+      return usuario
 
 
 class UsuarioUpdateSerializer(serializers.ModelSerializer):

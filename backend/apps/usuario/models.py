@@ -129,5 +129,6 @@ class UsuarioRol(models.Model):
 
     class Meta:
         db_table = 'USUARIO_ROL'
-        unique_together = ('usuario', 'rol')
+        verbose_name = "USUARIO_ROL"
+        verbose_name_plural = "USUARIO_ROLES"
 

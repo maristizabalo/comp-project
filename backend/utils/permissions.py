@@ -2,17 +2,20 @@ from rest_framework.permissions import BasePermission
 
 
 def check_user_permissions(permissions, user, obj=None):
-    # Recuperar todos los permisos del rol del usuario
-    user_permissions = user.rol.permisos.all()
-    
-    # Iterar sobre los permisos del usuario
-    for user_perm in user_permissions:
-        # Comparar el id del permiso con los valores en permissions
-        if user_perm.id in permissions:
-            return True
-    
-    return False
-
+  """
+  Verifica si el usuario tiene al menos uno de los permisos dados.
+  :param permissions: lista de IDs de permisos requeridos
+  :param user: instancia de Usuario
+  :param obj: (opcional) objeto sobre el cual aplicar permisos
+  :return: True si el usuario tiene al menos uno de los permisos, False si no
+  """
+  # Obtenemos todos los roles activos del usuario con sus permisos relacionados
+  roles = user.roles.filter(activo=True).prefetch_related('permisos')
+  for rol in roles:
+      for permiso in rol.permisos.all():
+          if permiso.id in permissions:
+              return True
+  return False
 
 class CheckPermissions(BasePermission):
 
