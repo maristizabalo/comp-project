@@ -3,6 +3,12 @@
 # echo "🚀 Activando entorno virtual..."
 # source venv/bin/activate
 
+echo "🧼 Limpiando contenido de carpetas 'cache'..."
+find . -type d -name "cache" | while read dir; do
+    rm -rf "$dir"/*
+    echo "🗑️  Limpiado: $dir"
+done
+
 echo "🧹 Eliminando carpetas de migrations..."
 for app in auth area categoria modulo rol permiso usuario formulario construccion_formulario respuesta; do
     rm -rf apps/$app/migrations

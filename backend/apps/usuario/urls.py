@@ -2,9 +2,6 @@ from django.urls import path
 
 from . import views
 
-
-app_name = 'usuario'
-
 urlpatterns = [
   path('', views.UsuarioList.as_view(), name='usuario-list'),
   path('<int:pk>/', views.UsuarioDetail.as_view(), name='usuario-detail'),
