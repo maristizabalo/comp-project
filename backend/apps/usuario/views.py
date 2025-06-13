@@ -17,7 +17,7 @@ from rest_framework import permissions
 
 class UsuarioActivosList(transactionals.ListAPIView):
   serializer_class = UsuarioBasicListSerializer
-  queryset = Usuario.objects.filter(activo=True, activo_ldap=True)
+  queryset = Usuario.objects.filter(activo=True, activo_ldap=True).order_by('id')
   permission_classes = [permissions.AllowAny]
 
 
@@ -35,7 +35,7 @@ class UsuarioList(transactionals.ListCreateAPIView):
     return UsuarioSerializer
   
   def get_queryset(self):
-    queryset = Usuario.objects.all()
+    queryset = Usuario.objects.all().order_by('id')
     query = self.request.query_params.get('usuario')
     if query is not None:
         queryset = queryset.filter(Q(usuario__icontains=query) | Q(nombre_completo__icontains=query))
@@ -80,7 +80,7 @@ class UsuarioList(transactionals.ListCreateAPIView):
 
   
 class UsuarioDetail(transactionals.RetrieveUpdateDestroyAPIView):
-    queryset = Usuario.objects.all()
+    queryset = Usuario.objects.all().order_by('id')
     serializer_class = UsuarioSerializer
 
     def get_permissions(self):
