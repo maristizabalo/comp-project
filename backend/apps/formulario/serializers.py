@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Formulario
 from apps.modulo.models import Modulo
 from apps.modulo.serializers import ModuloLiteSerializer
+from apps.permiso.models import PermisoFormulario
 
 class FormularioLiteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,6 +19,24 @@ class FormularioSerializer(serializers.ModelSerializer):
     id_padre_id = serializers.PrimaryKeyRelatedField(
         queryset=Formulario.objects.all(), source='id_padre', write_only=True, required=False, allow_null=True
     )
+    
+    def create(self, validated_data):
+        # 1. Crear el formulario
+        formulario = Formulario.objects.create(**validated_data)
+
+        # 2. Crear permisos relacionados
+        PermisoFormulario.objects.create(
+            nombre=f"lectura_{formulario.nombre}",
+            tipo=PermisoFormulario.LECTURA,
+            formulario=formulario
+        )
+        PermisoFormulario.objects.create(
+            nombre=f"escritura_{formulario.nombre}",
+            tipo=PermisoFormulario.ESCRITURA,
+            formulario=formulario
+        )
+
+        return formulario
 
     class Meta:
         model = Formulario

@@ -1,5 +1,5 @@
 from django.db import models
-from apps.permiso.models import Permiso
+from apps.permiso.models import Permiso, PermisoFormulario
 
 class Rol(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_ROL')
@@ -15,7 +15,8 @@ class Rol(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True, db_column='FECHA_CREACION')
     fecha_modificacion = models.DateTimeField(auto_now=True, db_column='FECHA_MODIFICACION')
     
-    permisos = models.ManyToManyField(Permiso, through='RolPermiso')    
+    permisos = models.ManyToManyField(Permiso, through='RolPermiso')
+    permisos_formulario = models.ManyToManyField(PermisoFormulario, through='RolPermisoFormulario')    
 
 
     class Meta:
@@ -46,3 +47,10 @@ class RolPermiso(models.Model):
 
     def __str__(self) -> str:
         return f'Rol {self.rol.nombre} - Permiso {self.permiso.nombre}'
+
+class RolPermisoFormulario(models.Model):
+    rol = models.ForeignKey(Rol, on_delete=models.CASCADE, db_column='ID_ROL')
+    permiso_formulario = models.ForeignKey(PermisoFormulario, on_delete=models.CASCADE, db_column='ID_PERMISO_FORMULARIO')
+
+    class Meta:
+        db_table = 'ROL_PERMISO_FORMULARIO'

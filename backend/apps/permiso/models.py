@@ -1,4 +1,5 @@
 from django.db import models
+from apps.formulario.models import Formulario
 
 class Permiso(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_PERMISO')
@@ -20,3 +21,20 @@ class Permiso(models.Model):
 
     def __str__(self) -> str:
         return f'id: {self.id} - {self.nombre}'
+
+class PermisoFormulario(models.Model):
+    LECTURA = 'lectura'
+    ESCRITURA = 'escritura'
+
+    TIPO_CHOICES = [
+        (LECTURA, 'Lectura'),
+        (ESCRITURA, 'Escritura'),
+    ]
+
+    id = models.BigAutoField(primary_key=True, db_column='ID_PERMISO_FORMULARIO')
+    nombre = models.CharField(max_length=255, db_column='NOMBRE')
+    tipo = models.CharField(max_length=50, choices=TIPO_CHOICES, db_column='TIPO')
+    formulario = models.ForeignKey(Formulario, on_delete=models.CASCADE, db_column='ID_FORMULARIO')
+
+    class Meta:
+        db_table = 'PERMISO_FORMULARIO'
