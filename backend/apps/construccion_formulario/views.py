@@ -11,7 +11,6 @@ class FormularioListCreateView(ListCreateAPIView):
     queryset = Formulario.objects.all()
     serializer_class = FormularioCompletoSerializer
 
-
 class FormularioRetrieveUpdateView(RetrieveUpdateAPIView):
     queryset = Formulario.objects.all()
     serializer_class = FormularioCompletoSerializer

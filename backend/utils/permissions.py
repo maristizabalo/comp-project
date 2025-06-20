@@ -1,5 +1,36 @@
 from rest_framework.permissions import BasePermission
 
+from apps.permiso.models import PermisoFormulario
+from apps.rol.models import RolPermisoFormulario
+
+
+def check_user_formulario_permiso(user, formulario_id, tipo_permiso):
+    """
+    Verifica si el usuario tiene permiso de tipo (lectura/escritura) sobre un formulario específico.
+
+    :param user: Usuario
+    :param formulario_id: ID del formulario
+    :param tipo_permiso: 'lectura' o 'escritura'
+    :return: True o False
+    """
+    roles_activos = user.roles.filter(activo=True).values_list('id', flat=True)
+
+    return RolPermisoFormulario.objects.filter(
+        rol_id__in=roles_activos,
+        permiso_formulario__formulario_id=formulario_id,
+        permiso_formulario__tipo=tipo_permiso
+    ).exists()
+
+class CheckFormularioPermission(BasePermission):
+    def __init__(self, tipo_permiso):
+        self.tipo_permiso = tipo_permiso
+
+    def has_permission(self, request, view):
+        formulario_id = view.kwargs.get('formulario_id') or view.kwargs.get('pk')
+        # print(formulario_id)
+        if not formulario_id:
+            return False
+        return check_user_formulario_permiso(request.user, formulario_id, self.tipo_permiso)
 
 def check_user_permissions(permissions, user, obj=None):
   """
@@ -28,3 +59,4 @@ class CheckPermissions(BasePermission):
 
   def has_object_permission(self, request, view, obj):
     return check_user_permissions(self.permissions, request.user, obj)
+

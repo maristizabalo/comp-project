@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from apps.formulario.models import Formulario
 from .models import Campo, Opcion
+from apps.permiso.models import PermisoFormulario
+
 
 
 # Opcion
@@ -41,12 +43,27 @@ class FormularioCompletoSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         campos_data = validated_data.pop('campos')
+        
+        # 1. Crear el formulario
         formulario = Formulario.objects.create(**validated_data)
 
+        # 2. Crear los campos (y sus opciones si hay)
         for campo_data in campos_data:
             opciones = campo_data.pop('opciones', [])
             campo = Campo.objects.create(formulario=formulario, **campo_data)
             for opcion in opciones:
                 Opcion.objects.create(campo=campo, **opcion)
+
+        # 3. Crear permisos del formulario (LECTURA y ESCRITURA)
+        PermisoFormulario.objects.create(
+            nombre=f"lectura_{formulario.nombre}",
+            tipo=PermisoFormulario.LECTURA,
+            formulario=formulario
+        )
+        PermisoFormulario.objects.create(
+            nombre=f"escritura_{formulario.nombre}",
+            tipo=PermisoFormulario.ESCRITURA,
+            formulario=formulario
+        )
 
         return formulario

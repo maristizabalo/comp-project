@@ -4,6 +4,7 @@ from apps.construccion_formulario.models import Campo
 from .serializers import RespuestaFormularioSerializer, RespuestaFormularioTablaSerializer
 from django.http import HttpResponse
 import pandas as pd
+from utils.permissions
 
 class RespuestaFormularioView(ListCreateAPIView):
     queryset = RespuestaFormulario.objects.all()
@@ -20,7 +21,7 @@ class RespuestasFormularioTablaView(ListCreateAPIView):
         formulario_id = self.kwargs['formulario_id']
         return RespuestaFormulario.objects.filter(formulario_id=formulario_id).prefetch_related('respuestas_campo__campo')
 
-def exportar_respuestas_excel(request, formulario_id): #Modificar por que solo me esta sirviendo para una tabla especifica
+def exportar_respuestas_excel(request, formulario_id):
     formularios = RespuestaFormulario.objects.filter(formulario_id=formulario_id).prefetch_related('respuestas_campo__campo')
     
     if not formularios.exists():
@@ -33,7 +34,6 @@ def exportar_respuestas_excel(request, formulario_id): #Modificar por que solo m
         fila = {
             "ID": f.id,
             "Usuario": f.usuario,
-            "IP": f.ip,
             "Fecha": f.fecha_creacion
         }
         for campo in campos:

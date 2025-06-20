@@ -1,19 +1,22 @@
-from .models import Rol, RolPermiso
+from .models import Rol, RolPermiso, RolPermisoFormulario
 from rest_framework import serializers
-from apps.permiso.models import Permiso
+from apps.permiso.models import Permiso, PermisoFormulario
 
 
 class RolLiteSerializer(serializers.ModelSerializer):
     permisos = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Permiso.objects.all())
+    permisos_formulario = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=PermisoFormulario.objects.all())
 
     class Meta:
         model = Rol
-        fields = ["id", "nombre", "permisos"]
+        fields = ["id", "nombre", "permisos", "permisos_formulario"]
 
 class RolSerializer(serializers.ModelSerializer):
     permisos = serializers.PrimaryKeyRelatedField(
-        many=True, 
-        queryset=Permiso.objects.all()
+        many=True, queryset=Permiso.objects.all()
+    )
+    permisos_formulario = serializers.PrimaryKeyRelatedField(
+        many=True, queryset=PermisoFormulario.objects.all()
     )
 
     class Meta:
@@ -23,6 +26,7 @@ class RolSerializer(serializers.ModelSerializer):
             "nombre",
             "descripcion",
             "permisos",
+            "permisos_formulario",
             "activo",
             "usuario_creo",
             "usuario_modifico",
@@ -38,6 +42,8 @@ class RolSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         permisos = validated_data.pop("permisos", [])
+        permisos_formulario = validated_data.pop("permisos_formulario", [])
+
         request = self.context.get("request")
         ip = self.context.get("ip_user", "0.0.0.0")
         user = request.user if request else None
@@ -50,6 +56,7 @@ class RolSerializer(serializers.ModelSerializer):
             ip_modifico=ip
         )
 
+        # Agregar permisos normales
         for permiso in permisos:
             RolPermiso.objects.create(
                 rol=rol,
@@ -60,15 +67,24 @@ class RolSerializer(serializers.ModelSerializer):
                 ip_modifico=ip
             )
 
+        # Agregar permisos de formulario
+        for permiso_formulario in permisos_formulario:
+            RolPermisoFormulario.objects.create(
+                rol=rol,
+                permiso_formulario=permiso_formulario
+            )
+
         return rol
 
     def update(self, instance, validated_data):
         permisos = validated_data.pop("permisos", None)
+        permisos_formulario = validated_data.pop("permisos_formulario", None)
+
         request = self.context.get("request")
         ip = self.context.get("ip_user", "0.0.0.0")
         user = request.user if request else None
 
-        # Actualizar los campos del rol
+        # Actualizar campos normales
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
@@ -76,11 +92,9 @@ class RolSerializer(serializers.ModelSerializer):
         instance.ip_modifico = ip
         instance.save()
 
+        # Actualizar permisos
         if permisos is not None:
-            # Limpiar los permisos actuales
             instance.permisos.clear()
-
-            # Agregar los nuevos permisos con datos de auditoría
             for permiso in permisos:
                 RolPermiso.objects.create(
                     rol=instance,
@@ -91,12 +105,23 @@ class RolSerializer(serializers.ModelSerializer):
                     ip_modifico=ip
                 )
 
-        return instance
+        # Actualizar permisos de formulario
+        if permisos_formulario is not None:
+            instance.permisos_formulario.clear()
+            for permiso_formulario in permisos_formulario:
+                RolPermisoFormulario.objects.create(
+                    rol=instance,
+                    permiso_formulario=permiso_formulario
+                )
 
+        return instance
+    
+    
 class RolListSerializer(serializers.ModelSerializer):
   permisos = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=Permiso.objects.all())
+  permisos_formulario = serializers.PrimaryKeyRelatedField(many=True, read_only=False, queryset=PermisoFormulario.objects.all())
 
   class Meta:
     model = Rol
-    fields = [ "id", "nombre", "descripcion", "activo", "permisos", "usuario_creo", 
+    fields = [ "id", "nombre", "descripcion", "activo", "permisos", "permisos_formulario", "usuario_creo", 
               "usuario_modifico", "ip_creo", "ip_modifico" ]
