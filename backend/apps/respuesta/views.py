@@ -2,13 +2,20 @@ from utils.transactionals import ListCreateAPIView, RetrieveUpdateAPIView
 from .models import RespuestaFormulario
 from apps.construccion_formulario.models import Campo
 from .serializers import RespuestaFormularioSerializer, RespuestaFormularioTablaSerializer
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseForbidden
 import pandas as pd
-from utils.permissions
+from rest_framework.permissions import IsAuthenticated
+from utils.permissions import build_check_formulario_permiso, check_user_formulario_permiso
 
 class RespuestaFormularioView(ListCreateAPIView):
     queryset = RespuestaFormulario.objects.all()
     serializer_class = RespuestaFormularioSerializer
+    permission_classes = [IsAuthenticated, build_check_formulario_permiso('escritura')]
+    
+    def create(self, request, *args, **kwargs):
+        formulario_id = request.data.get("formulario")
+        print(f"ID del formulario recibido: {formulario_id}")
+        return super().create(request, *args, **kwargs)
 
 class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
     queryset = RespuestaFormulario.objects.all()
@@ -16,12 +23,16 @@ class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
 
 class RespuestasFormularioTablaView(ListCreateAPIView):
     serializer_class = RespuestaFormularioTablaSerializer
+    permission_classes = [build_check_formulario_permiso('lectura')]
 
     def get_queryset(self):
         formulario_id = self.kwargs['formulario_id']
         return RespuestaFormulario.objects.filter(formulario_id=formulario_id).prefetch_related('respuestas_campo__campo')
 
 def exportar_respuestas_excel(request, formulario_id):
+    if not check_user_formulario_permiso(request.user, formulario_id, 'lectura'):
+        return HttpResponseForbidden("No tienes permiso para exportar este formulario.")
+    
     formularios = RespuestaFormulario.objects.filter(formulario_id=formulario_id).prefetch_related('respuestas_campo__campo')
     
     if not formularios.exists():

@@ -21,17 +21,24 @@ def check_user_formulario_permiso(user, formulario_id, tipo_permiso):
         permiso_formulario__tipo=tipo_permiso
     ).exists()
 
-class CheckFormularioPermission(BasePermission):
-    def __init__(self, tipo_permiso):
-        self.tipo_permiso = tipo_permiso
+def build_check_formulario_permiso(tipo_permiso):
+    class _CheckFormularioPermission(BasePermission):
+        def has_permission(self, request, view):
+            formulario_id = view.kwargs.get('formulario_id') or view.kwargs.get('pk')
 
-    def has_permission(self, request, view):
-        formulario_id = view.kwargs.get('formulario_id') or view.kwargs.get('pk')
-        # print(formulario_id)
-        if not formulario_id:
-            return False
-        return check_user_formulario_permiso(request.user, formulario_id, self.tipo_permiso)
+            if not formulario_id and request.method in ['POST', 'PUT', 'PATCH']:
+                formulario_id = request.data.get('formulario')
 
+            print(f"🛂 Validando permiso '{tipo_permiso}' para el formulario ID: {formulario_id}")
+            
+            if not formulario_id:
+                return False
+
+            return check_user_formulario_permiso(request.user, formulario_id, tipo_permiso)
+    
+    return _CheckFormularioPermission
+  
+  
 def check_user_permissions(permissions, user, obj=None):
   """
   Verifica si el usuario tiene al menos uno de los permisos dados.
