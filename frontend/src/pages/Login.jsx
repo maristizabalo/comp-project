@@ -14,23 +14,22 @@ const Login = () => {
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.6 }}
         className="login-left"
-      >
-        <div className="login-left-content">
-          <Title level={2} style={{ color: "#fff" }}>
-            DEFENSORÍA DEL ESPACIO PÚBLICO
+      > <div className="login-left-content">
+          <Title level={2} className="text-white">
+            COMPLEMENTARIO
           </Title>
-          <p>
+          <p className="hidden lg:block text-white">
             Sistema de gestión para formularios complementarios. Acceso
             exclusivo para personal autorizado.
           </p>
-        </div>
+        </div>>
       </motion.div>
 
       {/* Imagen flotando entre ambas partes */}
       <img
         src={ImgDec}
         alt="Decoración SVG"
-        className="absolute z-10 left-[30%] -translate-x-1/2 top-1/2 -translate-y-1/2 w-48 max-w-[150px] md:w-60"
+        className="absolute z-50 left-[35%] -translate-x-1/2 top-1/2 -translate-y-1/2 w-48 max-w-[350px] md:w-96"
       />
 
       {/* DERECHA - Formulario de Login */}
@@ -53,11 +52,11 @@ const Login = () => {
           </Title>
 
           <Form.Item
-            label="Correo electrónico"
-            name="email"
-            rules={[{ required: true, message: "Por favor ingresa tu correo" }]}
+            label="Usuario"
+            name="text"
+            rules={[{ required: true, message: "Por favor ingresa tu usuario" }]}
           >
-            <Input placeholder="usuario@entidad.gov.co" />
+            <Input placeholder="Usuario" />
           </Form.Item>
 
           <Form.Item
