@@ -1,11 +1,13 @@
-import { Button, Form, Input, Typography } from 'antd';
-import { motion } from 'framer-motion';
+import { Button, Form, Input, Typography } from "antd";
+import { motion } from "framer-motion";
+import ImgDec from "../assets/img/dec_1.svg"; 
+
 
 const { Title } = Typography;
 
 const Login = () => {
   return (
-    <div className="login-container">
+    <div className="login-container relative">
       {/* IZQUIERDA - Fondo institucional curvo */}
       <motion.div
         initial={{ opacity: 0, x: -50 }}
@@ -14,14 +16,22 @@ const Login = () => {
         className="login-left"
       >
         <div className="login-left-content">
-          <Title level={2} style={{ color: '#fff' }}>
+          <Title level={2} style={{ color: "#fff" }}>
             DEFENSORÍA DEL ESPACIO PÚBLICO
           </Title>
           <p>
-            Sistema de gestión para formularios complementarios. Acceso exclusivo para personal autorizado.
+            Sistema de gestión para formularios complementarios. Acceso
+            exclusivo para personal autorizado.
           </p>
         </div>
       </motion.div>
+
+      {/* Imagen flotando entre ambas partes */}
+      <img
+        src={ImgDec}
+        alt="Decoración SVG"
+        className="absolute z-10 left-[30%] -translate-x-1/2 top-1/2 -translate-y-1/2 w-48 max-w-[150px] md:w-60"
+      />
 
       {/* DERECHA - Formulario de Login */}
       <motion.div
@@ -35,17 +45,17 @@ const Login = () => {
           layout="vertical"
           className="login-form"
           onFinish={(values) => {
-            console.log('Login values:', values);
+            console.log("Login values:", values);
           }}
         >
-          <Title level={3} style={{ color: '#E80B2C', textAlign: 'center' }}>
+          <Title level={3} style={{ color: "#E80B2C", textAlign: "center" }}>
             Iniciar Sesión
           </Title>
 
           <Form.Item
             label="Correo electrónico"
             name="email"
-            rules={[{ required: true, message: 'Por favor ingresa tu correo' }]}
+            rules={[{ required: true, message: "Por favor ingresa tu correo" }]}
           >
             <Input placeholder="usuario@entidad.gov.co" />
           </Form.Item>
@@ -53,7 +63,9 @@ const Login = () => {
           <Form.Item
             label="Contraseña"
             name="password"
-            rules={[{ required: true, message: 'Por favor ingresa tu contraseña' }]}
+            rules={[
+              { required: true, message: "Por favor ingresa tu contraseña" },
+            ]}
           >
             <Input.Password placeholder="••••••••" />
           </Form.Item>
