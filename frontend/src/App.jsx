@@ -4,10 +4,10 @@ import { Provider } from "react-redux";
 import { store } from "./store/store";
 import { BrowserRouter, Route } from "react-router-dom";
 import RoutesWithNotFound from "./pages/RoutesWithNotFound";
-import Login from "./pages/Login";
 import Private from "./pages/private/Private";
 import { AuthGuard } from './guards/AuthGuard';
 import { PublicGuard } from './guards/PublicGuard';
+import Login from "./pages/Login/Login";
 
 
 function App() {

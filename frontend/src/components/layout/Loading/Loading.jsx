@@ -2,7 +2,7 @@ import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
 import styles from "./Loading.module.css";
 
-const Loading = ({ message = "Iniciando sesión..." }) => {
+const Loading = ({ message = "Cargando..." }) => {
   return (
     <div className={styles.overlay}>
       <Spin

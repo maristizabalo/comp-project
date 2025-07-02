@@ -1,13 +1,13 @@
 import styles from "./Login.module.css";
 import { Input, Button, Alert } from "antd";
 import { UserOutlined, LockOutlined, RightOutlined } from "@ant-design/icons";
-import logo_alcaldia from "../assets/img/logo_alcaldia.svg";
-import logo_bogota from "../assets/img/logo_bogota.svg";
-import logo_dadep from "../assets/img/logo_dadep.svg";
+import logo_alcaldia from "../../assets/img/logo_alcaldia.svg";
+import logo_bogota from "../../assets/img/logo_bogota.svg";
+import logo_dadep from "../../assets/img/logo_dadep.svg";
 import { useState } from "react";
-import { useAuth } from "../hooks/use-auth";
+import { useAuth } from "../../hooks/use-auth";
 import { useNavigate } from "react-router";
-import Loading from "../components/layout/Loading/Loading";
+import Loading from "../../components/layout/Loading/Loading";
 
 const Login = () => {
   const [formValues, setFormValues] = useState({
@@ -61,10 +61,10 @@ const Login = () => {
     formValues.username.trim() !== "" && formValues.password.trim() !== "";
   return (
     <div className={styles.container}>
-      {isLoading && <Loading />}
+      {isLoading && <Loading message="Iniciando sesión..."/>}
       <div className={styles.screen}>
         <div className={styles.screen__content}>
-          <h2 className="text-black absolute top-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl lg:text-3xl font-bold tracking-wide whitespace-nowrap">
+          <h2 className="text-black absolute top-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl lg:text-3xl font-extrabold tracking-wide whitespace-nowrap">
             COMPLEMENTARIOS
           </h2>
           <form className={styles.login} onSubmit={handleSubmit}>

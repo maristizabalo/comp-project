@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/use-auth';
-import Loading from '../components/layout/Loading';
+import Loading from '../components/layout/Loading/Loading';
 
 export function AuthGuard({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
