@@ -1,81 +1,71 @@
-import { Button, Form, Input, Typography } from "antd";
-import { motion } from "framer-motion";
-import ImgDec from "../assets/img/dec_1.svg"; 
-
+import styles from "./Login.module.css";
+import { Input, Button, Typography } from "antd";
+import { UserOutlined, LockOutlined, RightOutlined } from "@ant-design/icons";
+import logo_alcaldia from "../assets/img/logo_alcaldia.svg";
+import logo_bogota from "../assets/img/logo_bogota.svg";
+import logo_dadep from "../assets/img/logo_dadep.svg";
 
 const { Title } = Typography;
 
 const Login = () => {
   return (
-    <div className="login-container relative">
-      {/* IZQUIERDA - Fondo institucional curvo */}
-      <motion.div
-        initial={{ opacity: 0, x: -50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="login-left"
-      > <div className="login-left-content">
-          <Title level={2} className="text-white">
-            COMPLEMENTARIO
-          </Title>
-          <p className="hidden lg:block text-white">
-            Sistema de gestión para formularios complementarios. Acceso
-            exclusivo para personal autorizado.
-          </p>
-        </div>>
-      </motion.div>
+    <div className={styles.container}>
+      <div className={styles.screen}>
+        <div className={styles.screen__content}>
+          <form className={styles.login} onSubmit={(e) => e.preventDefault()}>
+            <div className={styles.login__field}>
+              <UserOutlined className={styles.login__icon} />
+              <Input
+                type="text"
+                placeholder="Usuario"
+                className={styles.login__input}
+              />
+            </div>
+            <div className={styles.login__field}>
+              <LockOutlined className={styles.login__icon} />
+              <Input.Password
+                placeholder="Clave"
+                className={styles.login__input}
+              />
+            </div>
 
-      {/* Imagen flotando entre ambas partes */}
-      <img
-        src={ImgDec}
-        alt="Decoración SVG"
-        className="absolute z-50 left-[35%] -translate-x-1/2 top-1/2 -translate-y-1/2 w-48 max-w-[350px] md:w-96"
-      />
-
-      {/* DERECHA - Formulario de Login */}
-      <motion.div
-        initial={{ opacity: 0, x: 50 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.6 }}
-        className="login-right"
-      >
-        <Form
-          name="login"
-          layout="vertical"
-          className="login-form"
-          onFinish={(values) => {
-            console.log("Login values:", values);
-          }}
-        >
-          <Title level={3} style={{ color: "#E80B2C", textAlign: "center" }}>
-            Iniciar Sesión
-          </Title>
-
-          <Form.Item
-            label="Usuario"
-            name="text"
-            rules={[{ required: true, message: "Por favor ingresa tu usuario" }]}
-          >
-            <Input placeholder="Usuario" />
-          </Form.Item>
-
-          <Form.Item
-            label="Contraseña"
-            name="password"
-            rules={[
-              { required: true, message: "Por favor ingresa tu contraseña" },
-            ]}
-          >
-            <Input.Password placeholder="••••••••" />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Entrar
+            <Button htmlType="submit" className={styles.login__submit}>
+              <span className={styles.button__text}>Iniciar Sesión</span>
+              <RightOutlined className={styles.button__icon} />
             </Button>
-          </Form.Item>
-        </Form>
-      </motion.div>
+          </form>
+          <div className={styles.containerLogos}>
+            <div className={styles.logosAdmin}>
+              <img
+                src={logo_alcaldia}
+                alt="Logo Alcaldía"
+                className={styles.logo}
+              />
+              <img src={logo_dadep} alt="Logo DADEP" className={styles.logo} />
+              <img
+                src={logo_bogota}
+                alt="Logo Bogotá"
+                className={styles.logo}
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.screen__background}>
+          <span
+            className={`${styles.screen__background__shape} ${styles.shape2}`}
+          />
+          <span
+            className={`${styles.screen__background__shape} ${styles.shape3}`}
+          />
+          <span
+            className={`${styles.screen__background__shape} ${styles.shape4}`}
+          />
+          <span
+            className={`${styles.screen__background__shape} ${styles.shape1}`}
+          />
+        </div>
+      </div>
     </div>
   );
 };

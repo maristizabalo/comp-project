@@ -1,0 +1,312 @@
+/* .container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  background: linear-gradient(90deg, #ddc6c9, #cecbcb);
+}
+
+.screen {
+  background: linear-gradient(90deg, #E80B2C, #C95D63);
+  position: relative;
+  height: 600px;
+  width: 360px;
+  box-shadow: 0px 0px 24px #a23c3c;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.screen__content {
+  z-index: 1;
+  position: relative;
+  height: 100%;
+}
+
+.screen__background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.screen__background__shape {
+  transform: rotate(45deg);
+  position: absolute;
+  border-radius: 32px;
+}
+
+.shape1 {
+  height: 520px;
+  width: 520px;
+  background: #ffffff;
+  top: -50px;
+  right: 120px;
+  border-radius: 0 72px 0 0;
+}
+
+.shape2 {
+  height: 220px;
+  width: 220px;
+  background: #e66b7d;
+  top: -172px;
+  right: 0;
+}
+
+.shape3 {
+  height: 540px;
+  width: 190px;
+  background: linear-gradient(270deg, #d4414a, #a1323b);
+  top: -24px;
+  right: 0;
+}
+
+.shape4 {
+  height: 400px;
+  width: 200px;
+  background: #9d424d;
+  top: 420px;
+  right: 50px;
+  border-radius: 60px;
+}
+
+.login {
+  width: 320px;
+  padding: 30px;
+  padding-top: 156px;
+}
+
+.login__field {
+  padding: 20px 0;
+  position: relative;
+}
+
+.login__icon {
+  position: absolute;
+  top: 30px;
+  color: #fff;
+  font-size: 16px;
+  left: 0;
+}
+
+.login__input {
+  border: none !important;
+  border-bottom: 2px solid #ffffff !important;
+  background: transparent !important;
+  padding-left: 24px !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+.login__submit {
+  background: #fff !important;
+  font-size: 14px;
+  margin-top: 30px;
+  padding: 16px 20px;
+  border-radius: 26px;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: #b13b3b;
+  box-shadow: 0px 2px 2px #e66666;
+}
+
+.button__icon {
+  font-size: 24px;
+  margin-left: auto;
+  color: #a73737;
+}
+
+.socialLogin {
+  position: absolute;
+  height: 140px;
+  width: 160px;
+  text-align: center;
+  bottom: 0;
+  right: 0;
+  color: #fff;
+}
+
+.socialIcons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.socialIcons a {
+  color: #fff;
+  font-size: 18px;
+  transition: transform 0.2s;
+}
+
+.socialIcons a:hover {
+  transform: scale(1.4);
+} */
+
+/* Container principal centrado en pantalla con fondo en gradiente suave */
+.container {
+  display: flex; /* Usa Flexbox para organizar el layout */
+  align-items: center; /* Centra verticalmente el contenido */
+  justify-content: center; /* Centra horizontalmente el contenido */
+  min-height: 100vh; /* Ocupa el 100% del alto de la ventana */
+  background: linear-gradient(90deg, #ddc6c9, #cecbcb); /* Fondo de la página en gradiente gris-rosado */
+}
+
+/* Contenedor del login con fondo rojo en gradiente */
+.screen {
+  background: linear-gradient(90deg, #E80B2C, #C95D63); /* Fondo en gradiente rojo a rosado */
+  position: relative; /* Para que los elementos hijos con posición absoluta se posicionen dentro */
+  height: 600px; /* Altura fija */
+  width: 360px; /* Ancho fijo */
+  box-shadow: 0px 0px 24px #a23c3c; /* Sombra para dar profundidad */
+  border-radius: 10px; /* Bordes redondeados */
+  overflow: hidden; /* Oculta los elementos que se salen del contenedor */
+}
+
+/* Contenido principal encima de los elementos decorativos */
+.screen__content {
+  z-index: 1; /* Se pone por encima de los elementos de fondo */
+  position: relative;
+  height: 100%;
+}
+
+/* Contenedor de formas decorativas en el fondo */
+.screen__background {
+  position: absolute; /* Posicionamiento absoluto para cubrir el fondo */
+  top: 0; left: 0; right: 0; bottom: 0; /* Ocupa todo el contenedor */
+  z-index: 0; /* Debajo del contenido */
+}
+
+/* Estilos base para todas las formas decorativas */
+.screen__background__shape {
+  transform: rotate(45deg); /* Rota las formas para mejor estética */
+  position: absolute;
+  border-radius: 32px; /* Bordes redondeados */
+}
+
+/* Forma blanca superior derecha grande */
+.shape1 {
+  height: 600px;         /* Aumenta la altura */
+  width: 700px;          /* Aumenta el ancho */
+  background: #ffffff;
+  top: -80px;            /* La empujamos un poco más arriba */
+  right: 100px;          /* La movemos más hacia la izquierda para que sobresalga más */
+  border-radius: 0 72px 0 0;
+}
+
+/* Forma rosada más pequeña */
+.shape2 {
+  height: 220px;
+  width: 220px;
+  background: #e66b7d;
+  top: -172px;
+  right: 0;
+}
+
+/* Forma larga con gradiente */
+.shape3 {
+  height: 540px;
+  width: 190px;
+  background: linear-gradient(270deg, #d4414a, #a1323b);
+  top: -24px;
+  right: 0;
+}
+
+/* Forma inferior derecha más redondeada */
+.shape4 {
+  height: 400px;
+  width: 200px;
+  background: #9d424d;
+  top: 420px;
+  right: 50px;
+  border-radius: 60px; /* Muy redondeada */
+}
+
+/* Contenedor del formulario de login */
+.login {
+  width: 320px;
+  padding: 30px;
+  padding-top: 156px; /* Empuja hacia abajo para dejar espacio a los elementos decorativos */
+}
+
+/* Campo de input del login */
+.login__field {
+  padding: 20px 0;
+  position: relative;
+}
+
+/* Ícono dentro del campo */
+.login__icon {
+  position: absolute;
+  top: 30px;
+  color: #fff;
+  font-size: 16px;
+  left: 0;
+}
+
+/* Estilo del input de texto */
+.login__input {
+  border: none !important;
+  border-bottom: 2px solid #ffffff !important; /* Línea blanca debajo */
+  background: transparent !important; /* Fondo transparente */
+  padding-left: 24px !important; /* Espacio para el ícono */
+  color: #fff !important;
+  font-weight: 600 !important;
+}
+
+/* Botón de enviar login */
+.login__submit {
+  background: #fff !important;
+  font-size: 14px;
+  margin-top: 30px;
+  padding: 16px 20px;
+  border-radius: 26px;
+  text-transform: uppercase;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  color: #b13b3b;
+  box-shadow: 0px 2px 2px #e66666;
+}
+
+/* Ícono dentro del botón */
+.button__icon {
+  font-size: 24px;
+  margin-left: auto;
+  color: #a73737;
+}
+
+/* Contenedor general de los logos */
+.containerLogos {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end; /* 👈 Alinea el contenido a la derecha */
+  padding: 10px 20px; /* 👈 Espaciado opcional */
+}
+
+/* Contenedor de los logos, en fila */
+.logosAdmin {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Cada logo individual */
+.logo {
+  height: 32px; /* Puedes ajustar esto según necesidad */
+  width: auto;
+  transition: transform 0.2s ease-in-out;
+}
+
+.logo:hover {
+  transform: scale(1.1); /* Zoom al pasar el mouse */
+}
