@@ -161,3 +161,65 @@
 .logo:hover {
   transform: scale(1.1); /* Zoom al pasar el mouse */
 }
+
+@media (max-width: 768px) {
+  .screen {
+    height: 500px;     /* Reduce el alto */
+    width: 320px;      /* Reduce un poco el ancho */
+  }
+
+  .shape1 {
+    height: 500px;
+    width: 600px;
+    top: -100px;
+    right: 80px;
+  }
+
+  .shape2 {
+    height: 180px;
+    width: 180px;
+    top: -150px;
+    right: 0;
+  }
+
+  .shape3 {
+    height: 460px;
+    width: 160px;
+    top: -20px;
+    right: 0;
+  }
+
+  .shape4 {
+    height: 300px;
+    width: 160px;
+    top: 400px;
+    right: 40px;
+  }
+
+  .login {
+    width: 280px;
+    padding: 24px;
+    padding-top: 120px;
+  }
+
+  .login__icon {
+    font-size: 14px;
+  }
+
+  .login__input {
+    font-size: 14px;
+  }
+
+  .login__submit {
+    font-size: 13px;
+    padding: 14px 18px;
+  }
+
+  .button__icon {
+    font-size: 20px;
+  }
+
+  .logo {
+    height: 28px;
+  }
+}
