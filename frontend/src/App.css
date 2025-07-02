@@ -1,3 +1,23 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+  font-family: MuseoSansCondensed-300;
+  src: url(./assets/fuentes/MuseoSansCondensed-300.ttf);
+}
+
+* {
+  margin: 0;
+  font-family: MuseoSansCondensed-300;
+}
+
+/* Forzar fuente en todos los componentes de Ant Design */
+:where(.ant-input, .ant-btn, .ant-typography, .ant-input-password input) {
+  font-family: MuseoSansCondensed-300 !important;
+}
+
+/* También para el placeholder */
+:where(.ant-input::placeholder, .ant-input-password input::placeholder) {
+  font-family: MuseoSansCondensed-300 !important;
+}

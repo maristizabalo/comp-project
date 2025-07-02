@@ -13,7 +13,7 @@
   position: relative; /* Para que los elementos hijos con posición absoluta se posicionen dentro */
   height: 600px; /* Altura fija */
   width: 360px; /* Ancho fijo */
-  box-shadow: 0px 0px 24px #a23c3c; /* Sombra para dar profundidad */
+  box-shadow: 0px 0px 24px #000000; /* Sombra para dar profundidad */
   border-radius: 10px; /* Bordes redondeados */
   overflow: hidden; /* Oculta los elementos que se salen del contenedor */
 }
@@ -94,7 +94,7 @@
 .login__icon {
   position: absolute;
   top: 30px;
-  color: #fff;
+  color: #000000;
   font-size: 16px;
   left: 0;
 }
@@ -102,16 +102,16 @@
 /* Estilo del input de texto */
 .login__input {
   border: none !important;
-  border-bottom: 2px solid #ffffff !important; /* Línea blanca debajo */
+  border-bottom: 2px solid #000000 !important; /* Línea blanca debajo */
   background: transparent !important; /* Fondo transparente */
   padding-left: 24px !important; /* Espacio para el ícono */
-  color: #fff !important;
+  color: #000000 !important;
   font-weight: 600 !important;
 }
 
 /* Botón de enviar login */
 .login__submit {
-  background: #fff !important;
+  background: #f3f0f0 !important;
   font-size: 14px;
   margin-top: 30px;
   padding: 16px 20px;
