@@ -94,7 +94,7 @@
 .login__icon {
   position: absolute;
   top: 30px;
-  color: #000000;
+  color: #a73737;
   font-size: 16px;
   left: 0;
 }
@@ -102,11 +102,11 @@
 /* Estilo del input de texto */
 .login__input {
   border: none !important;
-  border-bottom: 2px solid #000000 !important; /* Línea blanca debajo */
+  border-bottom: 2px solid #a73737 !important; /* Línea blanca debajo */
   background: transparent !important; /* Fondo transparente */
   padding-left: 24px !important; /* Espacio para el ícono */
   color: #000000 !important;
-  font-weight: 600 !important;
+  font-weight: 200 !important;
 }
 
 /* Botón de enviar login */

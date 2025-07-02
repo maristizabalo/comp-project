@@ -1,17 +1,18 @@
 import styles from "./Login.module.css";
-import { Input, Button, Typography } from "antd";
+import { Input, Button } from "antd";
 import { UserOutlined, LockOutlined, RightOutlined } from "@ant-design/icons";
 import logo_alcaldia from "../assets/img/logo_alcaldia.svg";
 import logo_bogota from "../assets/img/logo_bogota.svg";
 import logo_dadep from "../assets/img/logo_dadep.svg";
-
-const { Title } = Typography;
 
 const Login = () => {
   return (
     <div className={styles.container}>
       <div className={styles.screen}>
         <div className={styles.screen__content}>
+          <h2 className="text-black absolute top-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl lg:text-3xl font-bold tracking-wide whitespace-nowrap">
+            COMPLEMENTARIOS
+          </h2>
           <form className={styles.login} onSubmit={(e) => e.preventDefault()}>
             <div className={styles.login__field}>
               <UserOutlined className={styles.login__icon} />
