@@ -123,13 +123,23 @@
   width: 100%;
   color: #b13b3b;
   box-shadow: 0px 2px 2px #e66666;
+  transition: background 0.3s, color 0.3s;
 }
 
-/* Ícono dentro del botón */
 .button__icon {
   font-size: 24px;
   margin-left: auto;
   color: #a73737;
+  transition: color 0.3s;
+}
+
+.login__submit:hover {
+  background-color: #ffffff !important;
+  color: #E80B2C !important; /* cambia el texto */
+}
+
+.login__submit:hover .button__icon {
+  color: #E80B2C !important; /* cambia el ícono */
 }
 
 /* Contenedor general de los logos */

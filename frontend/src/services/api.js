@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_COMPLEMENTARIO_API || "http://localhost:8000/api",
+  baseURL: import.meta.env.VITE_COMPLEMENTARIOS_API || "http://localhost:8000/api",
   timeout: 180000,
 });
 

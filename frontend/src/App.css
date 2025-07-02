@@ -21,3 +21,4 @@
 :where(.ant-input::placeholder, .ant-input-password input::placeholder) {
   font-family: MuseoSansCondensed-300 !important;
 }
+
