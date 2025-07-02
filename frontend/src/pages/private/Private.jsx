@@ -1,7 +1,12 @@
+import AppLayout from "../../components/layout/AppLayout"
 
 const Private = () => {
   return (
-    <div>Private</div>
+    <>
+    <AppLayout>
+      HOLA
+    </AppLayout>
+    </>
   )
 }
 

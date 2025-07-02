@@ -48,7 +48,7 @@ const Login = () => {
 
     try {
       await login(formValues);
-      navigate("/private/dashboard");
+      navigate("/inicio");
     } catch (error) {
       setError(
         error.response?.data?.message ||
@@ -64,7 +64,7 @@ const Login = () => {
       {isLoading && <Loading message="Iniciando sesión..."/>}
       <div className={styles.screen}>
         <div className={styles.screen__content}>
-          <h2 className="text-black absolute top-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl lg:text-3xl font-extrabold tracking-wide whitespace-nowrap">
+          <h2 className="text-black absolute top-10 left-1/2 -translate-x-1/2 text-2xl md:text-3xl lg:text-3xl font-extrabold whitespace-nowrap">
             COMPLEMENTARIOS
           </h2>
           <form className={styles.login} onSubmit={handleSubmit}>
