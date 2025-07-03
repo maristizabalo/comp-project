@@ -1,6 +1,6 @@
 import { Button, Layout, Menu } from "antd";
 import {
-  DashboardOutlined,
+  HomeOutlined,
   UserOutlined,
   BellOutlined,
   SettingOutlined,
@@ -48,7 +48,7 @@ const AppLayout = ({ children }) => {
   const items = [
     {
       key: "/inicio",
-      icon: <DashboardOutlined />,
+      icon: <HomeOutlined />,
       label: "Inicio",
     },
     {
@@ -56,14 +56,14 @@ const AppLayout = ({ children }) => {
       label: "Gestión de Formularios",
       children: [
         {
-          key: "/modulos",
-          icon: <AppstoreOutlined />,
-          label: "Módulos",
-        },
-        {
           key: "/categorias",
           icon: <FolderOpenOutlined />,
           label: "Categorías",
+        },
+        {
+          key: "/modulos",
+          icon: <AppstoreOutlined />,
+          label: "Módulos",
         },
         {
           key: "/formularios",
@@ -111,7 +111,7 @@ const AppLayout = ({ children }) => {
         onBreakpoint={(broken) => setCollapsed(broken)}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="h-16 flex items-center justify-center text-white font-bold text-lg tracking-wide border-b border-white/20 shadow-inner">
+        <div className="h-16 flex items-center justify-center text-white font-extrabold text-2xl tracking-wide border-b border-white/20 shadow-inner">
           COMPLEMENTARIOS
         </div>
         <Menu
@@ -119,7 +119,13 @@ const AppLayout = ({ children }) => {
           mode="inline"
           defaultSelectedKeys={["/inicio"]}
           onClick={handleMenuClick}
-          className="!bg-[#E80B2C] [&_.ant-menu-item]:!text-white [&_.ant-menu-item-selected]:!bg-white/20 [&_.ant-menu-item:hover]:!bg-white/10"
+          className="!bg-[#E80B2C]
+          [&_.ant-menu-item]:!text-white
+          [&_.ant-menu-item]:!font-semibold
+          [&_.ant-menu-item-selected]:!bg-white/20
+          [&_.ant-menu-item:hover]:!bg-white/10
+          [&_.ant-menu-item-selected]:!font-bold
+          [&_.ant-menu-item-group-title]:!text-white/70 !text-sm !font-semibold"
           items={items}
         />
         <div className="mt-4 px-4">
