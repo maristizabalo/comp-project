@@ -1,7 +1,9 @@
-import { Layout, Menu } from "antd";
+import { Button, Layout, Menu } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
+  BellOutlined,
+  SettingOutlined,
   AppstoreOutlined,
   FolderOpenOutlined,
   FormOutlined,
@@ -9,7 +11,7 @@ import {
   SafetyOutlined,
   ApartmentOutlined,
 } from "@ant-design/icons";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo_alcaldia from "../../assets/img/logo_alcaldia_mayor_bogota.svg";
 import logo_dadep from "../../assets/img/logo_dadep_wh.svg";
 import logo_bogota from "../../assets/img/logo_bogota_wh.svg";
@@ -21,6 +23,23 @@ const { Sider, Header, Content } = Layout;
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  // para obtener la ruta actual
+  const location = useLocation();
+
+  // definir los títulos de las rutas
+  const routeTitles = {
+    "/inicio": "Inicio",
+    "/modulos": "Módulos",
+    "/categorias": "Categorías",
+    "/formularios": "Formularios",
+    "/respuestas": "Respuestas",
+    "/usuarios": "Usuarios",
+    "/roles": "Roles y Permisos",
+    "/areas": "Áreas",
+  };
+
+  const currentTitle = routeTitles[location.pathname] || "";
 
   const handleMenuClick = ({ key }) => {
     navigate(key);
@@ -131,9 +150,29 @@ const AppLayout = ({ children }) => {
           !collapsed ? "ml-[240px]" : ""
         }`}
       >
-        <Header className="bg-transparent px-4 flex items-center justify-between">
-          <div className="text-xl font-semibold text-red-700">
-            Panel de administración
+        <Header className="bg-transparent px-4 mx-10 mt-6 flex items-center justify-between">
+          {/* Título dinámico */}
+          <div className="text-3xl font-semibold text-red-700">
+            {currentTitle}
+          </div>
+
+          {/* Botones flotantes */}
+          <div className="flex gap-2 items-center">
+            <Button
+              shape="circle"
+              icon={<UserOutlined />}
+              className="!bg-white !shadow-md hover:!bg-gray-100"
+            />
+            <Button
+              shape="circle"
+              icon={<BellOutlined />}
+              className="!bg-white !shadow-md hover:!bg-gray-100"
+            />
+            <Button
+              shape="circle"
+              icon={<SettingOutlined />}
+              className="!bg-white !shadow-md hover:!bg-gray-100"
+            />
           </div>
         </Header>
         <Content className="p-6">
