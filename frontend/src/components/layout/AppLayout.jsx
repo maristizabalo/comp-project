@@ -152,7 +152,7 @@ const AppLayout = ({ children }) => {
       >
         <Header className="bg-transparent px-4 mx-10 mt-6 flex items-center justify-between">
           {/* Título dinámico */}
-          <div className="text-3xl font-semibold text-red-700">
+          <div className="text-3xl font-semibold text-primario">
             {currentTitle}
           </div>
 
@@ -160,18 +160,21 @@ const AppLayout = ({ children }) => {
           <div className="flex gap-2 items-center">
             <Button
               shape="circle"
+              size="large"
               icon={<UserOutlined />}
-              className="!bg-white !shadow-md hover:!bg-gray-100"
+              className="bg-white shadow-md hover:bg-gray-100"
             />
             <Button
               shape="circle"
+              size="large"
               icon={<BellOutlined />}
-              className="!bg-white !shadow-md hover:!bg-gray-100"
+              className="bg-white shadow-md hover:bg-gray-100"
             />
             <Button
               shape="circle"
+              size="large"
               icon={<SettingOutlined />}
-              className="!bg-white !shadow-md hover:!bg-gray-100"
+              className="bg-white shadow-md hover:bg-gray-100"
             />
           </div>
         </Header>
