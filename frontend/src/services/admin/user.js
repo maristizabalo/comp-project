@@ -1,6 +1,18 @@
 import { api } from "../api";
 
 export const usersService = {
+  // Buscar usuario en LDAP
+  buscarEnLDAP: async (usuario) => {
+    try {
+      const response = await api.get(`/usuario/ldap?busqueda=${usuario}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Error al buscar en LDAP"
+      );
+    }
+  },
+
   // Obtener todos los usuarios
   getUsuarios: async () => {
     try {

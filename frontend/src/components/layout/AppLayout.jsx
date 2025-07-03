@@ -12,9 +12,9 @@ import {
   ApartmentOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import logo_alcaldia from "../../assets/img/logo_alcaldia_mayor_bogota.svg";
-import logo_dadep from "../../assets/img/logo_dadep_wh.svg";
-import logo_bogota from "../../assets/img/logo_bogota_wh.svg";
+import logo_alcaldia from "../../assets/img/logo_alcaldia.svg";
+import logo_dadep from "../../assets/img/logo_dadep.svg";
+import logo_bogota from "../../assets/img/logo_bogota.svg";
 import { useState } from "react";
 import { LogoutButton } from "./LogoutButton";
 
@@ -30,11 +30,17 @@ const AppLayout = ({ children }) => {
   // definir los títulos de las rutas
   const routeTitles = {
     "/inicio": "Inicio",
+
+    // Usuarios
+    "/usuarios": "Lista de usuarios",
+    "/usuarios/crear": "Creacion de usuario",
+    
     "/modulos": "Módulos",
     "/categorias": "Categorías",
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
-    "/usuarios": "Usuarios",
+
+
     "/roles": "Roles y Permisos",
     "/areas": "Áreas",
   };
@@ -111,7 +117,7 @@ const AppLayout = ({ children }) => {
         onBreakpoint={(broken) => setCollapsed(broken)}
         onCollapse={(value) => setCollapsed(value)}
       >
-        <div className="h-16 flex items-center justify-center text-white font-extrabold text-2xl tracking-wide border-b border-white/20 shadow-inner">
+        <div className="h-16 flex items-center justify-center text-black font-extrabold text-2xl tracking-wide border-b border-white/20 shadow-inner">
           COMPLEMENTARIOS
         </div>
         <Menu
