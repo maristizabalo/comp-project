@@ -150,7 +150,7 @@ const AppLayout = ({ children }) => {
           !collapsed ? "ml-[240px]" : ""
         }`}
       >
-        <Header className="bg-transparent px-4 mx-10 mt-6 flex items-center justify-between">
+        <Header className="bg-transparent px-2 mx-10 mt-6 flex items-center justify-between">
           {/* Título dinámico */}
           <div className="text-3xl font-semibold text-primario">
             {currentTitle}
