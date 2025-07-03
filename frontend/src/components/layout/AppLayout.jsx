@@ -16,7 +16,7 @@ import logo_bogota from "../../assets/img/logo_bogota_wh.svg";
 import { useState } from "react";
 import { LogoutButton } from "./LogoutButton";
 
-const { Sider, Content } = Layout;
+const { Sider, Header, Content } = Layout;
 
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
@@ -78,7 +78,7 @@ const AppLayout = ({ children }) => {
           label: "Áreas",
         },
       ],
-    }
+    },
   ];
 
   return (
@@ -131,10 +131,13 @@ const AppLayout = ({ children }) => {
           !collapsed ? "ml-[240px]" : ""
         }`}
       >
-        <Content className="p-6">
-          <div className="bg-white shadow-md rounded-xl p-6 min-h-[85vh]">
-            {children}
+        <Header className="bg-transparent px-4 flex items-center justify-between">
+          <div className="text-xl font-semibold text-red-700">
+            Panel de administración
           </div>
+        </Header>
+        <Content className="p-6">
+          <div className="bg-transparent p-6 min-h-[85vh]">{children}</div>
         </Content>
       </Layout>
     </Layout>
