@@ -2,7 +2,6 @@ import { Layout, Menu } from "antd";
 import {
   DashboardOutlined,
   UserOutlined,
-  LogoutOutlined,
   AppstoreOutlined,
   FolderOpenOutlined,
   FormOutlined,
@@ -10,23 +9,20 @@ import {
   SafetyOutlined,
   ApartmentOutlined,
 } from "@ant-design/icons";
-import { Outlet, useNavigate } from "react-router";
+import { Outlet, useNavigate } from "react-router-dom";
 import logo_alcaldia from "../../assets/img/logo_alcaldia_mayor_bogota.svg";
 import logo_dadep from "../../assets/img/logo_dadep_wh.svg";
 import logo_bogota from "../../assets/img/logo_bogota_wh.svg";
 import { useState } from "react";
+import { LogoutButton } from "./LogoutButton";
 
 const { Sider, Content } = Layout;
 
-const AppLayout = () => {
+const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
   const handleMenuClick = ({ key }) => {
-    if (key === "logout") {
-      console.log("Cerrando sesión...");
-      return;
-    }
     navigate(key);
   };
 
@@ -82,12 +78,7 @@ const AppLayout = () => {
           label: "Áreas",
         },
       ],
-    },
-    {
-      key: "logout",
-      icon: <LogoutOutlined />,
-      label: "Cerrar sesión",
-    },
+    }
   ];
 
   return (
@@ -112,6 +103,9 @@ const AppLayout = () => {
           className="!bg-[#E80B2C] [&_.ant-menu-item]:!text-white [&_.ant-menu-item-selected]:!bg-white/20 [&_.ant-menu-item:hover]:!bg-white/10"
           items={items}
         />
+        <div className="mt-4 px-4">
+          <LogoutButton />
+        </div>
         <div className="absolute bottom-4 left-0 w-full flex justify-center gap-4 px-4">
           <img
             src={logo_alcaldia}
@@ -139,7 +133,7 @@ const AppLayout = () => {
       >
         <Content className="p-6">
           <div className="bg-white shadow-md rounded-xl p-6 min-h-[85vh]">
-            <Outlet />
+            {children}
           </div>
         </Content>
       </Layout>

@@ -6,7 +6,7 @@ import logo_bogota from "../../assets/img/logo_bogota.svg";
 import logo_dadep from "../../assets/img/logo_dadep.svg";
 import { useState } from "react";
 import { useAuth } from "../../hooks/use-auth";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 import Loading from "../../components/layout/Loading/Loading";
 
 const Login = () => {

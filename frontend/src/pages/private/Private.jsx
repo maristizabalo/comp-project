@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import AppLayout from "../../components/layout/AppLayout"
+import AppLayout from "../../components/layout/AppLayout";
 import Inicio from "./Inicio";
 
 const Private = () => {
