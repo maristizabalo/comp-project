@@ -34,12 +34,11 @@ const AppLayout = ({ children }) => {
     // Usuarios
     "/usuarios": "Lista de usuarios",
     "/usuarios/crear": "Creacion de usuario",
-    
+
     "/modulos": "Módulos",
     "/categorias": "Categorías",
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
-
 
     "/roles": "Roles y Permisos",
     "/areas": "Áreas",

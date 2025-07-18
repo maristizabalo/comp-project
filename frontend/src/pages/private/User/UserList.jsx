@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { Table, Tag, Button, Tooltip, Breadcrumb } from "antd";
-import { EditOutlined, StopOutlined } from "@ant-design/icons";
+import {
+  EditOutlined,
+  PlusCircleOutlined,
+  StopOutlined,
+} from "@ant-design/icons";
 import { usersService } from "../../../services/admin/user";
 import { useNavigate } from "react-router-dom";
 
@@ -83,12 +87,10 @@ const UserList = () => {
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
-        <Breadcrumb
-          items={[{ title: "Usuario", href: "/usuarios" }, { title: "Lista" }]}
-        />
         <Button type="primary" onClick={() => navigate("/usuarios/crear")}>
-          Nuevo Usuario
-        </Button>
+          {" "}
+          <PlusCircleOutlined className="mr-2" /> Crear Usuario{" "}
+        </Button>{" "}
       </div>
       <Table
         columns={columns}
