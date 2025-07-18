@@ -25,6 +25,18 @@ export const usersService = {
     }
   },
 
+  // Obtener un usuario específico por ID
+  getUsuarioById: async (id) => {
+    try {
+      const response = await api.get(`/usuario/${id}/`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Error al obtener el usuario"
+      );
+    }
+  },
+
   // Crear nuevo usuario
   createUsuario: async (usuarioData) => {
     try {

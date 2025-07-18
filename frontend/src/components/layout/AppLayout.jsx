@@ -34,6 +34,7 @@ const AppLayout = ({ children }) => {
     // Usuarios
     "/usuarios": "Lista de usuarios",
     "/usuarios/crear": "Creacion de usuario",
+    "/usuarios/editar/": "Edicion de usuario",
 
     "/modulos": "Módulos",
     "/categorias": "Categorías",
@@ -44,7 +45,15 @@ const AppLayout = ({ children }) => {
     "/areas": "Áreas",
   };
 
-  const currentTitle = routeTitles[location.pathname] || "";
+  const getTitleFromPath = (path) => {
+    const sortedKeys = Object.keys(routeTitles).sort(
+      (a, b) => b.length - a.length
+    );
+    const match = sortedKeys.find((key) => path.startsWith(key));
+    return routeTitles[match] || "";
+  };
+
+  const currentTitle = getTitleFromPath(location.pathname);
 
   const handleMenuClick = ({ key }) => {
     navigate(key);

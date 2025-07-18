@@ -68,7 +68,7 @@ const UserList = () => {
             <Button
               icon={<EditOutlined />}
               size="small"
-              onClick={() => console.log("Editar", record)}
+              onClick={() => navigate(`/usuarios/editar/${record.id}`)}
             />
           </Tooltip>
           <Tooltip title="Desactivar">
@@ -101,54 +101,16 @@ const UserList = () => {
         pagination={{ pageSize: 10 }}
         scroll={{ x: "max-content" }}
         className="
-    rounded-xl overflow-hidden 
-    [&_.ant-table-container]:rounded-xl 
-    [&_.ant-table-thead>tr>th]:!bg-gray-400 
-    [&_.ant-table-thead>tr>th]:!text-black 
-    [&_.ant-table-thead>tr>th]:!font-semibold 
-    [&_.ant-table-cell]:!text-sm 
-    [&_.ant-table]:!border-none 
-    shadow-md
-  "
+          rounded-xl overflow-hidden 
+          [&_.ant-table-container]:rounded-xl 
+        [&_.ant-table-thead>tr>th]:!bg-gray-400 
+        [&_.ant-table-thead>tr>th]:!text-black 
+          [&_.ant-table-thead>tr>th]:!font-semibold 
+          [&_.ant-table-cell]:!text-sm 
+          [&_.ant-table]:!border-none 
+          shadow-md
+        "
       />
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {usuarios.map((user) => (
-          <div
-            key={user.id}
-            className="bg-white p-4 rounded-xl shadow-md border border-gray-200"
-          >
-            <h3 className="text-lg font-semibold text-gray-800 mb-1">
-              {user.nombreCompleto}
-            </h3>
-            <p className="text-sm text-gray-600">Usuario: {user.usuario}</p>
-            <div className="mt-2 flex items-center gap-2">
-              <Tag color={user.activo ? "green" : "red"}>
-                {user.activo ? "Activo" : "Inactivo"}
-              </Tag>
-              <Tag color={user.activoLdap ? "blue" : "default"}>
-                {user.activoLdap ? "LDAP ON" : "LDAP OFF"}
-              </Tag>
-            </div>
-            <div className="mt-4 flex gap-2">
-              <Button
-                icon={<EditOutlined />}
-                size="small"
-                onClick={() => console.log("Editar", user)}
-              >
-                Editar
-              </Button>
-              <Button
-                icon={<StopOutlined />}
-                danger
-                size="small"
-                onClick={() => console.log("Desactivar", user)}
-              >
-                Desactivar
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div> */}
     </div>
   );
 };

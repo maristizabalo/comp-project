@@ -5,7 +5,6 @@ import Loading from '../components/layout/Loading/Loading';
 export function AuthGuard({ children }) {
   const { isAuthenticated, isLoading } = useAuth();
   const location = useLocation();
-  console.log(isAuthenticated, isLoading, "VARIABLES DE AUTH GUARD");
 
   if (isLoading) {
     return <Loading />; // Muestra un spinner mientras verifica la autenticación
