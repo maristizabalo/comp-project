@@ -52,7 +52,7 @@ export const usersService = {
   // Actualizar usuario
   updateUsuario: async (id, updatedData) => {
     try {
-      const response = await api.put(`/usuario/${id}/`, updatedData);
+      const response = await api.patch(`/usuario/${id}/`, updatedData);
       return response.data;
     } catch (error) {
       throw new Error(

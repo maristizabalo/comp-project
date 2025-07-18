@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
-import { Table, Tag, Button, Tooltip, Breadcrumb } from "antd";
+import {
+  Table,
+  Tag,
+  Button,
+  Tooltip,
+  Modal,
+  message,
+} from "antd";
 import {
   EditOutlined,
   PlusCircleOutlined,
   StopOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import { usersService } from "../../../services/admin/user";
 import { useNavigate } from "react-router-dom";
@@ -11,6 +19,11 @@ import { useNavigate } from "react-router-dom";
 const UserList = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [actionType, setActionType] = useState("deactivate"); // "activate" o "deactivate"
+
   const navigate = useNavigate();
 
   const fetchUsuarios = async () => {
@@ -28,6 +41,35 @@ const UserList = () => {
   useEffect(() => {
     fetchUsuarios();
   }, []);
+
+  const showConfirmationModal = (user, action) => {
+    setSelectedUser(user);
+    setActionType(action); // "activate" o "deactivate"
+    setModalVisible(true);
+  };
+
+  const handleConfirm = async () => {
+    if (!selectedUser) return;
+
+    setConfirmLoading(true);
+    const newStatus = actionType === "activate";
+
+    try {
+      await usersService.updateUsuario(selectedUser.id, { activo: newStatus });
+      message.success(
+        `Usuario ${selectedUser.nombreCompleto} ${
+          newStatus ? "activado" : "desactivado"
+        }`
+      );
+      setModalVisible(false);
+      fetchUsuarios(); // recargar la tabla
+    } catch (error) {
+      console.error(error);
+      message.error("No se pudo actualizar el estado del usuario");
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
 
   const columns = [
     {
@@ -71,14 +113,26 @@ const UserList = () => {
               onClick={() => navigate(`/usuarios/editar/${record.id}`)}
             />
           </Tooltip>
-          <Tooltip title="Desactivar">
-            <Button
-              icon={<StopOutlined />}
-              danger
-              size="small"
-              onClick={() => console.log("Desactivar", record)}
-            />
-          </Tooltip>
+
+          {record.activo ? (
+            <Tooltip title="Desactivar">
+              <Button
+                icon={<StopOutlined />}
+                danger
+                size="small"
+                onClick={() => showConfirmationModal(record, "deactivate")}
+              />
+            </Tooltip>
+          ) : (
+            <Tooltip title="Activar">
+              <Button
+                icon={<CheckOutlined />}
+                type="primary"
+                size="small"
+                onClick={() => showConfirmationModal(record, "activate")}
+              />
+            </Tooltip>
+          )}
         </div>
       ),
     },
@@ -88,10 +142,10 @@ const UserList = () => {
     <div className="space-y-4">
       <div className="flex justify-between items-center">
         <Button type="primary" onClick={() => navigate("/usuarios/crear")}>
-          {" "}
-          <PlusCircleOutlined className="mr-2" /> Crear Usuario{" "}
-        </Button>{" "}
+          <PlusCircleOutlined className="mr-2" /> Crear Usuario
+        </Button>
       </div>
+
       <Table
         columns={columns}
         dataSource={usuarios}
@@ -103,14 +157,39 @@ const UserList = () => {
         className="
           rounded-xl overflow-hidden 
           [&_.ant-table-container]:rounded-xl 
-        [&_.ant-table-thead>tr>th]:!bg-gray-400 
-        [&_.ant-table-thead>tr>th]:!text-black 
+          [&_.ant-table-thead>tr>th]:!bg-gray-400 
+          [&_.ant-table-thead>tr>th]:!text-black 
           [&_.ant-table-thead>tr>th]:!font-semibold 
           [&_.ant-table-cell]:!text-sm 
           [&_.ant-table]:!border-none 
           shadow-md
         "
       />
+
+      {/* Modal de confirmación */}
+      <Modal
+        title={
+          actionType === "deactivate"
+            ? "Confirmar desactivación"
+            : "Confirmar activación"
+        }
+        open={modalVisible}
+        onOk={handleConfirm}
+        confirmLoading={confirmLoading}
+        onCancel={() => setModalVisible(false)}
+        okText={actionType === "deactivate" ? "Sí, desactivar" : "Sí, activar"}
+        cancelText="Cancelar"
+      >
+        {selectedUser && (
+          <p>
+            ¿Estás seguro que deseas{" "}
+            <strong>
+              {actionType === "deactivate" ? "desactivar" : "activar"}
+            </strong>{" "}
+            al usuario <strong>{selectedUser.nombreCompleto}</strong>?
+          </p>
+        )}
+      </Modal>
     </div>
   );
 };
