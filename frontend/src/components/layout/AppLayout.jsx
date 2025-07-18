@@ -190,7 +190,7 @@ const AppLayout = ({ children }) => {
             />
           </div>
         </Header>
-        <Content className="p-6">
+        <Content className="px-6">
           <div className="bg-transparent p-6 min-h-[85vh]">{children}</div>
         </Content>
       </Layout>
