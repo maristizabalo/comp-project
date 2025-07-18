@@ -1,13 +1,5 @@
 import { useState } from "react";
-import {
-  Form,
-  Input,
-  Button,
-  Select,
-  Switch,
-  Breadcrumb,
-  message,
-} from "antd";
+import { Form, Input, Button, Select, Switch, Breadcrumb, message, Spin } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import { usersService } from "../../../services/admin/user";
 
@@ -18,14 +10,18 @@ const UserCreate = () => {
   const [loading, setLoading] = useState(false);
   const [ldapOptions, setLdapOptions] = useState([]);
   const [ldapLoaded, setLdapLoaded] = useState(false);
+  const [ldapLoading, setLdapLoading] = useState(false); // nuevo estado
 
   const handleSearchLDAP = async (value) => {
-    if (!value) return;
+    if (!value || value.length < 3) return;
+    setLdapLoading(true); // inicia loading
     try {
       const results = await usersService.buscarEnLDAP(value);
-      console.log(results)
+      setLdapOptions(results);
     } catch (error) {
       message.error("Error al buscar en LDAP");
+    } finally {
+      setLdapLoading(false); // termina loading
     }
   };
 
@@ -34,6 +30,7 @@ const UserCreate = () => {
     if (selected) {
       form.setFieldsValue({
         ...selected,
+        "activoLdap": usuario.activo
       });
       setLdapLoaded(true);
       message.success("Usuario cargado desde LDAP");
@@ -70,7 +67,8 @@ const UserCreate = () => {
             onSearch={handleSearchLDAP}
             onSelect={handleSelectLDAPUser}
             filterOption={false}
-            notFoundContent={null}
+            notFoundContent={ldapLoading ? <Spin size="small" /> : null}
+            loading={ldapLoading}
           >
             {ldapOptions.map((user) => (
               <Option key={user.usuario} value={user.usuario}>
@@ -92,7 +90,11 @@ const UserCreate = () => {
           <Switch disabled />
         </Form.Item>
 
-        <Form.Item label="¿Usuario activo?" name="activo" valuePropName="checked">
+        <Form.Item
+          label="¿Usuario activo?"
+          name="activo"
+          valuePropName="checked"
+        >
           <Switch />
         </Form.Item>
 
@@ -109,7 +111,7 @@ const UserCreate = () => {
           </Select>
         </Form.Item>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end text-prima">
           <Button type="primary" htmlType="submit">
             Crear Usuario
           </Button>

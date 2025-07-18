@@ -140,5 +140,9 @@ class UsuarioLdapSearch(APIView):
       result = {"message": "El término de búsqueda debe tener 3 o más caracteres"}
     else:
       result = ldap.search_user(busqueda)
+      result = [
+        {**{k if k != "activo" else "activoLdap": v for k, v in item.items()}}
+        for item in result
+        ]
 
     return Response(result)
