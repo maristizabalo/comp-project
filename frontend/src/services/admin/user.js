@@ -59,19 +59,5 @@ export const usersService = {
         error.response?.data?.message || "Error al actualizar el usuario"
       );
     }
-  },
-
-  // Desactivar usuario
-  deactivateUsuario: async (id) => {
-    try {
-      const response = await api.patch(`/usuario/${id}/`, {
-        activo: false,
-      });
-      return response.data;
-    } catch (error) {
-      throw new Error(
-        error.response?.data?.message || "Error al desactivar el usuario"
-      );
-    }
-  },
+  }
 };
