@@ -8,6 +8,7 @@ const UserCreate = () => {
   const [form] = Form.useForm();
   const [ldapOptions, setLdapOptions] = useState([]);
   const [ldapLoading, setLdapLoading] = useState(false);
+  const [activoLdapChecked, setActivoLdapChecked] = useState(false);
 
   const handleSearchLDAP = async (value) => {
     if (!value || value.length < 3) return;
@@ -27,8 +28,8 @@ const UserCreate = () => {
     if (selected) {
       form.setFieldsValue({
         ...selected,
-        activoLdap: usuario.activo,
       });
+      setActivoLdapChecked(selected.activoLdap);
       message.success("Usuario cargado desde LDAP");
     }
   };
@@ -86,7 +87,7 @@ const UserCreate = () => {
               <div className="grid grid-cols-2 w-full">
                 <div className="flex justify-center items-center gap-2">
                   <Form.Item name="activoLdap" valuePropName="checked" noStyle>
-                    <Switch disabled /> {/* Aquí está la clave: disabled */}
+                    <Switch checked={activoLdapChecked} disabled />
                   </Form.Item>
                   <span>LDAP activo</span>
                 </div>
