@@ -1,10 +1,10 @@
 // pages/admin/UserCreate.jsx
 import { useEffect, useState } from "react";
 import { Form, message } from "antd";
-import { usersService } from "../../../services/admin/user";
-import { rolService } from "../../../services/admin/rol";
 import { useNavigate } from "react-router-dom";
-import UserForm from "../../../components/user/UserForm";
+import { usersService } from "../../../../services/admin/user";
+import { rolService } from "../../../../services/admin/rol";
+import UserForm from "../../../../components/user/UserForm";
 
 const UserCreate = () => {
   const [form] = Form.useForm();

@@ -13,7 +13,7 @@ import {
   StopOutlined,
   CheckOutlined,
 } from "@ant-design/icons";
-import { usersService } from "../../../services/admin/user";
+import { usersService } from "../../../../services/admin/user";
 import { useNavigate } from "react-router-dom";
 
 const UserList = () => {

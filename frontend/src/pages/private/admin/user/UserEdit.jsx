@@ -1,10 +1,10 @@
 // pages/admin/UserEdit.jsx
 import { useEffect, useState } from "react";
 import { Form, message, Spin } from "antd";
-import { usersService } from "../../../services/admin/user";
-import { rolService } from "../../../services/admin/rol";
+import { usersService } from "../../../../services/admin/user";
+import { rolService } from "../../../../services/admin/rol";
 import { useParams, useNavigate } from "react-router-dom";
-import UserForm from "../../../components/user/UserForm";
+import UserForm from "../../../../components/user/UserForm";
 
 const UserEdit = () => {
   const [form] = Form.useForm();

@@ -1,9 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import Inicio from "./Inicio";
-import UserList from "./User/UserList";
-import UserCreate from "./User/UserCreate";
-import UserEdit from "./user/UserEdit";
+import UserList from "./admin/user/UserList";
+import UserCreate from "./admin/user/UserCreate";
+import UserEdit from "./admin/user/UserEdit";
 
 const Private = () => {
   return (
