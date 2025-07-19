@@ -6,7 +6,7 @@ djangorestframework==3.16.0
 djangorestframework-camel-case==1.4.2
 djangorestframework-gis==1.2.0
 et_xmlfile==2.0.0
-GDAL==3.9.0
+GDAL==3.10.3
 ldap3==2.9.1
 numpy==2.3.0
 openpyxl==3.1.5
