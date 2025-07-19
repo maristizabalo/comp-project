@@ -4,7 +4,7 @@ import { Form, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { usersService } from "../../../../services/admin/user";
 import { rolService } from "../../../../services/admin/rol";
-import UserForm from "../../../../components/user/UserForm";
+import UserForm from "../../../../components/admin/user/UserForm";
 
 const UserCreate = () => {
   const [form] = Form.useForm();

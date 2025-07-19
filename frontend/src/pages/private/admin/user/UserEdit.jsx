@@ -4,7 +4,7 @@ import { Form, message, Spin } from "antd";
 import { usersService } from "../../../../services/admin/user";
 import { rolService } from "../../../../services/admin/rol";
 import { useParams, useNavigate } from "react-router-dom";
-import UserForm from "../../../../components/user/UserForm";
+import UserForm from "../../../../components/admin/user/UserForm";
 
 const UserEdit = () => {
   const [form] = Form.useForm();
