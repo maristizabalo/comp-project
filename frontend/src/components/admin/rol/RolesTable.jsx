@@ -68,6 +68,16 @@ const RolesTable = ({ roles, onViewDetails, onEditRole, onDeactivateRole }) => {
       dataSource={roles}
       rowKey="id"
       pagination={false}
+      className="
+          rounded-xl overflow-hidden 
+          [&_.ant-table-container]:rounded-xl 
+          [&_.ant-table-thead>tr>th]:!bg-gray-400 
+          [&_.ant-table-thead>tr>th]:!text-black 
+          [&_.ant-table-thead>tr>th]:!font-semibold 
+          [&_.ant-table-cell]:!text-sm 
+          [&_.ant-table]:!border-none 
+          shadow-md
+      "
     />
   );
 };

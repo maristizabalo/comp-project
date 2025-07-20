@@ -41,7 +41,7 @@ const AppLayout = ({ children }) => {
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
 
-    "/roles": "Roles y Permisos",
+    "/roles": "Lista de roles y permisos",
     "/areas": "Áreas",
   };
 
