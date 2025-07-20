@@ -9,7 +9,7 @@ const RolesPermissionsCreate = () => {
   const [form] = Form.useForm();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
 
-  const handleFinish = async (values) => {
+  const onFinish = async (values) => {
     setLoadingSubmit(true);
     try {
       await rolService.createRol(values);
@@ -34,14 +34,12 @@ const RolesPermissionsCreate = () => {
   ];
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-xl font-bold">Crear Rol</h1>
-
+    <div className="p-6 bg-white rounded-xl shadow-md w-full mx-auto max-w-4xl">
       <RoleForm
         form={form}
         permisosOptions={permisosOptions}
         permisosFormularioOptions={permisosFormularioOptions}
-        onFinish={handleFinish}
+        onFinish={onFinish}
         loadingSubmit={loadingSubmit}
       />
     </div>

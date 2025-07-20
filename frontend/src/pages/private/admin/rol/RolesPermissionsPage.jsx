@@ -188,16 +188,6 @@ const RolesPermissionsPage = () => {
         onClose={() => setDrawerOpen(false)}
       />
 
-      {/* Modal para edición */}
-      <RoleFormModal
-        role={selectedRole}
-        open={modalVisible && actionType !== "deactivate" && actionType !== "activate"}
-        onClose={() => setModalVisible(false)}
-        onSuccess={() => {
-          setModalVisible(false);
-          fetchRoles();
-        }}
-      />
     </div>
   );
 };

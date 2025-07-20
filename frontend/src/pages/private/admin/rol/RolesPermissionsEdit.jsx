@@ -1,38 +1,40 @@
 import { useEffect, useState } from "react";
+import { Form, message, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
-import { Form, message } from "antd";
 import { rolService } from "../../../../services/admin/rol";
 import RoleForm from "../../../../components/admin/rol/RoleForm";
 
 const RolesPermissionsEdit = () => {
-  const { id } = useParams();
-  const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [initialValues, setInitialValues] = useState(null);
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-
-  const fetchRole = async () => {
-    setLoading(true);
-    try {
-      const role = await rolService.getRoleById(id);
-      form.setFieldsValue({
-        nombre: role.nombre,
-        descripcion: role.descripcion,
-        permisos: role.permisos,
-        permisosFormulario: role.permisosFormulario,
-      });
-    } catch (error) {
-      message.error(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const navigate = useNavigate();
+  const { id } = useParams();
 
   useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const role = await rolService.getRoleById(id);
+        setInitialValues({
+          nombre: role.nombre,
+          descripcion: role.descripcion,
+          permisos: role.permisos,
+          permisosFormulario: role.permisosFormulario,
+        });
+      } catch (error) {
+        message.error("Error al cargar el rol");
+      }
+    };
     fetchRole();
   }, [id]);
 
-  const handleFinish = async (values) => {
+  useEffect(() => {
+    if (initialValues) {
+      form.setFieldsValue(initialValues);
+    }
+  }, [initialValues, form]);
+
+  const onFinish = async (values) => {
     setLoadingSubmit(true);
     try {
       await rolService.updateRol(id, values);
@@ -56,16 +58,22 @@ const RolesPermissionsEdit = () => {
     { label: "Formulario 2", value: 2 },
   ];
 
-  return (
-    <div className="max-w-3xl mx-auto space-y-6">
-      <h1 className="text-xl font-bold">Editar Rol</h1>
+  if (!initialValues) {
+    return (
+      <div className="w-full h-96 flex justify-center items-center">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
+  return (
+    <div className="p-6 bg-white rounded-xl shadow-md w-full mx-auto max-w-4xl">
       <RoleForm
         form={form}
-        initialValues={{}}
+        initialValues={initialValues}
         permisosOptions={permisosOptions}
         permisosFormularioOptions={permisosFormularioOptions}
-        onFinish={handleFinish}
+        onFinish={onFinish}
         loadingSubmit={loadingSubmit}
       />
     </div>

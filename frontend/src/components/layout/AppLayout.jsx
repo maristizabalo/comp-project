@@ -33,15 +33,18 @@ const AppLayout = ({ children }) => {
 
     // Usuarios
     "/usuarios": "Lista de usuarios",
-    "/usuarios/crear": "Creacion de usuario",
-    "/usuarios/editar/": "Edicion de usuario",
+    "/usuarios/crear": "Creación de usuario",
+    "/usuarios/editar/": "Edición de usuario",
+
+    "/roles": "Lista de roles y permisos",
+    "/roles/crear": "Creación de rol",
+    "/roles/editar/": "Edición de rol",
 
     "/modulos": "Módulos",
     "/categorias": "Categorías",
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
 
-    "/roles": "Lista de roles y permisos",
     "/areas": "Áreas",
   };
 
