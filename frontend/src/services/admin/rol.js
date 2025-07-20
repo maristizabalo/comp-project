@@ -1,7 +1,7 @@
 import { api } from "../api";
 
 export const rolService = {
-    
+
   // Obtener todos los roles
   getRoles: async () => {
     try {
@@ -11,6 +11,16 @@ export const rolService = {
       throw new Error(
         error?.response?.data?.message || "Error al obtener los roles"
       );
+    }
+  },
+
+  // Obtener rol por id
+  getRoleById: async (id) => {
+    try {
+      const response = await api.get(`/rol/${id}/`);
+      return response.data;
+    } catch (error) {
+      throw new Error(error?.response?.data?.message || "Error al obtener el rol");
     }
   },
 

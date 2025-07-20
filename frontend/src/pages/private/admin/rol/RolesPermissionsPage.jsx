@@ -15,7 +15,7 @@ import {
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import RoleDetailsDrawer from "../../../../components/admin/rol/RoleDetailsDrawer";
-import RoleFormModal from "../../../../components/admin/rol/RoleFormModal";
+import RoleFormModal from "../../../../components/admin/rol/RoleForm";
 import { rolService } from "../../../../services/admin/rol";
 
 const RolesPermissionsPage = () => {
@@ -108,10 +108,7 @@ const RolesPermissionsPage = () => {
             <Button
               icon={<EditOutlined />}
               size="small"
-              onClick={() => {
-                setSelectedRole(record);
-                setModalVisible(true);
-              }}
+              onClick={() => navigate(`/roles/editar/${record.id}`)}
             />
           </Tooltip>
 
