@@ -4,6 +4,7 @@ import Inicio from "./Inicio";
 import UserList from "./admin/user/UserList";
 import UserCreate from "./admin/user/UserCreate";
 import UserEdit from "./admin/user/UserEdit";
+import RolesPermissionsPage from "./admin/rol/RolesPermissionsPage";
 
 const Private = () => {
   return (
@@ -16,6 +17,8 @@ const Private = () => {
         <Route path="/usuarios/crear" element={<UserCreate />} />
         <Route path="/usuarios/editar/:id" element={<UserEdit />} />
 
+        {/* Rutas para admin roles y permisos */}
+        <Route path="/roles" element={<RolesPermissionsPage />} />
 
         {/* <Route path="/modulos" element={<Modulos />} />
         <Route path="/categorias" element={<Categorias />} />
