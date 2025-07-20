@@ -16,7 +16,6 @@ import {
 import { useNavigate } from "react-router-dom";
 import RoleDetailsDrawer from "../../../../components/admin/rol/RoleDetailsDrawer";
 import { rolService } from "../../../../services/admin/rol";
-import { permissionService } from "../../../../services/admin/permission";
 
 const RolesPermissionsPage = () => {
   const [roles, setRoles] = useState([]);
@@ -26,9 +25,6 @@ const RolesPermissionsPage = () => {
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [actionType, setActionType] = useState("deactivate");
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [permisos, setPermisos] = useState([]);
-  const [permisosFormulario, setPermisosFormulario] = useState([]);
-
   const navigate = useNavigate();
 
   const fetchRoles = async () => {
@@ -43,28 +39,8 @@ const RolesPermissionsPage = () => {
     }
   };
 
-  const fetchPermisos = async () => {
-    try {
-      const data = await permissionService.getPermissions();
-      setPermisos(data);
-    } catch (error) {
-      console.error("Error al obtener permisos:", error.message);
-    }
-  };
-
-  const fetchPermisosFormulario = async () => {
-    try {
-      const data = await permissionService.getPermissionsForm();
-      setPermisosFormulario(data);
-    } catch (error) {
-      console.error("Error al obtener permisos formulario:", error.message);
-    }
-  };
-
   useEffect(() => {
     fetchRoles();
-    fetchPermisos();
-    fetchPermisosFormulario();
   }, []);
 
   const showConfirmationModal = (role, action) => {
@@ -103,6 +79,16 @@ const RolesPermissionsPage = () => {
       title: "Descripción",
       dataIndex: "descripcion",
       key: "descripcion",
+    },
+    {
+      title: "Permisos",
+      key: "permisos",
+      render: (_, record) => `${record.permisos?.length || 0} permisos`,
+    },
+    {
+      title: "Permisos Formularios",
+      key: "permisosFormulario",
+      render: (_, record) => `${record.permisosFormulario?.length || 0} permisos`,
     },
     {
       title: "Activo",
@@ -151,28 +137,6 @@ const RolesPermissionsPage = () => {
     },
   ];
 
-  const columnsPermisos = [
-    {
-      title: "Nombre",
-      dataIndex: "nombre",
-      key: "nombre",
-    },
-  ];
-
-  const columnsPermisosFormulario = [
-    {
-      title: "Nombre",
-      dataIndex: "nombre",
-      key: "nombre",
-    },
-    {
-      title: "Tipo",
-      dataIndex: "tipo",
-      key: "tipo",
-    },
-  ];
-
-
   return (
     <div className="space-y-4">
       <div className="flex justify-between items-center">
@@ -201,54 +165,6 @@ const RolesPermissionsPage = () => {
         "
       />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Permisos</h2>
-          <Table
-            columns={columnsPermisos}
-            dataSource={permisos}
-            rowKey="id"
-            pagination={false}
-            bordered
-            size="small"
-            className="
-        rounded-xl overflow-hidden 
-        [&_.ant-table-container]:rounded-xl 
-        [&_.ant-table-thead>tr>th]:!bg-gray-300 
-        [&_.ant-table-thead>tr>th]:!text-black 
-        [&_.ant-table-thead>tr>th]:!font-medium 
-        [&_.ant-table-cell]:!text-sm 
-        [&_.ant-table]:!border-none 
-        shadow-sm
-      "
-          />
-        </div>
-
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold">Permisos de Formularios</h2>
-          <Table
-            columns={columnsPermisosFormulario}
-            dataSource={permisosFormulario}
-            rowKey="id"
-            pagination={false}
-            bordered
-            size="small"
-            className="
-        rounded-xl overflow-hidden 
-        [&_.ant-table-container]:rounded-xl 
-        [&_.ant-table-thead>tr>th]:!bg-gray-300 
-        [&_.ant-table-thead>tr>th]:!text-black 
-        [&_.ant-table-thead>tr>th]:!font-medium 
-        [&_.ant-table-cell]:!text-sm 
-        [&_.ant-table]:!border-none 
-        shadow-sm
-      "
-          />
-        </div>
-      </div>
-
-
-      {/* Modal de confirmación */}
       <Modal
         title={
           actionType === "deactivate"
@@ -273,13 +189,11 @@ const RolesPermissionsPage = () => {
         )}
       </Modal>
 
-      {/* Drawer para detalles */}
       <RoleDetailsDrawer
         role={selectedRole}
         open={drawerOpen}
         onClose={() => setDrawerOpen(false)}
       />
-
     </div>
   );
 };

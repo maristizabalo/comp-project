@@ -1,12 +1,14 @@
+import { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
-import Inicio from "./Inicio";
-import UserList from "./admin/user/UserList";
-import UserCreate from "./admin/user/UserCreate";
-import UserEdit from "./admin/user/UserEdit";
-import RolesPermissionsPage from "./admin/rol/RolesPermissionsPage";
-import RolesPermissionsEdit from "./admin/rol/RolesPermissionsEdit";
-import RolesPermissionsCreate from "./admin/rol/RolesPermissionsCreate";
+
+const Inicio = lazy(() => import("./Inicio"));
+const UserList = lazy(() => import("./admin/user/UserList"));
+const UserCreate = lazy(() => import("./admin/user/UserCreate"));
+const UserEdit = lazy(() => import("./admin/user/UserEdit"));
+const RolesPermissionsPage = lazy(() => import("./admin/rol/RolesPermissionsPage"));
+const RolesPermissionsEdit = lazy(() => import("./admin/rol/RolesPermissionsEdit"));
+const RolesPermissionsCreate = lazy(() => import("./admin/rol/RolesPermissionsCreate"));
 
 const Private = () => {
   return (

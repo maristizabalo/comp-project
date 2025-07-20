@@ -8,6 +8,8 @@ import Private from "./pages/private/Private";
 import { AuthGuard } from './guards/AuthGuard';
 import { PublicGuard } from './guards/PublicGuard';
 import Login from "./pages/Login/Login";
+import { Suspense } from "react";
+import Loading from "./components/layout/Loading";
 
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
       }}
     >
       <Provider store={store}>
+        <Suspense fallback={<Loading />}>
         <BrowserRouter>
           <RoutesWithNotFound>
             <Route element={<PublicGuard />}>
@@ -39,6 +42,7 @@ function App() {
             </Route>
           </RoutesWithNotFound>
         </BrowserRouter>
+        </Suspense>
       </Provider>
     </ConfigProvider>
   );

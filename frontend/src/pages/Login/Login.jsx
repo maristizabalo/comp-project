@@ -7,7 +7,7 @@ import logo_dadep from "../../assets/img/logo_dadep.svg";
 import { useState } from "react";
 import { useAuth } from "../../hooks/use-auth";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../components/layout/loading/Loading";
+import Loading from "../../components/layout/Loading";
 
 const Login = () => {
   const [formValues, setFormValues] = useState({
@@ -57,8 +57,6 @@ const Login = () => {
     }
   };
 
-  const isFormValid =
-    formValues.username.trim() !== "" && formValues.password.trim() !== "";
   return (
     <div className={styles.container}>
       {isLoading && <Loading message="Iniciando sesión..."/>}

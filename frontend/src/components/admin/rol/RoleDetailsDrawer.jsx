@@ -29,8 +29,8 @@ const RoleDetailsDrawer = ({ role, open, onClose }) => {
       <div className="flex flex-wrap gap-2">
         {role.permisos?.length ? (
           role.permisos.map((permiso) => (
-            <Tag key={permiso} color="blue">
-              Permiso ID: {permiso}
+            <Tag key={permiso.id} color="blue">
+              {permiso.nombre}
             </Tag>
           ))
         ) : (
@@ -44,8 +44,8 @@ const RoleDetailsDrawer = ({ role, open, onClose }) => {
       <div className="flex flex-wrap gap-2">
         {role.permisosFormulario?.length ? (
           role.permisosFormulario.map((permiso) => (
-            <Tag key={permiso} color="purple">
-              Formulario ID: {permiso}
+            <Tag key={permiso.id} color="purple">
+              {permiso.nombre} ({permiso.tipo})
             </Tag>
           ))
         ) : (
