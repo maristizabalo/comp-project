@@ -1,5 +1,5 @@
-from .models import Permiso
-from .serializers import PermisoSerializer
+from .models import Permiso, PermisoFormulario
+from .serializers import PermisoSerializer, PermisoFormularioSerializer
 from utils import transactionals
 from functools import partial
 from utils.permissions import CheckPermissions
@@ -39,6 +39,41 @@ class PermisoDetail(transactionals.RetrieveUpdateDestroyAPIView):
         """
         Instantiates and returns the list of permissions that this view requires.
         """
+        if self.request.method in ['PUT', 'PATCH']:
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+
+
+class PermisoFormularioList(transactionals.ListCreateAPIView):
+    queryset = PermisoFormulario.objects.all().order_by('id')
+    serializer_class = PermisoFormularioSerializer
+
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+        return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
+
+    @transactionals.transactional()
+    def post(self, request, *args, **kwargs):
+        data = request.data.copy()
+        serializer = PermisoFormularioSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class PermisoFormularioDetail(transactionals.RetrieveUpdateDestroyAPIView):
+    queryset = PermisoFormulario.objects.all().order_by('id')
+    serializer_class = PermisoFormularioSerializer
+
+    def get_permissions(self):
         if self.request.method in ['PUT', 'PATCH']:
             return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
         return [permission() for permission in (partial(CheckPermissions, [PermisoAdminEnum.ADMIN_ROL_Y_PERMISO.value]),)]
