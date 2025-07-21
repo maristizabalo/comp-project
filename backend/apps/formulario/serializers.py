@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Formulario
+from .models import Formulario, Seccion
 from apps.modulo.models import Modulo
 from apps.modulo.serializers import ModuloLiteSerializer
 from apps.permiso.models import PermisoFormulario
@@ -48,4 +48,11 @@ class FormularioSerializer(serializers.ModelSerializer):
             'usuario_modifico', 'ip_modifico',
             'fecha_creacion', 'fecha_modificacion'
         ]
+        read_only_fields = ['id', 'fecha_creacion', 'fecha_modificacion']
+
+
+class SeccionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Seccion
+        fields = '__all__'
         read_only_fields = ['id', 'fecha_creacion', 'fecha_modificacion']
