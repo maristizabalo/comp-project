@@ -10,9 +10,14 @@ const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
 const UserCreate = lazy(() => import("./admin/user/UserCreate"));
 const UserEdit = lazy(() => import("./admin/user/UserEdit"));
+
 const RolesPermissionsPage = lazy(() => import("./admin/rol/RolesPermissionsPage"));
 const RolesPermissionsEdit = lazy(() => import("./admin/rol/RolesPermissionsEdit"));
 const RolesPermissionsCreate = lazy(() => import("./admin/rol/RolesPermissionsCreate"));
+
+const AreaList = lazy(() => import("./admin/area/AreaList"));
+const AreaCreate = lazy(() => import("./admin/area/AreaCreate"));
+const AreaEdit = lazy(() => import("./admin/area/AreaEdit"));
 
 const Private = () => {
   const dispatch = useDispatch();
@@ -41,6 +46,11 @@ const Private = () => {
         <Route path="/roles" element={<RolesPermissionsPage />} />
         <Route path="/roles/crear" element={<RolesPermissionsCreate />} />
         <Route path="/roles/editar/:id" element={<RolesPermissionsEdit />} />
+
+        {/* Rutas para admin areas */}
+        <Route path="/areas" element={<AreaList />} />
+        <Route path="/areas/crear" element={<AreaCreate />} />
+        <Route path="/areas/editar/:id" element={<AreaEdit />} />
 
         {/* <Route path="/modulos" element={<Modulos />} />
         <Route path="/categorias" element={<Categorias />} />
