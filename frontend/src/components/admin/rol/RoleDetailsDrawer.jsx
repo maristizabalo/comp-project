@@ -1,7 +1,20 @@
 import { Drawer, Descriptions, Tag, Divider } from "antd";
+import { useSelector } from "react-redux";
 
 const RoleDetailsDrawer = ({ role, open, onClose }) => {
+  const permissions = useSelector((state) => state.admin.permissions.permissions);
+  const permissionsForm = useSelector((state) => state.admin.permissions.permissionsForm);
+
   if (!role) return null;
+
+  // Buscar los permisos completos basados en los IDs
+  const permisosAsignados = permissions.filter((permiso) =>
+    role.permisos.includes(permiso.id)
+  );
+
+  const permisosFormularioAsignados = permissionsForm.filter((permiso) =>
+    role.permisosFormulario.includes(permiso.id)
+  );
 
   return (
     <Drawer
@@ -24,8 +37,8 @@ const RoleDetailsDrawer = ({ role, open, onClose }) => {
 
       <h3 className="font-semibold">Permisos Asignados</h3>
       <div className="flex flex-wrap gap-2">
-        {role.permisos?.length ? (
-          role.permisos.map((permiso) => (
+        {permisosAsignados.length ? (
+          permisosAsignados.map((permiso) => (
             <Tag key={permiso.id} color="blue">
               {permiso.nombre}
             </Tag>
@@ -39,8 +52,8 @@ const RoleDetailsDrawer = ({ role, open, onClose }) => {
 
       <h3 className="font-semibold">Permisos de Formularios</h3>
       <div className="flex flex-wrap gap-2">
-        {role.permisosFormulario?.length ? (
-          role.permisosFormulario.map((permiso) => (
+        {permisosFormularioAsignados.length ? (
+          permisosFormularioAsignados.map((permiso) => (
             <Tag key={permiso.id} color="purple">
               {permiso.nombre} ({permiso.tipo})
             </Tag>
