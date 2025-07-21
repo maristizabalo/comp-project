@@ -19,6 +19,8 @@ const AreaList = lazy(() => import("./admin/area/AreaList"));
 const AreaCreate = lazy(() => import("./admin/area/AreaCreate"));
 const AreaEdit = lazy(() => import("./admin/area/AreaEdit"));
 
+const CategoryList = lazy(() => import("./category/CategoryList"));
+
 const Unauthorized = lazy(() => import("../../components/layout/Unauthorized"));
 
 const routePermissions = {
@@ -49,6 +51,7 @@ const routeComponents = {
   "/areas": <AreaList />,
   "/areas/crear": <AreaCreate />,
   "/areas/editar/:id": <AreaEdit />,
+  "/categorias": <CategoryList />,
 };
 
 const Private = () => {
