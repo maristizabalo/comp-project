@@ -1,10 +1,13 @@
 import { Drawer, Descriptions, Tag, Divider, Spin } from "antd";
 import { useEffect } from "react";
+import { useSelector } from "react-redux";
 import { usersService } from "../../../services/admin/user";
 import { useFetch } from "../../../hooks/use-fetch";
 
 const UserDetailsDrawer = ({ userId, open, onClose }) => {
   const { loading, data: user, fetchData } = useFetch();
+  const permissions = useSelector((state) => state.admin.permissions.permissions);
+  const permissionsForm = useSelector((state) => state.admin.permissions.permissionsForm);
 
   useEffect(() => {
     if (open && userId) {
@@ -21,6 +24,12 @@ const UserDetailsDrawer = ({ userId, open, onClose }) => {
       </Drawer>
     );
   }
+
+  const getPermisosNombres = (ids) =>
+    permissions.filter((p) => ids.includes(p.id));
+
+  const getPermisosFormularioNombres = (ids) =>
+    permissionsForm.filter((p) => ids.includes(p.id));
 
   return (
     <Drawer
@@ -51,16 +60,32 @@ const UserDetailsDrawer = ({ userId, open, onClose }) => {
       <h3 className="font-semibold">Roles Asignados</h3>
       <div className="flex flex-col gap-4">
         {user.roles?.length ? (
-          user.roles.map(({ rol }) => (
-            <div key={rol.id} className="border p-2 rounded-lg">
-              <p className="font-semibold">{rol.nombre}</p>
-              <p className="text-sm text-gray-500">{rol.descripcion}</p>
-              <p className="text-xs mt-1">
-                <Tag color="purple">Permisos: {rol.permisos.length}</Tag>
-                <Tag color="cyan">Formularios: {rol.permisosFormulario.length}</Tag>
-              </p>
-            </div>
-          ))
+          user.roles.map(({ rol }) => {
+            const permisos = getPermisosNombres(rol.permisos);
+            const permisosFormulario = getPermisosFormularioNombres(rol.permisosFormulario);
+            return (
+              <div key={rol.id} className="border p-2 rounded-lg">
+                <p className="font-semibold">{rol.nombre}</p>
+                <p className="text-sm text-gray-500">{rol.descripcion}</p>
+
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {permisos.map((permiso) => (
+                    <Tag key={permiso.id} color="blue">
+                      {permiso.nombre}
+                    </Tag>
+                  ))}
+                </div>
+
+                <div className="flex flex-wrap gap-1 mt-2">
+                  {permisosFormulario.map((permiso) => (
+                    <Tag key={permiso.id} color="purple">
+                      {permiso.nombre} ({permiso.tipo})
+                    </Tag>
+                  ))}
+                </div>
+              </div>
+            );
+          })
         ) : (
           <p className="text-gray-400">Sin roles asignados.</p>
         )}
