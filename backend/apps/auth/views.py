@@ -18,16 +18,34 @@ from apps.rol.serializers import RolLiteSerializer
 
 
 def user_credentials(token, token_date, user, roles):
+  # Obtener roles
   roles = Rol.objects.filter(usuarios=user)
-  rol_serializer = RolLiteSerializer(roles, many=True)
+
+  # Array de ids de roles
+  roles_ids = list(roles.values_list('id', flat=True))
+
+  # Permisos y permisos_formulario de todos los roles del usuario
+  permisos_ids = set()
+  permisos_formulario_ids = set()
+
+  for rol in roles.prefetch_related('permisos', 'permisos_formulario'):
+      permisos_ids.update(rol.permisos.values_list('id', flat=True))
+      permisos_formulario_ids.update(rol.permisos_formulario.values_list('id', flat=True))
   
+  # Ordenar los arrays antes de devolverlos
+  roles_ids = sorted(roles_ids)
+  permisos_ids = sorted(permisos_ids)
+  permisos_formulario_ids = sorted(permisos_formulario_ids)
+
   return Response({
       'token': token,
       'token_created': token_date,
       'user': {
           'id': user.id,
           'usuario': user.usuario,
-          'roles': rol_serializer.data,
+          'roles': roles_ids,
+          'permisos': permisos_ids,
+          'permisos_formulario': permisos_formulario_ids,
           'nombre_completo': user.nombre_completo,
           'activo': user.activo,
           'activo_ldap': user.activo_ldap,

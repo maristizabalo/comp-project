@@ -1,6 +1,10 @@
-import { lazy } from "react";
+import { lazy, useEffect } from "react";
 import { Route, Routes } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
+import { useDispatch, useSelector } from "react-redux";
+import { PERMISOS_ADMIN } from "../../utils/constants";
+import { fetchRoles } from "../../store/admin/roleSlice";
+import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -11,6 +15,25 @@ const RolesPermissionsEdit = lazy(() => import("./admin/rol/RolesPermissionsEdit
 const RolesPermissionsCreate = lazy(() => import("./admin/rol/RolesPermissionsCreate"));
 
 const Private = () => {
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.auth.user);
+
+  const permisosUsuario = new Set(
+    user?.roles
+      ?.flatMap((r) => r.rol?.permisos || [])
+      .filter(Boolean)
+  );
+
+  console.log(permisosUsuario, "permisos del usuario");
+
+  useEffect(() => {
+    if (permisosUsuario.has(PERMISOS_ADMIN.ADMIN_ROL_Y_PERMISO)) {
+      dispatch(fetchRoles());
+      dispatch(fetchPermissions());
+      dispatch(fetchPermissionsForm());
+    }
+  }, [permisosUsuario, dispatch]);
+
   return (
     <AppLayout>
       <Routes>
