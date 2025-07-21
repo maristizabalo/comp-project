@@ -23,39 +23,61 @@ const CategoryList = lazy(() => import("./category/CategoryList"));
 const CategoryCreate = lazy(() => import("./category/CategoryCreate"));
 const CategoryEdit = lazy(() => import("./category/CategoryEdit"));
 
+const ModuleList = lazy(() => import("./module/ModuleList"));
+const ModuleCreate = lazy(() => import("./module/ModuleCreate"));
+const ModuleEdit = lazy(() => import("./module/ModuleEdit"));
+
 const Unauthorized = lazy(() => import("../../components/layout/Unauthorized"));
 
 const routePermissions = {
   "/inicio": null,
+
   "/usuarios": "ADMIN_USUARIO",
   "/usuarios/crear": "ADMIN_USUARIO",
   "/usuarios/editar/:id": "ADMIN_USUARIO",
+
   "/roles": "ADMIN_ROL_Y_PERMISO",
   "/roles/crear": "ADMIN_ROL_Y_PERMISO",
   "/roles/editar/:id": "ADMIN_ROL_Y_PERMISO",
+
   "/areas": "ADMIN_AREA",
   "/areas/crear": "ADMIN_AREA",
   "/areas/editar/:id": "ADMIN_AREA",
-  "/modulos": "ADMIN_MODULO",
+
   "/categorias": "ADMIN_CATEGORIA",
+  "/categorias/crear": "ADMIN_CATEGORIA",
+  "/categorias/editar/:id": "ADMIN_CATEGORIA",
+
+  "/modulos": "ADMIN_MODULO",
+  "/modulos/crear": "ADMIN_MODULO",
+  "/modulos/editar/:id": "ADMIN_MODULO",
+
   "/formularios": "ADMIN_FORMULARIO",
   "/respuestas": "ADMIN_FORMULARIO",
 };
 
 const routeComponents = {
   "/inicio": <Inicio />,
+
   "/usuarios": <UserList />,
   "/usuarios/crear": <UserCreate />,
   "/usuarios/editar/:id": <UserEdit />,
+
   "/roles": <RolesPermissionsPage />,
   "/roles/crear": <RolesPermissionsCreate />,
   "/roles/editar/:id": <RolesPermissionsEdit />,
+
   "/areas": <AreaList />,
   "/areas/crear": <AreaCreate />,
   "/areas/editar/:id": <AreaEdit />,
+
   "/categorias": <CategoryList />,
   "/categorias/crear": <CategoryCreate />,
   "/categorias/editar/:id": <CategoryEdit />,
+
+  "/modulos": <ModuleList />, 
+  "/modulos/crear": <ModuleCreate />, 
+  "/modulos/editar/:id": <ModuleEdit />, 
 };
 
 const Private = () => {

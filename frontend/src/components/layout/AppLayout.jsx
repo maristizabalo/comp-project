@@ -24,19 +24,27 @@ const AppLayout = ({ children }) => {
 
   const routeTitles = {
     "/inicio": "Inicio",
+
     "/usuarios": "Lista de usuarios",
     "/usuarios/crear": "Creación de usuario",
     "/usuarios/editar/": "Edición de usuario",
+
     "/roles": "Lista de roles y permisos",
     "/roles/crear": "Creación de rol",
     "/roles/editar/": "Edición de rol",
+
     "/areas": "Áreas",
     "/areas/crear": "Creación de área",
     "/areas/editar/": "Edición de área",
+
     "/categorias": "Categorías",
     "/categorias/crear": "Creación de categoría",
     "/categorias/editar/": "Edición de categoría",
+
     "/modulos": "Módulos",
+    "/modulos/crear": "Creación de módulo",
+    "/modulos/editar/": "Edición de módulo",
+
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
   };
