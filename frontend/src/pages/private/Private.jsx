@@ -1,11 +1,10 @@
 import { lazy, useEffect } from "react";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, Navigate } from "react-router-dom";
 import AppLayout from "../../components/layout/AppLayout";
 import { useDispatch, useSelector } from "react-redux";
 import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
-import { filterRoutesByPermissions } from "../../utils/filterRoutesByPermissions";
 import { appRoutes } from "../../utils/routesConfig";
 
 const Inicio = lazy(() => import("./Inicio"));
@@ -22,6 +21,23 @@ const AreaCreate = lazy(() => import("./admin/area/AreaCreate"));
 const AreaEdit = lazy(() => import("./admin/area/AreaEdit"));
 
 const Unauthorized = lazy(() => import("../../components/layout/Unauthorized"));
+
+const routePermissions = {
+  "/inicio": null,
+  "/usuarios": "ADMIN_USUARIO",
+  "/usuarios/crear": "ADMIN_USUARIO",
+  "/usuarios/editar/:id": "ADMIN_USUARIO",
+  "/roles": "ADMIN_ROL_Y_PERMISO",
+  "/roles/crear": "ADMIN_ROL_Y_PERMISO",
+  "/roles/editar/:id": "ADMIN_ROL_Y_PERMISO",
+  "/areas": "ADMIN_AREA",
+  "/areas/crear": "ADMIN_AREA",
+  "/areas/editar/:id": "ADMIN_AREA",
+  "/modulos": "ADMIN_MODULO",
+  "/categorias": "ADMIN_CATEGORIA",
+  "/formularios": "ADMIN_FORMULARIO",
+  "/respuestas": "ADMIN_FORMULARIO",
+};
 
 const routeComponents = {
   "/inicio": <Inicio />,
@@ -48,35 +64,31 @@ const Private = () => {
     }
   }, [userPermissions, dispatch]);
 
-  const filteredRoutes = filterRoutesByPermissions(appRoutes, userPermissions);
-
-  const flattenRoutes = (routes) =>
-    routes.flatMap((route) => (route.children ? route.children : route));
-
-  const finalRoutes = flattenRoutes(filteredRoutes);
-
   const permissionById = Object.entries(PERMISOS_ADMIN).reduce((acc, [key, value]) => {
     acc[value] = key;
     return acc;
   }, {});
+
   const userPermissionsStrings = userPermissions.map((p) => permissionById[p]);
+
+  const isAllowed = (requiredPermission) => {
+    return !requiredPermission || userPermissionsStrings.includes(requiredPermission);
+  };
 
   return (
     <AppLayout>
       <Routes>
-        {Object.keys(routeComponents).map((path) => {
-          const route = finalRoutes.find((r) => r.key === path);
-          const requiredPermission = route?.permission;
-          const isAllowed =
-            !requiredPermission || userPermissionsStrings.includes(requiredPermission);
+        {Object.entries(routeComponents).map(([path, component]) => {
+          const requiredPermission = routePermissions[path];
           return (
             <Route
               key={path}
               path={path}
-              element={isAllowed ? routeComponents[path] : <Unauthorized />}
+              element={isAllowed(requiredPermission) ? component : <Unauthorized />}
             />
           );
         })}
+        <Route path="*" element={<Navigate to="/inicio" />} />
       </Routes>
     </AppLayout>
   );
