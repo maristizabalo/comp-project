@@ -18,21 +18,14 @@ const Private = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
 
-  const permisosUsuario = new Set(
-    user?.roles
-      ?.flatMap((r) => r.rol?.permisos || [])
-      .filter(Boolean)
-  );
-
-  console.log(permisosUsuario, "permisos del usuario");
-
   useEffect(() => {
-    if (permisosUsuario.has(PERMISOS_ADMIN.ADMIN_ROL_Y_PERMISO)) {
+    if (user?.permisos?.includes(PERMISOS_ADMIN.ADMIN_ROL_Y_PERMISO)) {
       dispatch(fetchRoles());
       dispatch(fetchPermissions());
       dispatch(fetchPermissionsForm());
     }
-  }, [permisosUsuario, dispatch]);
+  }, [user, dispatch]);
+
 
   return (
     <AppLayout>
