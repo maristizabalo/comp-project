@@ -14,9 +14,6 @@ const RoleDetailsDrawer = ({ role, open, onClose }) => {
       <Descriptions column={1} bordered size="small">
         <Descriptions.Item label="Nombre">{role.nombre}</Descriptions.Item>
         <Descriptions.Item label="Descripción">{role.descripcion}</Descriptions.Item>
-        <Descriptions.Item label="Activo">
-          {role.activo ? <Tag color="green">Sí</Tag> : <Tag color="red">No</Tag>}
-        </Descriptions.Item>
         <Descriptions.Item label="Usuario creó">{role.usuarioCreo}</Descriptions.Item>
         <Descriptions.Item label="Usuario modificó">{role.usuarioModifico}</Descriptions.Item>
         <Descriptions.Item label="IP creó">{role.ipCreo}</Descriptions.Item>

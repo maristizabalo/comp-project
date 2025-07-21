@@ -1,16 +1,12 @@
 import { useEffect, useState, lazy } from "react";
 import {
   Table,
-  Tag,
   Button,
   Tooltip,
-  Modal,
-  message,
 } from "antd";
 import {
   EyeOutlined,
   EditOutlined,
-  StopOutlined,
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
@@ -21,8 +17,6 @@ const RoleDetailsDrawer = lazy(() => import("../../../../components/admin/rol/Ro
 
 const RolesPermissionsPage = () => {
   const [selectedRole, setSelectedRole] = useState(null);
-  const [modalVisible, setModalVisible] = useState(false);
-  const [actionType, setActionType] = useState("deactivate");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -32,36 +26,10 @@ const RolesPermissionsPage = () => {
     fetchData: fetchRoles,
   } = useFetch();
 
-  const {
-    loading: loadingUpdate,
-    fetchData: updateRole,
-  } = useFetch();
-
   useEffect(() => {
     fetchRoles(rolService.getRoles);
   }, [fetchRoles]);
 
-  const showConfirmationModal = (role, action) => {
-    setSelectedRole(role);
-    setActionType(action);
-    setModalVisible(true);
-  };
-
-  const handleConfirm = async () => {
-    if (!selectedRole) return;
-    const newStatus = actionType === "activate";
-
-    try {
-      await updateRole(rolService.updateRol, selectedRole.id, { activo: newStatus });
-      message.success(
-        `Rol ${selectedRole.nombre} ${newStatus ? "activado" : "desactivado"}`
-      );
-      setModalVisible(false);
-      fetchRoles(rolService.getRoles);
-    } catch (error) {
-      message.error(error.message);
-    }
-  };
 
   const columns = [
     {
@@ -85,13 +53,6 @@ const RolesPermissionsPage = () => {
       render: (_, record) => `${record.permisosFormulario?.length || 0} permisos`,
     },
     {
-      title: "Activo",
-      dataIndex: "activo",
-      key: "activo",
-      render: (activo) =>
-        activo ? <Tag color="green">Sí</Tag> : <Tag color="red">No</Tag>,
-    },
-    {
       title: "Acciones",
       key: "acciones",
       render: (_, record) => (
@@ -112,18 +73,6 @@ const RolesPermissionsPage = () => {
               icon={<EditOutlined />}
               size="small"
               onClick={() => navigate(`/roles/editar/${record.id}`)}
-            />
-          </Tooltip>
-
-          <Tooltip title={record.activo ? "Desactivar" : "Activar"}>
-            <Button
-              icon={<StopOutlined />}
-              danger={record.activo}
-              type={!record.activo ? "primary" : "default"}
-              size="small"
-              onClick={() =>
-                showConfirmationModal(record, record.activo ? "deactivate" : "activate")
-              }
             />
           </Tooltip>
         </div>
@@ -158,30 +107,6 @@ const RolesPermissionsPage = () => {
           shadow-md
         "
       />
-
-      <Modal
-        title={
-          actionType === "deactivate"
-            ? "Confirmar desactivación"
-            : "Confirmar activación"
-        }
-        open={modalVisible}
-        onOk={handleConfirm}
-        confirmLoading={loadingUpdate}
-        onCancel={() => setModalVisible(false)}
-        okText={actionType === "deactivate" ? "Sí, desactivar" : "Sí, activar"}
-        cancelText="Cancelar"
-      >
-        {selectedRole && (
-          <p>
-            ¿Estás seguro que deseas{" "}
-            <strong>
-              {actionType === "deactivate" ? "desactivar" : "activar"}
-            </strong>{" "}
-            el rol <strong>{selectedRole.nombre}</strong>?
-          </p>
-        )}
-      </Modal>
 
       <RoleDetailsDrawer
         role={selectedRole}

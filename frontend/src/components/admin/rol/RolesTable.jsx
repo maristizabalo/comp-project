@@ -18,13 +18,6 @@ const RolesTable = ({ roles, onViewDetails, onEditRole, onDeactivateRole }) => {
       key: "descripcion",
     },
     {
-      title: "Activo",
-      dataIndex: "activo",
-      key: "activo",
-      render: (activo) =>
-        activo ? <Tag color="green">Sí</Tag> : <Tag color="red">No</Tag>,
-    },
-    {
       title: "Acciones",
       key: "acciones",
       render: (_, record) => (
@@ -43,20 +36,6 @@ const RolesTable = ({ roles, onViewDetails, onEditRole, onDeactivateRole }) => {
               size="small"
             />
           </Tooltip>
-          <Popconfirm
-            title="¿Estás seguro de desactivar este rol?"
-            onConfirm={() => onDeactivateRole(record)}
-            okText="Sí"
-            cancelText="No"
-          >
-            <Tooltip title="Desactivar">
-              <Button
-                icon={<StopOutlined />}
-                danger
-                size="small"
-              />
-            </Tooltip>
-          </Popconfirm>
         </div>
       ),
     },
