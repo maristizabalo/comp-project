@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { lazy, useEffect, useState } from "react";
 import {
   Table,
   Tag,
@@ -8,6 +8,7 @@ import {
   message,
 } from "antd";
 import {
+  EyeOutlined,
   EditOutlined,
   PlusCircleOutlined,
   StopOutlined,
@@ -15,27 +16,33 @@ import {
 } from "@ant-design/icons";
 import { usersService } from "../../../../services/admin/user";
 import { useNavigate } from "react-router-dom";
+import { useFetch } from "../../../../hooks/use-fetch"
+const UserDetailsDrawer = lazy(() => import("../../../../components/admin/user/UserDetailsDrawer"));
 
 const UserList = () => {
   const [usuarios, setUsuarios] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
-  const [actionType, setActionType] = useState("deactivate"); // "activate" o "deactivate"
+  const [actionType, setActionType] = useState("deactivate");
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
 
   const navigate = useNavigate();
 
+  const {
+    loading,
+    error,
+    fetchData: fetchUsuariosData,
+  } = useFetch();
+
+  const {
+    loading: loadingUpdate,
+    fetchData: fetchUpdateUsuario,
+  } = useFetch();
+
   const fetchUsuarios = async () => {
-    setLoading(true);
-    try {
-      const data = await usersService.getUsuarios();
-      setUsuarios(data);
-    } catch (error) {
-      console.error("Error al obtener usuarios:", error.message);
-    } finally {
-      setLoading(false);
-    }
+    const data = await fetchUsuariosData(usersService.getUsuarios);
+    if (data) setUsuarios(data);
   };
 
   useEffect(() => {
@@ -44,30 +51,25 @@ const UserList = () => {
 
   const showConfirmationModal = (user, action) => {
     setSelectedUser(user);
-    setActionType(action); // "activate" o "deactivate"
+    setActionType(action);
     setModalVisible(true);
   };
 
   const handleConfirm = async () => {
     if (!selectedUser) return;
-
-    setConfirmLoading(true);
     const newStatus = actionType === "activate";
-
     try {
-      await usersService.updateUsuario(selectedUser.id, { activo: newStatus });
+      await fetchUpdateUsuario(usersService.updateUsuario, selectedUser.id, {
+        activo: newStatus,
+      });
       message.success(
-        `Usuario ${selectedUser.nombreCompleto} ${
-          newStatus ? "activado" : "desactivado"
+        `Usuario ${selectedUser.nombreCompleto} ${newStatus ? "activado" : "desactivado"
         }`
       );
       setModalVisible(false);
-      fetchUsuarios(); // recargar la tabla
-    } catch (error) {
-      console.error(error);
-      message.error("No se pudo actualizar el estado del usuario");
-    } finally {
-      setConfirmLoading(false);
+      fetchUsuarios();
+    } catch (err) {
+      message.error(err.message);
     }
   };
 
@@ -106,6 +108,17 @@ const UserList = () => {
       key: "acciones",
       render: (_, record) => (
         <div className="flex gap-2">
+          <Tooltip title="Ver Detalle">
+            <Button
+              icon={<EyeOutlined />}
+              size="small"
+              onClick={() => {
+                setSelectedUserId(record.id);
+                setDrawerOpen(true);
+              }}
+            />
+          </Tooltip>
+
           <Tooltip title="Editar">
             <Button
               icon={<EditOutlined />}
@@ -166,7 +179,12 @@ const UserList = () => {
         "
       />
 
-      {/* Modal de confirmación */}
+      <UserDetailsDrawer
+        userId={selectedUserId}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+      />
+
       <Modal
         title={
           actionType === "deactivate"
@@ -175,7 +193,7 @@ const UserList = () => {
         }
         open={modalVisible}
         onOk={handleConfirm}
-        confirmLoading={confirmLoading}
+        confirmLoading={loadingUpdate}
         onCancel={() => setModalVisible(false)}
         okText={actionType === "deactivate" ? "Sí, desactivar" : "Sí, activar"}
         cancelText="Cancelar"

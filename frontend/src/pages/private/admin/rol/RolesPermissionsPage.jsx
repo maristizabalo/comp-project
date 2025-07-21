@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, lazy } from "react";
 import {
   Table,
   Tag,
@@ -14,7 +14,7 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-import RoleDetailsDrawer from "../../../../components/admin/rol/RoleDetailsDrawer";
+const RoleDetailsDrawer = lazy(() => import("../../../../components/admin/rol/RoleDetailsDrawer"));
 import { rolService } from "../../../../services/admin/rol";
 
 const RolesPermissionsPage = () => {

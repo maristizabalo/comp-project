@@ -1,49 +1,51 @@
-// pages/admin/UserCreate.jsx
 import { useEffect, useState } from "react";
 import { Form, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { usersService } from "../../../../services/admin/user";
 import { rolService } from "../../../../services/admin/rol";
 import UserForm from "../../../../components/admin/user/UserForm";
+import { useFetch } from "../../../../hooks/use-fetch";
 
 const UserCreate = () => {
   const [form] = Form.useForm();
-  const [ldapOptions, setLdapOptions] = useState([]);
-  const [ldapLoading, setLdapLoading] = useState(false);
-  const [rolesOptions, setRolesOptions] = useState([]);
-  const [loadingRoles, setLoadingRoles] = useState(false);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const navigate = useNavigate();
+  const [ldapOptions, setLdapOptions] = useState([]);
 
+  const {
+    loading: loadingRoles,
+    data: rolesOptions,
+    fetchData: fetchRoles,
+  } = useFetch();
+
+  const {
+    loading: ldapLoading,
+    fetchData: fetchLDAP,
+  } = useFetch();
+
+  const {
+    loading: loadingSubmit,
+    fetchData: fetchCreateUser,
+  } = useFetch();
+
+  // Cargar roles
   useEffect(() => {
-    const fetchRoles = async () => {
-      setLoadingRoles(true);
-      try {
-        const roles = await rolService.getRoles();
-        setRolesOptions(roles);
-      } catch (error) {
-        message.error("Error al cargar los roles");
-      } finally {
-        setLoadingRoles(false);
-      }
-    };
+    fetchRoles(rolService.getRoles).catch(() =>
+      message.error("Error al cargar los roles")
+    );
+  }, [fetchRoles]);
 
-    fetchRoles();
-  }, []);
-
+  // Buscar LDAP
   const handleSearchLDAP = async (value) => {
     if (!value || value.length < 3) return;
-    setLdapLoading(true);
     try {
-      const results = await usersService.buscarEnLDAP(value);
+      const results = await fetchLDAP(usersService.buscarEnLDAP, value);
       setLdapOptions(results);
     } catch (error) {
       message.error("Error al buscar en LDAP");
-    } finally {
-      setLdapLoading(false);
     }
   };
 
+  // Seleccionar usuario LDAP
   const handleSelectLDAPUser = (usuario) => {
     const selected = ldapOptions.find((u) => u.usuario === usuario);
     if (selected) {
@@ -54,17 +56,15 @@ const UserCreate = () => {
     }
   };
 
+  // Crear usuario
   const onFinish = async (values) => {
-    setLoadingSubmit(true);
     try {
-      await usersService.createUsuario(values);
+      await fetchCreateUser(usersService.createUsuario, values);
       message.success("Usuario creado exitosamente");
       form.resetFields();
       navigate("/usuarios");
     } catch (error) {
-      message.error("Error al crear el usuario");
-    } finally {
-      setLoadingSubmit(false);
+      message.error(error.message);
     }
   };
 
@@ -73,7 +73,7 @@ const UserCreate = () => {
       <UserForm
         form={form}
         onFinish={onFinish}
-        rolesOptions={rolesOptions}
+        rolesOptions={rolesOptions || []}
         loadingRoles={loadingRoles}
         ldapOptions={ldapOptions}
         ldapLoading={ldapLoading}
