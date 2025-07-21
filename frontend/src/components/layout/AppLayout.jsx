@@ -4,54 +4,41 @@ import {
   UserOutlined,
   BellOutlined,
   SettingOutlined,
-  AppstoreOutlined,
-  FolderOpenOutlined,
-  FormOutlined,
-  FileSearchOutlined,
-  SafetyOutlined,
-  ApartmentOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import logo_alcaldia from "../../assets/img/logo_alcaldia.svg";
 import logo_dadep from "../../assets/img/logo_dadep.svg";
 import logo_bogota from "../../assets/img/logo_bogota.svg";
-import { useState } from "react";
+import React, { useState } from "react";
 import { LogoutButton } from "./LogoutButton";
+import { useSelector } from "react-redux";
+import { filterRoutesByPermissions } from "../../utils/filterRoutesByPermissions";
+import { appRoutes } from "../../utils/routesConfig";
 
 const { Sider, Header, Content } = Layout;
 
 const AppLayout = ({ children }) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-
-  // para obtener la ruta actual
   const location = useLocation();
 
-  // definir los títulos de las rutas
   const routeTitles = {
     "/inicio": "Inicio",
-
-    // Usuarios
     "/usuarios": "Lista de usuarios",
     "/usuarios/crear": "Creación de usuario",
     "/usuarios/editar/": "Edición de usuario",
-
     "/roles": "Lista de roles y permisos",
     "/roles/crear": "Creación de rol",
     "/roles/editar/": "Edición de rol",
-
     "/modulos": "Módulos",
     "/categorias": "Categorías",
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
-
     "/areas": "Áreas",
   };
 
   const getTitleFromPath = (path) => {
-    const sortedKeys = Object.keys(routeTitles).sort(
-      (a, b) => b.length - a.length
-    );
+    const sortedKeys = Object.keys(routeTitles).sort((a, b) => b.length - a.length);
     const match = sortedKeys.find((key) => path.startsWith(key));
     return routeTitles[match] || "";
   };
@@ -62,64 +49,53 @@ const AppLayout = ({ children }) => {
     navigate(key);
   };
 
-  const items = [
-    {
-      key: "/inicio",
-      icon: <HomeOutlined />,
-      label: "Inicio",
-    },
-    {
-      type: "group",
-      label: "Gestión de Formularios",
-      children: [
-        {
-          key: "/categorias",
-          icon: <FolderOpenOutlined />,
-          label: "Categorías",
-        },
-        {
-          key: "/modulos",
-          icon: <AppstoreOutlined />,
-          label: "Módulos",
-        },
-        {
-          key: "/formularios",
-          icon: <FormOutlined />,
-          label: "Formularios",
-        },
-        {
-          key: "/respuestas",
-          icon: <FileSearchOutlined />,
-          label: "Respuestas",
-        },
-      ],
-    },
-    {
-      type: "group",
-      label: "Administración",
-      children: [
-        {
-          key: "/usuarios",
-          icon: <UserOutlined />,
-          label: "Usuarios",
-        },
-        {
-          key: "/roles",
-          icon: <SafetyOutlined />,
-          label: "Roles y Permisos",
-        },
-        {
-          key: "/areas",
-          icon: <ApartmentOutlined />,
-          label: "Áreas",
-        },
-      ],
-    },
-  ];
+  const userPermissions = useSelector((state) => state.auth.user?.permisos || []);
+  const filteredRoutes = filterRoutesByPermissions(appRoutes, userPermissions);
+
+  const filterVisibleMenuRoutes = (routes) => {
+    return routes
+      .map((route) => {
+        if (route.children) {
+          const visibleChildren = route.children.filter(
+            (child) => !child.key.includes("/crear") && !child.key.includes("/editar")
+          );
+          if (visibleChildren.length > 0) {
+            return { ...route, children: visibleChildren };
+          }
+          return null;
+        }
+        return route;
+      })
+      .filter(Boolean);
+  };
+
+  const transformToAntdMenuItems = (routes) => {
+    return routes.map((route) => {
+      if (route.children) {
+        return {
+          type: "group",
+          label: route.label,
+          children: route.children.map((child) => ({
+            key: child.key,
+            icon: child.icon ? React.createElement(child.icon) : null,
+            label: child.label,
+          })),
+        };
+      }
+
+      return {
+        key: route.key,
+        icon: route.icon ? React.createElement(route.icon) : null,
+        label: route.label,
+      };
+    });
+  };
+
+  const visibleMenuRoutes = filterVisibleMenuRoutes(filteredRoutes);
+  const items = transformToAntdMenuItems(visibleMenuRoutes);
 
   return (
     <Layout className="min-h-screen">
-      {/* SIDEBAR */}
       <Sider
         width={240}
         className="bg-[#E80B2C] shadow-xl fixed h-screen z-50"
@@ -149,37 +125,18 @@ const AppLayout = ({ children }) => {
           <LogoutButton />
         </div>
         <div className="absolute bottom-4 left-0 w-full flex justify-center gap-4 px-4">
-          <img
-            src={logo_alcaldia}
-            alt="Logo Alcaldía"
-            className="h-8 object-contain"
-          />
-          <img
-            src={logo_dadep}
-            alt="Logo DADEP"
-            className="h-8 object-contain"
-          />
-          <img
-            src={logo_bogota}
-            alt="Logo Bogotá"
-            className="h-8 object-contain"
-          />
+          <img src={logo_alcaldia} alt="Logo Alcaldía" className="h-8 object-contain" />
+          <img src={logo_dadep} alt="Logo DADEP" className="h-8 object-contain" />
+          <img src={logo_bogota} alt="Logo Bogotá" className="h-8 object-contain" />
         </div>
       </Sider>
 
-      {/* CONTENIDO */}
       <Layout
-        className={`bg-[#f5f6fa] transition-all duration-300 ${
-          !collapsed ? "ml-[240px]" : ""
-        }`}
+        className={`bg-[#f5f6fa] transition-all duration-300 ${!collapsed ? "ml-[240px]" : ""}`}
       >
         <Header className="bg-transparent px-2 mx-10 mt-6 flex items-center justify-between">
-          {/* Título dinámico */}
-          <div className="text-3xl font-semibold text-primario">
-            {currentTitle}
-          </div>
+          <div className="text-3xl font-semibold text-primario">{currentTitle}</div>
 
-          {/* Botones flotantes */}
           <div className="flex gap-2 items-center">
             <Button
               shape="circle"
@@ -202,7 +159,9 @@ const AppLayout = ({ children }) => {
           </div>
         </Header>
         <Content className="px-6">
-          <div className="bg-transparent p-6 min-h-[85vh]">{children}</div>
+          <div className="bg-transparent p-6 min-h-[85vh]">
+            {children || <Outlet />}
+          </div>
         </Content>
       </Layout>
     </Layout>

@@ -5,6 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
+import { filterRoutesByPermissions } from "../../utils/filterRoutesByPermissions";
+import { appRoutes } from "../../utils/routesConfig";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -19,43 +21,62 @@ const AreaList = lazy(() => import("./admin/area/AreaList"));
 const AreaCreate = lazy(() => import("./admin/area/AreaCreate"));
 const AreaEdit = lazy(() => import("./admin/area/AreaEdit"));
 
+const Unauthorized = lazy(() => import("../../components/layout/Unauthorized"));
+
+const routeComponents = {
+  "/inicio": <Inicio />,
+  "/usuarios": <UserList />,
+  "/usuarios/crear": <UserCreate />,
+  "/usuarios/editar/:id": <UserEdit />,
+  "/roles": <RolesPermissionsPage />,
+  "/roles/crear": <RolesPermissionsCreate />,
+  "/roles/editar/:id": <RolesPermissionsEdit />,
+  "/areas": <AreaList />,
+  "/areas/crear": <AreaCreate />,
+  "/areas/editar/:id": <AreaEdit />,
+};
+
 const Private = () => {
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
+  const userPermissions = useSelector((state) => state.auth.user?.permisos || []);
 
   useEffect(() => {
-    if (user?.permisos?.includes(PERMISOS_ADMIN.ADMIN_ROL_Y_PERMISO)) {
+    if (userPermissions.includes(PERMISOS_ADMIN.ADMIN_ROL_Y_PERMISO)) {
       dispatch(fetchRoles());
       dispatch(fetchPermissions());
       dispatch(fetchPermissionsForm());
     }
-  }, [user, dispatch]);
+  }, [userPermissions, dispatch]);
 
+  const filteredRoutes = filterRoutesByPermissions(appRoutes, userPermissions);
+
+  const flattenRoutes = (routes) =>
+    routes.flatMap((route) => (route.children ? route.children : route));
+
+  const finalRoutes = flattenRoutes(filteredRoutes);
+
+  const permissionById = Object.entries(PERMISOS_ADMIN).reduce((acc, [key, value]) => {
+    acc[value] = key;
+    return acc;
+  }, {});
+  const userPermissionsStrings = userPermissions.map((p) => permissionById[p]);
 
   return (
     <AppLayout>
       <Routes>
-        <Route path="/inicio" element={<Inicio />} />
-
-        {/* Rutas para admin usuarios */}
-        <Route path="/usuarios" element={<UserList />} />
-        <Route path="/usuarios/crear" element={<UserCreate />} />
-        <Route path="/usuarios/editar/:id" element={<UserEdit />} />
-
-        {/* Rutas para admin roles y permisos */}
-        <Route path="/roles" element={<RolesPermissionsPage />} />
-        <Route path="/roles/crear" element={<RolesPermissionsCreate />} />
-        <Route path="/roles/editar/:id" element={<RolesPermissionsEdit />} />
-
-        {/* Rutas para admin areas */}
-        <Route path="/areas" element={<AreaList />} />
-        <Route path="/areas/crear" element={<AreaCreate />} />
-        <Route path="/areas/editar/:id" element={<AreaEdit />} />
-
-        {/* <Route path="/modulos" element={<Modulos />} />
-        <Route path="/categorias" element={<Categorias />} />
-        <Route path="/formulario" element={<Formularios />} />
-        <Route path="/administracion" element={<Administracion />} /> */}
+        {Object.keys(routeComponents).map((path) => {
+          const route = finalRoutes.find((r) => r.key === path);
+          const requiredPermission = route?.permission;
+          const isAllowed =
+            !requiredPermission || userPermissionsStrings.includes(requiredPermission);
+          return (
+            <Route
+              key={path}
+              path={path}
+              element={isAllowed ? routeComponents[path] : <Unauthorized />}
+            />
+          );
+        })}
       </Routes>
     </AppLayout>
   );
