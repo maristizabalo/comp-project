@@ -46,6 +46,7 @@ const AppLayout = ({ children }) => {
     "/modulos/editar/": "Edición de módulo",
 
     "/formularios": "Formularios",
+    "/formularios/crear": "Creación de formulario",
     
     "/respuestas": "Respuestas",
   };
