@@ -4,11 +4,15 @@ import { useParams, useNavigate } from "react-router-dom";
 import { rolService } from "../../../../services/admin/rol";
 import RoleForm from "../../../../components/admin/rol/RoleForm";
 import { useFetch } from "../../../../hooks/use-fetch";
+import { useSelector } from "react-redux";
 
 const RolesPermissionsEdit = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const { id } = useParams();
+  const permissions = useSelector((state) => state.admin.permissions.permissions);
+  const permissionsForm = useSelector((state) => state.admin.permissions.permissionsForm);
+
 
   const {
     data: role,
@@ -46,16 +50,16 @@ const RolesPermissionsEdit = () => {
     }
   };
 
-  const permisosOptions = [
-    { label: "Permiso 1", value: 1 },
-    { label: "Permiso 2", value: 2 },
-    { label: "Permiso 3", value: 3 },
-  ];
 
-  const permisosFormularioOptions = [
-    { label: "Formulario 1", value: 1 },
-    { label: "Formulario 2", value: 2 },
-  ];
+  const permisosOptions = permissions.map((p) => ({
+    label: p.nombre,
+    value: p.id,
+  }));
+
+  const permisosFormularioOptions = permissionsForm.map((p) => ({
+    label: `${p.nombre} (${p.tipo})`,
+    value: p.id,
+  }));
 
   if (loading || !role) {
     return (

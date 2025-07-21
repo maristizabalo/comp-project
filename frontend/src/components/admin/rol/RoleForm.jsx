@@ -1,4 +1,5 @@
-import { Form, Input, Button, Checkbox } from "antd";
+import { Form, Input, Button, Select } from "antd";
+const { Option } = Select;
 
 const RoleForm = ({
   form,
@@ -31,12 +32,46 @@ const RoleForm = ({
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Form.Item label="Permisos" name="permisos">
-          <Checkbox.Group options={permisosOptions} />
+        <Form.Item
+          label="Permisos"
+          name="permisos"
+          rules={[{ required: true, message: "Debes asignar al menos un permiso" }]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Selecciona uno o más permisos"
+            showSearch
+            filterOption={(input, option) =>
+              option.children.toLowerCase().includes(input.toLowerCase())
+            }
+          >
+            {permisosOptions.map((p) => (
+              <Option key={p.value} value={p.value}>
+                {p.label}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
 
-        <Form.Item label="Permisos de Formularios" name="permisosFormulario">
-          <Checkbox.Group options={permisosFormularioOptions} />
+        <Form.Item
+          label="Permisos de Formularios"
+          name="permisosFormulario"
+          rules={[{ required: true, message: "Debes asignar al menos un permiso de formulario" }]}
+        >
+          <Select
+            mode="multiple"
+            placeholder="Selecciona uno o más permisos de formularios"
+            showSearch
+            filterOption={(input, option) =>
+              option.children.toLowerCase().includes(input.toLowerCase())
+            }
+          >
+            {permisosFormularioOptions.map((p) => (
+              <Option key={p.value} value={p.value}>
+                {p.label}
+              </Option>
+            ))}
+          </Select>
         </Form.Item>
       </div>
 
