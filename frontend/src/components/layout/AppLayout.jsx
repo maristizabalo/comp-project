@@ -30,11 +30,15 @@ const AppLayout = ({ children }) => {
     "/roles": "Lista de roles y permisos",
     "/roles/crear": "Creación de rol",
     "/roles/editar/": "Edición de rol",
-    "/modulos": "Módulos",
+    "/areas": "Áreas",
+    "/areas/crear": "Creación de área",
+    "/areas/editar/": "Edición de área",
     "/categorias": "Categorías",
+    "/categorias/crear": "Creación de categoría",
+    "/categorias/editar/": "Edición de categoría",
+    "/modulos": "Módulos",
     "/formularios": "Formularios",
     "/respuestas": "Respuestas",
-    "/areas": "Áreas",
   };
 
   const getTitleFromPath = (path) => {
