@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
+import FormList from "./form/FormList";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -53,6 +54,7 @@ const routePermissions = {
   "/modulos/editar/:id": "ADMIN_MODULO",
 
   "/formularios": "ADMIN_FORMULARIO",
+  
   "/respuestas": "ADMIN_FORMULARIO",
 };
 
@@ -77,7 +79,9 @@ const routeComponents = {
 
   "/modulos": <ModuleList />, 
   "/modulos/crear": <ModuleCreate />, 
-  "/modulos/editar/:id": <ModuleEdit />, 
+  "/modulos/editar/:id": <ModuleEdit />,
+
+  "/formularios": <FormList />,
 };
 
 const Private = () => {
