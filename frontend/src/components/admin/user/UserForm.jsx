@@ -105,6 +105,10 @@ const UserForm = ({
             mode="multiple"
             placeholder="Selecciona uno o más roles"
             loading={loadingRoles}
+            showSearch
+            filterOption={(input, option) =>
+              option.children.toLowerCase().includes(input.toLowerCase())
+            }
           >
             {rolesOptions.map((rol) => (
               <Option key={rol.id} value={rol.id}>
