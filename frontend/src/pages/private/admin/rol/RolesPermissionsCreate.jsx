@@ -2,23 +2,21 @@ import { useNavigate } from "react-router-dom";
 import { Form, message } from "antd";
 import { rolService } from "../../../../services/admin/rol";
 import RoleForm from "../../../../components/admin/rol/RoleForm";
-import { useState } from "react";
+import { useFetch } from "../../../../hooks/use-fetch";
 
 const RolesPermissionsCreate = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
+
+  const { loading: loadingSubmit, fetchData } = useFetch();
 
   const onFinish = async (values) => {
-    setLoadingSubmit(true);
     try {
-      await rolService.createRol(values);
+      await fetchData(rolService.createRol, values);
       message.success("Rol creado correctamente.");
       navigate("/roles");
     } catch (error) {
       message.error(error.message);
-    } finally {
-      setLoadingSubmit(false);
     }
   };
 

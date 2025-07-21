@@ -14,34 +14,32 @@ import {
   PlusCircleOutlined,
 } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
-const RoleDetailsDrawer = lazy(() => import("../../../../components/admin/rol/RoleDetailsDrawer"));
 import { rolService } from "../../../../services/admin/rol";
+import { useFetch } from "../../../../hooks/use-fetch";
+
+const RoleDetailsDrawer = lazy(() => import("../../../../components/admin/rol/RoleDetailsDrawer"));
 
 const RolesPermissionsPage = () => {
-  const [roles, setRoles] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [modalVisible, setModalVisible] = useState(false);
   const [selectedRole, setSelectedRole] = useState(null);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
   const [actionType, setActionType] = useState("deactivate");
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
 
-  const fetchRoles = async () => {
-    setLoading(true);
-    try {
-      const data = await rolService.getRoles();
-      setRoles(data);
-    } catch (error) {
-      console.error("Error al obtener roles:", error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  const {
+    data: roles,
+    loading,
+    fetchData: fetchRoles,
+  } = useFetch();
+
+  const {
+    loading: loadingUpdate,
+    fetchData: updateRole,
+  } = useFetch();
 
   useEffect(() => {
-    fetchRoles();
-  }, []);
+    fetchRoles(rolService.getRoles);
+  }, [fetchRoles]);
 
   const showConfirmationModal = (role, action) => {
     setSelectedRole(role);
@@ -51,21 +49,17 @@ const RolesPermissionsPage = () => {
 
   const handleConfirm = async () => {
     if (!selectedRole) return;
-    setConfirmLoading(true);
     const newStatus = actionType === "activate";
 
     try {
-      await rolService.updateRol(selectedRole.id, { activo: newStatus });
+      await updateRole(rolService.updateRol, selectedRole.id, { activo: newStatus });
       message.success(
         `Rol ${selectedRole.nombre} ${newStatus ? "activado" : "desactivado"}`
       );
       setModalVisible(false);
-      fetchRoles();
+      fetchRoles(rolService.getRoles);
     } catch (error) {
-      console.error(error);
-      message.error("No se pudo actualizar el estado del rol");
-    } finally {
-      setConfirmLoading(false);
+      message.error(error.message);
     }
   };
 
@@ -147,7 +141,7 @@ const RolesPermissionsPage = () => {
 
       <Table
         columns={columns}
-        dataSource={roles}
+        dataSource={roles || []}
         rowKey="id"
         loading={loading}
         bordered
@@ -173,7 +167,7 @@ const RolesPermissionsPage = () => {
         }
         open={modalVisible}
         onOk={handleConfirm}
-        confirmLoading={confirmLoading}
+        confirmLoading={loadingUpdate}
         onCancel={() => setModalVisible(false)}
         okText={actionType === "deactivate" ? "Sí, desactivar" : "Sí, activar"}
         cancelText="Cancelar"

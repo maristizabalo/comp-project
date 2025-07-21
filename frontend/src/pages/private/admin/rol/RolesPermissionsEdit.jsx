@@ -1,49 +1,48 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Form, message, Spin } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
 import { rolService } from "../../../../services/admin/rol";
 import RoleForm from "../../../../components/admin/rol/RoleForm";
+import { useFetch } from "../../../../hooks/use-fetch";
 
 const RolesPermissionsEdit = () => {
   const [form] = Form.useForm();
-  const [initialValues, setInitialValues] = useState(null);
-  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    const fetchRole = async () => {
-      try {
-        const role = await rolService.getRoleById(id);
-        setInitialValues({
-          nombre: role.nombre,
-          descripcion: role.descripcion,
-          permisos: role.permisos,
-          permisosFormulario: role.permisosFormulario,
-        });
-      } catch (error) {
-        message.error("Error al cargar el rol");
-      }
-    };
-    fetchRole();
-  }, [id]);
+  const {
+    data: role,
+    loading,
+    fetchData: fetchRoleById,
+  } = useFetch();
+
+  const {
+    loading: loadingSubmit,
+    fetchData: updateRole,
+  } = useFetch();
 
   useEffect(() => {
-    if (initialValues) {
-      form.setFieldsValue(initialValues);
+    fetchRoleById(rolService.getRoleById, id);
+  }, [fetchRoleById, id]);
+
+  useEffect(() => {
+    if (role) {
+      form.setFieldsValue({
+        nombre: role.nombre,
+        descripcion: role.descripcion,
+        permisos: role.permisos,
+        permisosFormulario: role.permisosFormulario,
+      });
     }
-  }, [initialValues, form]);
+  }, [role, form]);
 
   const onFinish = async (values) => {
-    setLoadingSubmit(true);
     try {
-      await rolService.updateRol(id, values);
+      await updateRole(rolService.updateRol, id, values);
       message.success("Rol actualizado correctamente.");
       navigate("/roles");
     } catch (error) {
       message.error(error.message);
-    } finally {
-      setLoadingSubmit(false);
     }
   };
 
@@ -58,7 +57,7 @@ const RolesPermissionsEdit = () => {
     { label: "Formulario 2", value: 2 },
   ];
 
-  if (!initialValues) {
+  if (loading || !role) {
     return (
       <div className="w-full h-96 flex justify-center items-center">
         <Spin size="large" />
@@ -70,7 +69,12 @@ const RolesPermissionsEdit = () => {
     <div className="p-6 bg-white rounded-xl shadow-md w-full mx-auto max-w-4xl">
       <RoleForm
         form={form}
-        initialValues={initialValues}
+        initialValues={{
+          nombre: role.nombre,
+          descripcion: role.descripcion,
+          permisos: role.permisos,
+          permisosFormulario: role.permisosFormulario,
+        }}
         permisosOptions={permisosOptions}
         permisosFormularioOptions={permisosFormularioOptions}
         onFinish={onFinish}
