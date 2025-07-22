@@ -1,63 +1,56 @@
-import { Input, Button, Typography, Divider } from "antd";
-import { PlusOutlined, DeleteOutlined } from "@ant-design/icons";
+import { Button, Form, Input, Typography } from "antd";
+import { MinusCircleOutlined, PlusOutlined } from "@ant-design/icons";
 import FieldItem from "./FieldItem";
 
 const { Title } = Typography;
 
-const SectionItem = ({ section, index, onUpdate, onRemove }) => {
-  const updateField = (fieldIndex, updatedField) => {
-    const newCampos = [...section.campos];
-    newCampos[fieldIndex] = updatedField;
-    onUpdate({ ...section, campos: newCampos });
-  };
+const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
+  <div className="border-t-4 border-red-500 rounded-lg shadow-md p-4 bg-white mb-6">
+    <Title level={5} className="text-primario">Sección</Title>
 
-  const addField = () => {
-    onUpdate({
-      ...section,
-      campos: [...(section.campos || []), { etiqueta: "" }],
-    });
-  };
-
-  const removeField = (fieldIndex) => {
-    onUpdate({
-      ...section,
-      campos: section.campos.filter((_, idx) => idx !== fieldIndex),
-    });
-  };
-
-  return (
-    <div className="border rounded-xl p-4 shadow-md">
-      <div className="flex justify-between items-center mb-4">
-        <Input
-          placeholder={`Nombre de la sección #${index + 1}`}
-          value={section.nombre}
-          onChange={(e) => onUpdate({ ...section, nombre: e.target.value })}
-          className="w-3/4"
-        />
-        <Button icon={<DeleteOutlined />} danger onClick={onRemove} />
-      </div>
-
-      <Divider>Campos</Divider>
-      <div className="flex flex-col gap-4">
-        {section.campos?.map((campo, idx) => (
-          <FieldItem
-            key={idx}
-            field={campo}
-            onChange={(updated) => updateField(idx, updated)}
-            onRemove={() => removeField(idx)}
-          />
-        ))}
-        <Button
-          type="dashed"
-          icon={<PlusOutlined />}
-          onClick={addField}
-          className="self-start"
-        >
-          Añadir Campo
-        </Button>
-      </div>
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <Form.Item
+        name={[section.name, "nombre"]}
+        label="Nombre de la sección"
+        rules={[{ required: true, message: "Campo obligatorio" }]}
+      >
+        <Input placeholder="Ej: Información Básica" />
+      </Form.Item>
     </div>
-  );
-};
+
+    <Form.List name={[section.name, "campos"]}>
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map((field) => (
+            <FieldItem
+              key={field.key}
+              field={field}
+              remove={remove}
+              tiposCamposOptions={tiposCamposOptions}
+              mainCount={mainCount}
+            />
+          ))}
+          <Button
+            type="dashed"
+            icon={<PlusOutlined />}
+            onClick={() => add()}
+            className="w-full mt-2"
+          >
+            Añadir campo
+          </Button>
+        </>
+      )}
+    </Form.List>
+
+    <Button
+      icon={<MinusCircleOutlined />}
+      danger
+      className="mt-4"
+      onClick={() => remove(section.name)}
+    >
+      Eliminar Sección
+    </Button>
+  </div>
+);
 
 export default SectionItem;

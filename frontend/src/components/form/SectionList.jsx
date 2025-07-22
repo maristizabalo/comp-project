@@ -1,46 +1,38 @@
-import { Button } from "antd";
+import { Button, Form } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 import SectionItem from "./SectionItem";
 
-const SectionList = ({ secciones, onChange }) => {
-  const addSection = () => {
-    onChange([
-      ...secciones,
-      { nombre: "", campos: [] },
-    ]);
-  };
+const SectionList = ({ tiposCamposOptions }) => {
+  const form = Form.useFormInstance();
+  const secciones = Form.useWatch("secciones", form) || [];
 
-  const updateSection = (index, updated) => {
-    const updatedSections = [...secciones];
-    updatedSections[index] = updated;
-    onChange(updatedSections);
-  };
-
-  const removeSection = (index) => {
-    const updatedSections = secciones.filter((_, idx) => idx !== index);
-    onChange(updatedSections);
-  };
+  const mainCount = secciones?.flatMap((s) => s?.campos || [])
+    .filter((c) => c?.principal).length || 0;
 
   return (
-    <div className="flex flex-col gap-6">
-      {secciones.map((section, index) => (
-        <SectionItem
-          key={index}
-          section={section}
-          index={index}
-          onUpdate={(updated) => updateSection(index, updated)}
-          onRemove={() => removeSection(index)}
-        />
-      ))}
-      <Button
-        type="dashed"
-        icon={<PlusOutlined />}
-        onClick={addSection}
-        className="self-center w-60"
-      >
-        Añadir Sección
-      </Button>
-    </div>
+    <Form.List name="secciones">
+      {(fields, { add, remove }) => (
+        <>
+          {fields.map((section) => (
+            <SectionItem
+              key={section.key}
+              section={section}
+              remove={remove}
+              tiposCamposOptions={tiposCamposOptions}
+              mainCount={mainCount}
+            />
+          ))}
+          <Button
+            type="dashed"
+            icon={<PlusOutlined />}
+            onClick={() => add()}
+            className="w-full"
+          >
+            Añadir sección
+          </Button>
+        </>
+      )}
+    </Form.List>
   );
 };
 

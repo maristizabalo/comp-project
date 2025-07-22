@@ -1,5 +1,3 @@
-# models.py dentro de la app `construccion_formulario`
-
 from django.db import models
 from apps.formulario.models import Formulario
 from apps.formulario.models import Seccion
@@ -30,8 +28,9 @@ class Campo(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_CAMPO')
     nombre = models.CharField(max_length=100, db_column='NOMBRE')
     etiqueta = models.CharField(max_length=100, db_column='ETIQUETA')  # lo que ve el usuario
-    requerido = models.BooleanField(default=False, db_column='REQUERIDO')
+    obligatorio = models.BooleanField(default=False, db_column='OBLIGATORIO')
     orden = models.PositiveIntegerField(default=0, db_column='ORDEN')
+    principal = models.BooleanField(default=False, db_column='PRINCIPAL')  # si es principal se mostrara en la tabla principal de respuestas del formulario
 
     tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT, db_column='ID_TIPO', related_name='campos')
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE, db_column='ID_SECCION', related_name='campos')

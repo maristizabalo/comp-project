@@ -25,10 +25,12 @@ class Permiso(models.Model):
 class PermisoFormulario(models.Model):
     LECTURA = 'lectura'
     ESCRITURA = 'escritura'
+    REPORTE = 'reporte'
 
     TIPO_CHOICES = [
         (LECTURA, 'Lectura'),
         (ESCRITURA, 'Escritura'),
+        (REPORTE, 'Reporte'),
     ]
 
     id = models.BigAutoField(primary_key=True, db_column='ID_PERMISO_FORMULARIO')

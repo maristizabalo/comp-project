@@ -56,13 +56,18 @@ class FormularioCompletoSerializer(serializers.ModelSerializer):
 
         # 3. Crear permisos del formulario (LECTURA y ESCRITURA)
         PermisoFormulario.objects.create(
-            nombre=f"lectura_{formulario.nombre}",
+            nombre=f"{formulario.nombre}-LECTURA",
             tipo=PermisoFormulario.LECTURA,
             formulario=formulario
         )
         PermisoFormulario.objects.create(
-            nombre=f"escritura_{formulario.nombre}",
+            nombre=f"{formulario.nombre}-ESCRITURA",
             tipo=PermisoFormulario.ESCRITURA,
+            formulario=formulario
+        )
+        PermisoFormulario.objects.create(
+            nombre=f"{formulario.nombre}-REPORTE",
+            tipo=PermisoFormulario.REPORTE,
             formulario=formulario
         )
 

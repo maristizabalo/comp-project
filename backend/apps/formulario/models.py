@@ -3,7 +3,7 @@ from apps.modulo.models import Modulo
 
 class Formulario(models.Model):
     id = models.BigAutoField(primary_key=True, db_column='ID_FORMULARIO')
-    nombre = models.CharField(max_length=100, db_column='NOMBRE')
+    nombre = models.CharField(max_length=100, unique=True, db_column='NOMBRE')
     descripcion = models.TextField(db_column='DESCRIPCION')
 
     modulo = models.ForeignKey(Modulo, on_delete=models.CASCADE, db_column='ID_MODULO', related_name='formularios')

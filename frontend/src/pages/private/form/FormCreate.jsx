@@ -1,53 +1,33 @@
-import { useState } from "react";
-import { Button, Card, Typography, message } from "antd";
-import FormHeader from "../../../components/form/FormHeader";
-import SectionList from "../../../components/form/SectionList";
+import { Card, Form, Button, message } from "antd";
+import FormHeader from "../../../components/form/FormHeader"
+import SectionList from "../../../components/form/SectionList"
 
-const { Title } = Typography;
+const tiposCamposOptions = [
+  { label: "Texto", value: "text" },
+  { label: "Número", value: "number" },
+  { label: "Fecha", value: "date" },
+  { label: "Select", value: "select" },
+];
 
 const FormCreate = () => {
-  const [formData, setFormData] = useState({
-    titulo: "",
-    descripcion: "",
-    secciones: [],
-  });
+  const [form] = Form.useForm();
 
-  const handleHeaderChange = (values) => {
-    setFormData((prev) => ({ ...prev, ...values }));
-  };
-
-  const handleSectionsChange = (secciones) => {
-    setFormData((prev) => ({ ...prev, secciones }));
-  };
-
-  const handleSubmit = () => {
-    const payload = {
-      ...formData,
-      secciones: formData.secciones.map((section, index) => ({
-        ...section,
-        orden: index + 1,
-        campos: section.campos.map((campo, idx) => ({
-          ...campo,
-          orden: idx + 1,
-        })),
-      })),
-    };
-    console.log(payload);
-    message.success("Formulario guardado (mira la consola)");
+  const onFinish = (values) => {
+    console.log("🚀 Data al Backend:", values);
+    message.success("Formulario creado correctamente");
   };
 
   return (
-    <Card className="max-w-4xl mx-auto">
-      <Title level={3} className="text-primario mb-6">
-        Crear Nuevo Formulario
-      </Title>
-      <FormHeader values={formData} onChange={handleHeaderChange} />
-      <SectionList secciones={formData.secciones} onChange={handleSectionsChange} />
-      <div className="flex justify-end mt-4">
-        <Button type="primary" onClick={handleSubmit}>
-          Guardar Formulario
-        </Button>
-      </div>
+    <Card className="">
+      <Form form={form} layout="vertical" onFinish={onFinish} className="flex flex-col gap-6">
+        <FormHeader form={form} />
+        <SectionList tiposCamposOptions={tiposCamposOptions} />
+        <div className="flex justify-end">
+          <Button type="primary" htmlType="submit">
+            Guardar formulario
+          </Button>
+        </div>
+      </Form>
     </Card>
   );
 };
