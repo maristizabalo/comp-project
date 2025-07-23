@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { useFetch } from "../../../hooks/use-fetch";
 import { moduleService } from "../../../services/module/moduleService";
 import { useEffect } from "react";
+import { formService } from "../../../services/form/formService";
 
 const FormCreate = () => {
   const [form] = Form.useForm();
@@ -13,7 +14,8 @@ const FormCreate = () => {
   const { items, loading } = useSelector((state) => state.formulario.tiposCampo);
   const tiposCamposOptions = (items || []).map((item) => ({
     label: item.nombre,
-    value: item.tipo,
+    tipo: item.tipo,
+    value: item.id,
   }));
 
   // Fetch módulos usando hook personalizado
@@ -23,13 +25,33 @@ const FormCreate = () => {
 
 
   useEffect(() => {
-      fetchData(moduleService.getModulos);
-    }, [fetchData]);
+    fetchData(moduleService.getModulos);
+  }, [fetchData]);
 
-  const onFinish = (values) => {
-    console.log("🚀 Data al Backend:", values);
-    message.success("Formulario creado correctamente");
+  const onFinish = async (values) => {
+    try {
+      const seccionesConOrden = (values.secciones || []).map((seccion, index) => ({
+        ...seccion,
+        orden: index + 1,
+        campos: (seccion.campos || []).map((campo, campoIndex) => ({
+          ...campo,
+          nombre: campo.etiqueta,
+        })),
+      }));
+
+      const payload = {
+        ...values,
+        secciones: seccionesConOrden,
+      };
+      await formService.createFormulario(payload);
+      message.success("Formulario creado correctamente");
+      form.resetFields(); // opcional si quieres limpiar el form
+    } catch (error) {
+      console.error("❌ Error al crear formulario:", error.message);
+      message.error(error.message);
+    }
   };
+
 
   if (loading || loadingModulos) return <Skeleton active />;
 

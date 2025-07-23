@@ -32,6 +32,15 @@ class Campo(models.Model):
     orden = models.PositiveIntegerField(default=0, db_column='ORDEN')
     principal = models.BooleanField(default=False, db_column='PRINCIPAL')  # si es principal se mostrara en la tabla principal de respuestas del formulario
 
+    campo_padre = models.ForeignKey(
+        'self',
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        db_column='ID_CAMPO_PADRE',
+        related_name='subcampos'
+    )
+
     tipo = models.ForeignKey(Tipo, on_delete=models.PROTECT, db_column='ID_TIPO', related_name='campos')
     seccion = models.ForeignKey(Seccion, on_delete=models.CASCADE, db_column='ID_SECCION', related_name='campos')
 

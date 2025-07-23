@@ -1,8 +1,8 @@
 from django.urls import path
-from .views import FormularioListCreateView, FormularioRetrieveUpdateView, TipoListView
+from .views import TipoListView, FormularioCrearView
 
 urlpatterns = [
-    path('', FormularioListCreateView.as_view(), name='formulario-list-create'),
-    path('<int:pk>/', FormularioRetrieveUpdateView.as_view(), name='formulario-retrieve-update'),
+    path('', FormularioCrearView.as_view(), name='formulario-create'),
+    # path('<int:pk>/', FormularioRetrieveUpdateView.as_view(), name='formulario-retrieve-update'),
     path('tipos/', TipoListView.as_view(), name='tipo-list'),
 ]

@@ -1,66 +1,43 @@
-import { Input, Select, Switch, Form, Button } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
+import { Suspense, lazy, useState } from "react";
+import { Form } from "antd";
 
-const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => (
-  <div className="flex items-center gap-3 border border-gray-200 rounded-md px-3 py-2 bg-gray-50">
-    {/* Etiqueta */}
-    <Form.Item
-      name={[field.name, "etiqueta"]}
-      className="!mb-0 flex-1"
-      rules={[{ required: true, message: "Requerido" }]}
-    >
-      <Input size="small" placeholder="Etiqueta del campo" />
-    </Form.Item>
+const FieldControls = lazy(() => import("./FieldControls"));
+const FieldOptions = lazy(() => import("./FieldOptions"));
+const FieldSubFields = lazy(() => import("./FieldSubFields"));
 
-    {/* Tipo */}
-    <Form.Item
-      name={[field.name, "tipo"]}
-      className="!mb-0 w-48"
-      rules={[{ required: true, message: "Requerido" }]}
-    >
-      <Select size="small" options={tiposCamposOptions} placeholder="Tipo" />
-    </Form.Item>
+const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => {
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
 
-    {/* Obligatorio */}
-    <div className="flex items-center gap-1">
-      <span className="text-xs text-gray-600">Obligatorio</span>
-      <Form.Item
-        name={[field.name, "obligatorio"]}
-        className="!mb-0"
-        valuePropName="checked"
-      >
-        <Switch size="small" />
-      </Form.Item>
+  const isOpcionTipo =
+    tipoSeleccionado === "seleccion-unica" || tipoSeleccionado === "seleccion-multiple";
+  const isGrupoCampos = tipoSeleccionado === "grupo-campos";
+
+  return (
+    <div className="flex flex-col gap-2 border border-gray-200 rounded-md px-3 py-2 bg-gray-50">
+      <Suspense fallback={<div className="text-xs text-gray-400">Cargando controles...</div>}>
+        <FieldControls
+          field={field}
+          remove={remove}
+          tiposCamposOptions={tiposCamposOptions}
+          mainCount={mainCount}
+          isGrupoCampos={isGrupoCampos}
+          onTipoChange={setTipoSeleccionado}
+        />
+      </Suspense>
+
+      {isOpcionTipo && (
+        <Suspense fallback={<div className="text-xs text-gray-400">Cargando opciones...</div>}>
+          <FieldOptions field={field} />
+        </Suspense>
+      )}
+
+      {isGrupoCampos && (
+        <Suspense fallback={<div className="text-xs text-gray-400">Cargando subcampos...</div>}>
+          <FieldSubFields field={field} />
+        </Suspense>
+      )}
     </div>
-
-    {/* Principal */}
-    <div className="flex items-center gap-1">
-      <span className="text-xs text-gray-600">Principal</span>
-      <Form.Item
-        name={[field.name, "principal"]}
-        className="!mb-0"
-        valuePropName="checked"
-        rules={[
-          ({ getFieldValue }) => ({
-            validator(_, value) {
-              if (!value || mainCount < 5) return Promise.resolve();
-              return Promise.reject("Máximo 5 campos principales");
-            },
-          }),
-        ]}
-      >
-        <Switch size="small" />
-      </Form.Item>
-    </div>
-
-    {/* Botón eliminar */}
-    <Button
-      type="text"
-      icon={<DeleteOutlined />}
-      danger
-      onClick={() => remove(field.name)}
-    />
-  </div>
-);
+  );
+};
 
 export default FieldItem;

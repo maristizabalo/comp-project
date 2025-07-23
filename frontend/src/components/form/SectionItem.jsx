@@ -31,14 +31,16 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
       {(fields, { add, remove }) => (
         <div className="flex flex-col gap-4">
           {fields.map((field) => (
-              <div key={field.key}>
-                <FieldItem
-                  field={field}
-                  remove={remove}
-                  tiposCamposOptions={tiposCamposOptions}
-                  mainCount={mainCount}
-                />
-              </div>
+            <div key={field.key}>
+              <FieldItem
+                field={field}
+                remove={remove}
+                tiposCamposOptions={tiposCamposOptions}
+                mainCount={mainCount}
+                fieldPath={[section.name, "campos", field.name]} // 👈 Añadido
+              />
+
+            </div>
           ))}
 
           <Button
