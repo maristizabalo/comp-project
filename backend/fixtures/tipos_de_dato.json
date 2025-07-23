@@ -63,9 +63,9 @@
     "model": "construccion_formulario.tipo",
     "pk": 5,
     "fields": {
-      "tipo": "seleccion",
-      "nombre": "Selección",
-      "descripcion": "Campo con opciones seleccionables",
+      "tipo": "seleccion-unica",
+      "nombre": "Selección Única",
+      "descripcion": "Campo con opciones seleccionables (única selección)",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",
@@ -78,8 +78,38 @@
     "model": "construccion_formulario.tipo",
     "pk": 6,
     "fields": {
+      "tipo": "seleccion-multiple",
+      "nombre": "Selección Múltiple",
+      "descripcion": "Campo con opciones seleccionables (múltiples selecciones)",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 7,
+    "fields": {
+      "tipo": "grupo-campos",
+      "nombre": "Grupo de Campos",
+      "descripcion": "Campo que agrupa otros campos como hijos (campo padre)",
+      "usuario_creo": "admin",
+      "ip_creo": "127.0.0.1",
+      "usuario_modifico": "admin",
+      "ip_modifico": "127.0.0.1",
+      "fecha_creacion": "2025-05-29T16:54:01.697Z",
+      "fecha_modificacion": "2025-05-29T16:54:01.697Z"
+    }
+  },
+  {
+    "model": "construccion_formulario.tipo",
+    "pk": 8,
+    "fields": {
       "tipo": "geometrico",
-      "nombre": "Geométrico",
+      "nombre": "Ubicación Geográfica",
       "descripcion": "Campo espacial (PostGIS)",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",

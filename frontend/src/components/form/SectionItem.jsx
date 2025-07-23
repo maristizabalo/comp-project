@@ -21,7 +21,7 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
       <Form.Item
         name={[section.name, "nombre"]}
-        rules={[{ required: true, message: "Debe dar un nombre a la sección", max: 12 }]}
+        rules={[{ required: true, message: "Debe dar un nombre a la sección" }]}
       >
         <Input placeholder="Nombre de la sección" />
       </Form.Item>
