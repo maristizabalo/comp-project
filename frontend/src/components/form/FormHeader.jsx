@@ -1,22 +1,59 @@
-import { Form, Input } from "antd";
+import { Form, Input, Select, Typography } from "antd";
+const { TextArea } = Input;
+const { Title } = Typography;
 
-const FormHeader = ({ form }) => (
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <Form.Item
-      label="Título del formulario"
-      name="titulo"
-      rules={[{ required: true, message: "Este campo es obligatorio" }]}
-    >
-      <Input placeholder="Título" />
-    </Form.Item>
-    <Form.Item
-      label="Descripción"
-      name="descripcion"
-      rules={[{ required: true, message: "Este campo es obligatorio" }]}
-    >
-      <Input.TextArea rows={3} placeholder="Descripción del formulario" />
-    </Form.Item>
-  </div>
-);
+const FormHeader = ({ form, modulos = [] }) => {
+  return (
+    <div className="flex flex-col gap-4">
+      <Title level={3} className="text-primario !mb-2">
+        Crear nuevo formulario
+      </Title>
+
+      <Form.Item
+        name="titulo"
+        className="mb-0"
+        rules={[{ required: true, message: "Este campo es obligatorio" }]}
+      >
+        <Input
+          placeholder="Título del formulario"
+          className="text-lg py-2 border border-gray-400"
+        />
+      </Form.Item>
+
+      <Form.Item
+        name="descripcion"
+        className="!mb-0"
+        rules={[{ required: true, message: "Este campo es obligatorio" }]}
+      >
+        <TextArea
+          rows={3}
+          placeholder="Breve descripción del formulario"
+          className="border border-gray-400"
+        />
+      </Form.Item>
+
+      <Form.Item
+        label="Módulo al que pertenece"
+        name="moduloId"
+        className="!mb-0"
+        rules={[{ required: true, message: "Debes seleccionar un módulo" }]}
+      >
+        <Select
+          placeholder="Selecciona un módulo"
+          options={modulos.map((mod) => ({
+            label: mod.nombre,
+            value: mod.id,
+          }))}
+          className="!rounded-md"
+          style={{
+            border: "1px solid #9ca3af", // gray-400
+            borderRadius: 6,
+          }}
+        />
+      </Form.Item>
+
+    </div>
+  );
+};
 
 export default FormHeader;

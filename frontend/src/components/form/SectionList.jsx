@@ -26,7 +26,7 @@ const SectionList = ({ tiposCamposOptions }) => {
             type="dashed"
             icon={<PlusOutlined />}
             onClick={() => add()}
-            className="w-full"
+            className="w-w-full mt-2 text-green-900 border-green-500 bg-green-50 hover:bg-green-100 hover:!border-green-900"
           >
             Añadir sección
           </Button>

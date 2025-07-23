@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
+import { fetchTiposCampo } from "../../store/form/tiposCamposSlice";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -57,7 +58,7 @@ const routePermissions = {
 
   "/formularios": "ADMIN_FORMULARIO",
   "/formularios/crear": "ADMIN_FORMULARIO",
-  
+
   "/respuestas": "ADMIN_FORMULARIO",
 };
 
@@ -80,8 +81,8 @@ const routeComponents = {
   "/categorias/crear": <CategoryCreate />,
   "/categorias/editar/:id": <CategoryEdit />,
 
-  "/modulos": <ModuleList />, 
-  "/modulos/crear": <ModuleCreate />, 
+  "/modulos": <ModuleList />,
+  "/modulos/crear": <ModuleCreate />,
   "/modulos/editar/:id": <ModuleEdit />,
 
   "/formularios": <FormList />,
@@ -97,6 +98,10 @@ const Private = () => {
       dispatch(fetchRoles());
       dispatch(fetchPermissions());
       dispatch(fetchPermissionsForm());
+    }
+
+    if (userPermissions.includes(PERMISOS_ADMIN.ADMIN_FORMULARIO)) {
+      dispatch(fetchTiposCampo());
     }
   }, [userPermissions, dispatch]);
 

@@ -1,36 +1,44 @@
-import { Input, Select, Switch, Button, Form } from "antd";
-import { MinusCircleOutlined } from "@ant-design/icons";
+import { Input, Select, Switch, Form, Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => (
-  <div className="border border-gray-200 rounded-lg p-4 mb-2 flex flex-col gap-2">
-    <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-      <Form.Item
-        name={[field.name, "etiqueta"]}
-        label="Etiqueta"
-        rules={[{ required: true, message: "Requerido" }]}
-      >
-        <Input size="small" placeholder="Etiqueta visible" />
-      </Form.Item>
+  <div className="flex items-center gap-3 border border-gray-200 rounded-md px-3 py-2 bg-gray-50">
+    {/* Etiqueta */}
+    <Form.Item
+      name={[field.name, "etiqueta"]}
+      className="!mb-0 flex-1"
+      rules={[{ required: true, message: "Requerido" }]}
+    >
+      <Input size="small" placeholder="Etiqueta del campo" />
+    </Form.Item>
 
-      <Form.Item
-        name={[field.name, "tipo"]}
-        label="Tipo de campo"
-        rules={[{ required: true, message: "Requerido" }]}
-      >
-        <Select size="small" options={tiposCamposOptions} placeholder="Tipo" />
-      </Form.Item>
+    {/* Tipo */}
+    <Form.Item
+      name={[field.name, "tipo"]}
+      className="!mb-0 w-48"
+      rules={[{ required: true, message: "Requerido" }]}
+    >
+      <Select size="small" options={tiposCamposOptions} placeholder="Tipo" />
+    </Form.Item>
 
+    {/* Obligatorio */}
+    <div className="flex items-center gap-1">
+      <span className="text-xs text-gray-600">Obligatorio</span>
       <Form.Item
         name={[field.name, "obligatorio"]}
-        label="Obligatorio"
+        className="!mb-0"
         valuePropName="checked"
       >
         <Switch size="small" />
       </Form.Item>
+    </div>
 
+    {/* Principal */}
+    <div className="flex items-center gap-1">
+      <span className="text-xs text-gray-600">Principal</span>
       <Form.Item
         name={[field.name, "principal"]}
-        label="Principal"
+        className="!mb-0"
         valuePropName="checked"
         rules={[
           ({ getFieldValue }) => ({
@@ -44,14 +52,14 @@ const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => (
         <Switch size="small" />
       </Form.Item>
     </div>
+
+    {/* Botón eliminar */}
     <Button
-      size="small"
+      type="text"
+      icon={<DeleteOutlined />}
       danger
-      icon={<MinusCircleOutlined />}
       onClick={() => remove(field.name)}
-    >
-      Eliminar campo
-    </Button>
+    />
   </div>
 );
 

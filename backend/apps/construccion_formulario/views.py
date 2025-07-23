@@ -1,11 +1,13 @@
 from rest_framework import status
 from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
-
-from .models import Formulario
-from .serializers import FormularioCompletoSerializer
+from .models import Formulario, Tipo
+from .serializers import FormularioCompletoSerializer, TipoLiteSerializer
 from utils.transactionals import ListCreateAPIView, RetrieveUpdateAPIView
 
+class TipoListView(ListCreateAPIView):
+    queryset = Tipo.objects.all().order_by('id')
+    serializer_class = TipoLiteSerializer
 
 class FormularioListCreateView(ListCreateAPIView):
     queryset = Formulario.objects.all()

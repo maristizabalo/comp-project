@@ -1,9 +1,13 @@
 from rest_framework import serializers
 from apps.formulario.models import Formulario
-from .models import Campo, Opcion
+from .models import Campo, Opcion, Tipo
 from apps.permiso.models import PermisoFormulario
 
-
+#tipo
+class TipoLiteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tipo
+        fields = ['id', 'tipo', 'nombre', 'descripcion']
 
 # Opcion
 class OpcionSerializer(serializers.ModelSerializer):
