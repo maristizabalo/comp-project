@@ -38,11 +38,9 @@ class FormularioCrearSerializer(serializers.Serializer):
     modulo_id = serializers.IntegerField()
 
     def create(self, validated_data):
-        print("FormularioCrearSerializer create method called with data:", validated_data)
         user = self.context.get('user')
         ip = self.context.get('ip')
         modulo_id = validated_data['modulo_id']
-        print("Modulo ID:", modulo_id)
         modulo_instance = Modulo.objects.get(pk=modulo_id)
 
         with transaction.atomic():
