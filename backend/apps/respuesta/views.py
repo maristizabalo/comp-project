@@ -15,7 +15,6 @@ class RespuestaFormularioView(ListCreateAPIView):
     
     def create(self, request, *args, **kwargs):
         formulario_id = request.data.get("formulario")
-        print(f"ID del formulario recibido: {formulario_id}")
         return super().create(request, *args, **kwargs)
 
 class RespuestaFormularioDetailView(RetrieveUpdateAPIView):

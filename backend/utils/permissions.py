@@ -29,7 +29,7 @@ def build_check_formulario_permiso(tipo_permiso):
             if not formulario_id and request.method in ['POST', 'PUT', 'PATCH']:
                 formulario_id = request.data.get('formulario')
 
-            print(f"🛂 Validando permiso '{tipo_permiso}' para el formulario ID: {formulario_id}")
+            print(f"Validando permiso '{tipo_permiso}' para el formulario ID: {formulario_id}")
             
             if not formulario_id:
                 return False

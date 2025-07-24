@@ -56,7 +56,6 @@ class TipoListView(ListCreateAPIView):
 
 class FormularioCrearView(ListCreateAPIView):
     def post(self, request, *args, **kwargs):
-        print("FormularioCrearView POST request data:", request.data)
         serializer = FormularioCrearSerializer(data=request.data, context={
             'user': request.user,
             'ip': request.META.get('REMOTE_ADDR')

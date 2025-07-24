@@ -50,7 +50,6 @@ class FormularioCrearSerializer(serializers.Serializer):
         ip = self.context.get('ip')
         modulo_id = validated_data['modulo_id']
         modulo_instance = Modulo.objects.get(pk=modulo_id)
-        print("FormularioCrearSerializer POST request data:", validated_data)
 
         with transaction.atomic():
             formulario = Formulario.objects.create(
@@ -65,7 +64,6 @@ class FormularioCrearSerializer(serializers.Serializer):
 
             for seccion_data in validated_data['secciones']:
                 campos_data = seccion_data.pop('campos', [])
-                print("Campos data:", campos_data)
 
                 seccion = Seccion.objects.create(
                     nombre=seccion_data['nombre'],
@@ -79,11 +77,8 @@ class FormularioCrearSerializer(serializers.Serializer):
                 )
 
                 for campo_data in campos_data:
-                    print(campo_data, "campo_data")
                     opciones_data = campo_data.pop('opciones', [])
                     subcampos_data = campo_data.pop('subcampos', [])
-                    print(opciones_data, "opciones_data")
-                    print(subcampos_data, "subcampos_data")
 
                     campo = Campo.objects.create(
                         seccion=seccion,
