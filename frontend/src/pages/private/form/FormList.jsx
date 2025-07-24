@@ -49,7 +49,11 @@ const FormList = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/formularios/crear")}>
+        <Button
+          type="primary"
+          icon={<PlusOutlined />}
+          onClick={() => navigate("/formularios/crear")}
+        >
           Nuevo Formulario
         </Button>
       </div>
@@ -76,23 +80,39 @@ const FormList = () => {
             <div key={modulo} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <Title level={4} className="!mb-0 !text-primario">{modulo}</Title>
-                <Paragraph className="text-gray-400 !mb-2">Total: {formularios.length} formularios</Paragraph>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <Paragraph className="text-gray-400 !mb-2">
+                  Total: {formularios.length} formularios
+                </Paragraph>
+
+                <div className="flex flex-col gap-4">
                   {formularios.map((formulario) => (
-                    <div key={formulario.id} className="relative rounded-xl shadow-md bg-white p-4 hover:shadow-lg transition-all">
-                      <Button
-                        icon={<EditOutlined />}
-                        shape="circle"
-                        size="small"
-                        className="absolute right-3 top-3 z-10"
-                        onClick={() => navigate(`/formularios/editar/${formulario.id}`)}
-                      />
-                      <div className="flex flex-col gap-2">
-                        <Text className="font-semibold text-base">{formulario.nombre}</Text>
+                    <div
+                      key={formulario.id}
+                      className="border border-gray-200 rounded-xl shadow-sm bg-white p-4 hover:shadow-md transition-all flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+                    >
+                      <div className="flex flex-col gap-1">
+                        <Text className="font-semibold text-lg">{formulario.nombre}</Text>
                         <Paragraph className="text-gray-500 text-sm !mb-1">{formulario.descripcion}</Paragraph>
                         <Paragraph className="text-gray-400 text-xs !mb-0">
                           Creado por: {formulario.usuarioCreo}
                         </Paragraph>
+                      </div>
+
+                      <div className="flex gap-2 flex-wrap sm:flex-nowrap">
+                        <Button onClick={() => navigate(`/formularios/diligenciar/${formulario.id}`)}>
+                          Diligenciar
+                        </Button>
+                        <Button
+                          type="default"
+                          onClick={() => navigate(`/formularios/respuestas/${formulario.id}`)}
+                        >
+                          Ver respuestas
+                        </Button>
+                        <Button
+                          icon={<EditOutlined />}
+                          onClick={() => navigate(`/formularios/editar/${formulario.id}`)}
+                          type="primary"
+                        />
                       </div>
                     </div>
                   ))}
