@@ -1,5 +1,6 @@
 import { Suspense, lazy, useState } from "react";
 import { Form } from "antd";
+import { TIPOS_CAMPO } from "../../utils/constants";
 
 const FieldControls = lazy(() => import("./FieldControls"));
 const FieldOptions = lazy(() => import("./FieldOptions"));
@@ -9,8 +10,8 @@ const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => {
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
 
   const isOpcionTipo =
-    tipoSeleccionado === "seleccion-unica" || tipoSeleccionado === "seleccion-multiple";
-  const isGrupoCampos = tipoSeleccionado === "grupo-campos";
+    tipoSeleccionado === TIPOS_CAMPO.SELECCION_UNICA || tipoSeleccionado === TIPOS_CAMPO.SELECCION_MULTIPLE;
+  const isGrupoCampos = tipoSeleccionado === TIPOS_CAMPO.GRUPO_CAMPOS;
 
   return (
     <div className="flex flex-col gap-2 border border-gray-200 rounded-md px-3 py-2 bg-gray-50">

@@ -16,12 +16,20 @@ class OpcionSerializer(serializers.ModelSerializer):
         fields = ['valor']
 
 
+class SubCampoSerializer(serializers.Serializer):
+    tipo = serializers.CharField()
+    etiqueta = serializers.CharField()
+
 class CampoSerializer(serializers.ModelSerializer):
     opciones = OpcionSerializer(many=True, required=False)
+    subcampos = SubCampoSerializer(many=True, required=False)  
 
     class Meta:
         model = Campo
-        fields = ['nombre', 'tipo', 'obligatorio', 'principal', 'opciones']
+        fields = [
+            'nombre', 'tipo', 'obligatorio', 'principal',
+            'opciones', 'subcampos'                    
+        ]
 
 
 class SeccionCrearSerializer(serializers.Serializer):
@@ -42,6 +50,7 @@ class FormularioCrearSerializer(serializers.Serializer):
         ip = self.context.get('ip')
         modulo_id = validated_data['modulo_id']
         modulo_instance = Modulo.objects.get(pk=modulo_id)
+        print("FormularioCrearSerializer POST request data:", validated_data)
 
         with transaction.atomic():
             formulario = Formulario.objects.create(
@@ -56,6 +65,7 @@ class FormularioCrearSerializer(serializers.Serializer):
 
             for seccion_data in validated_data['secciones']:
                 campos_data = seccion_data.pop('campos', [])
+                print("Campos data:", campos_data)
 
                 seccion = Seccion.objects.create(
                     nombre=seccion_data['nombre'],
@@ -69,7 +79,12 @@ class FormularioCrearSerializer(serializers.Serializer):
                 )
 
                 for campo_data in campos_data:
+                    print(campo_data, "campo_data")
                     opciones_data = campo_data.pop('opciones', [])
+                    subcampos_data = campo_data.pop('subcampos', [])
+                    print(opciones_data, "opciones_data")
+                    print(subcampos_data, "subcampos_data")
+
                     campo = Campo.objects.create(
                         seccion=seccion,
                         usuario_creo=user.usuario,
@@ -78,8 +93,32 @@ class FormularioCrearSerializer(serializers.Serializer):
                         ip_modifico=ip,
                         **campo_data
                     )
+
+                    # Crear opciones si las hay
                     for opcion_data in opciones_data:
                         Opcion.objects.create(campo=campo, **opcion_data)
+                    
+
+                    # Crear subcampos si los hay
+                    for subcampo_data in subcampos_data:
+                        tipo_nombre = subcampo_data.get("tipo")  # texto, numero, booleano, etc.
+                        tipo_obj = Tipo.objects.filter(tipo=tipo_nombre).first()
+
+                        if tipo_obj:
+                            Campo.objects.create(
+                                nombre=subcampo_data.get('etiqueta'),  # Puedes usar 'etiqueta' como nombre también
+                                etiqueta=subcampo_data.get('etiqueta'),
+                                tipo=tipo_obj,
+                                obligatorio=False,
+                                principal=False,
+                                orden=0,
+                                seccion=seccion,
+                                campo_padre=campo,
+                                usuario_creo=user.usuario,
+                                ip_creo=ip,
+                                usuario_modifico=user.usuario,
+                                ip_modifico=ip
+                            )
 
             # Crear permisos del formulario
             for tipo_permiso in ['LECTURA', 'ESCRITURA', 'REPORTE']:
@@ -87,6 +126,6 @@ class FormularioCrearSerializer(serializers.Serializer):
                     nombre=f"{formulario.nombre}-{tipo_permiso}",
                     tipo=tipo_permiso,
                     formulario=formulario
-                )   
+                )
 
         return formulario
