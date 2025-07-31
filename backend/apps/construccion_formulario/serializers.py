@@ -247,11 +247,15 @@ class SubcampoGroupSerializer(serializers.Serializer):
     campos = CampoRetrieveSerializer(many=True)
 
 class SeccionRetrieveSerializer(serializers.ModelSerializer):
-    campos = CampoRetrieveSerializer(many=True, read_only=True)
+    campos = serializers.SerializerMethodField()
 
     class Meta:
         model = Seccion
         fields = ['id', 'nombre', 'orden', 'descripcion', 'campos']
+
+    def get_campos(self, obj):
+        campos_raiz = obj.campos.filter(campo_padre__isnull=True).order_by('orden')
+        return CampoRetrieveSerializer(campos_raiz, many=True).data
 
 class FormularioRetrieveSerializer(serializers.ModelSerializer):
     secciones = SeccionRetrieveSerializer(many=True, read_only=True)
