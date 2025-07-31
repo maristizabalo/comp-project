@@ -93,7 +93,7 @@ const FormEntry = () => {
       </div>
 
       <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <FormStep seccion={formulario.secciones[currentStep]} />
+        <FormStep seccion={formulario.secciones[currentStep]} form={form}/>
 
         <div className="flex justify-between mt-6">
           {currentStep > 0 && (

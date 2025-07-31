@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@ant-design/v5-patch-for-react-19": "^1.0.3",
+    "@arcgis/core": "^4.33.11",
+    "@arcgis/map-components": "^4.33.12",
+    "@esri/calcite-components": "^3.2.1",
     "@reduxjs/toolkit": "^2.8.2",
     "antd": "^5.26.1",
     "axios": "^1.10.0",
