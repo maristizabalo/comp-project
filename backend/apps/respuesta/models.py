@@ -1,5 +1,4 @@
-from django.contrib.gis.db import models as gis_models
-from django.db import models
+from django.contrib.gis.db import models
 from apps.formulario.models import Formulario
 from apps.construccion_formulario.models import Campo, Opcion
 
@@ -20,7 +19,7 @@ class RespuestaCampo(models.Model):
     valor_texto = models.TextField(null=True, blank=True, db_column='VALOR_TEXTO')
     valor_numero = models.FloatField(null=True, blank=True, db_column='VALOR_NUMERO')
     valor_fecha = models.DateField(null=True, blank=True, db_column='VALOR_FECHA')
-    valor_geom = gis_models.PointField(null=True, blank=True, db_column='VALOR_GEOM', geography=True)
+    valor_geom = models.GeometryField(null=True, blank=True)  # Punto, línea o polígono
     valor_booleano = models.BooleanField(null=True, blank=True, db_column='VALOR_BOOLEANO')
     valor_opcion = models.ForeignKey(
         Opcion,

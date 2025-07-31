@@ -3,10 +3,14 @@ import React, { useState } from "react";
 import GroupedFieldInput from "./GroupedFieldInput";
 
 const FieldRenderer = ({ campo, form }) => {
-    const { nombre, tipo, etiqueta, obligatorio, opciones, subcampos } = campo;
+    const { id, nombre, tipo, etiqueta, obligatorio, opciones, subcampos } = campo;
     const [selected, setSelected] = useState(null);
 
-    const valoresGrupo = Form.useWatch(nombre); // 👈 Se observa todo el grupo
+    const valoresGrupo = Form.useWatch(nombre);
+
+    const rules = obligatorio ? [{ required: true, message: "Campo obligatorio" }] : [];
+
+    const setValue = (value) => form.setFieldValue(nombre, { campo: id, ...value });
 
     if (tipo === "grupo-campos" && subcampos?.campos?.length) {
         return (
@@ -52,11 +56,7 @@ const FieldRenderer = ({ campo, form }) => {
                                         <Input type="hidden" />
                                     </Form.Item>
                                     <div className="col-span-11">
-                                        <GroupedFieldInput
-                                            field={current}
-                                            tipo={current.tipo}
-                                            namePath={[name]}
-                                        />
+                                        <GroupedFieldInput field={current} tipo={current.tipo} namePath={[name]} />
                                     </div>
                                     <Button type="text" danger onClick={() => remove(name)} className="col-span-1">
                                         🗑️
@@ -70,21 +70,64 @@ const FieldRenderer = ({ campo, form }) => {
         );
     }
 
-    // campos simples
-    const rules = [{ required: obligatorio, message: "Campo obligatorio" }];
     switch (tipo) {
         case "texto":
-            return <Form.Item name={nombre} label={etiqueta} rules={rules}><Input type="text" /></Form.Item>;
+            return (
+                <Form.Item
+                    name={nombre}
+                    label={etiqueta}
+                    rules={rules}
+                    getValueProps={(value) => ({
+                        value: value?.valor_texto ?? ""
+                    })}
+                    normalize={(value) => ({
+                        campo: campo.id,
+                        valor_texto: value
+                    })}
+                >
+                    <Input type="text" onChange={(e) => setValue({ valor_texto: e.target.value })} />
+                </Form.Item>
+            );
         case "numero":
-            return <Form.Item name={nombre} label={etiqueta} rules={rules}><Input type="number" /></Form.Item>;
+            return (
+                <Form.Item name={nombre} label={etiqueta} rules={rules}>
+                    <Input
+                        type="number"
+                        onChange={(e) => setValue({ valor_numero: parseFloat(e.target.value) })}
+                    />
+                </Form.Item>
+            );
         case "booleano":
-            return <Form.Item name={nombre} label={etiqueta} valuePropName="checked"><Switch /></Form.Item>;
+            return (
+                <Form.Item name={nombre} label={etiqueta} valuePropName="checked">
+                    <Switch onChange={(val) => setValue({ valor_booleano: val })} />
+                </Form.Item>
+            );
         case "fecha":
-            return <Form.Item name={nombre} label={etiqueta} rules={rules}><DatePicker className="w-full" format="YYYY-MM-DD" /></Form.Item>;
+            return (
+                <Form.Item name={nombre} label={etiqueta} rules={rules}>
+                    <DatePicker className="w-full" format="YYYY-MM-DD" onChange={(date, dateStr) => setValue({ valor_fecha: dateStr })} />
+                </Form.Item>
+            );
         case "seleccion-unica":
-            return <Form.Item name={nombre} label={etiqueta} rules={rules}><Select options={opciones.map((op) => ({ label: op.valor, value: op.valor }))} /></Form.Item>;
+            return (
+                <Form.Item name={nombre} label={etiqueta} rules={rules}>
+                    <Select
+                        onChange={(val) => setValue({ valor_opcion: val })}
+                        options={opciones.map((op) => ({ label: op.valor, value: op.id }))}
+                    />
+                </Form.Item>
+            );
         case "seleccion-multiple":
-            return <Form.Item name={nombre} label={etiqueta} rules={rules}><Select mode="multiple" options={opciones.map((op) => ({ label: op.valor, value: op.valor }))} /></Form.Item>;
+            return (
+                <Form.Item name={nombre} label={etiqueta} rules={rules}>
+                    <Select
+                        mode="multiple"
+                        onChange={(vals) => setValue({ valor_opciones: vals })}
+                        options={opciones.map((op) => ({ label: op.valor, value: op.id }))}
+                    />
+                </Form.Item>
+            );
         case "archivo":
             return (
                 <Form.Item
@@ -98,32 +141,16 @@ const FieldRenderer = ({ campo, form }) => {
                 </Form.Item>
             );
         case "geometrico":
-            const LazyMap = React.lazy(() =>
-                import("../maps/ArcgisMap")
-            );
+            const LazyMap = React.lazy(() => import("../maps/ArcgisMap"));
             return (
-                <Form.Item
-                    name={nombre}
-                    label={etiqueta}
-                    rules={[{ required: obligatorio, message: "Debe dibujar una geometría" }]}
-                >
+                <Form.Item name={nombre} label={etiqueta} rules={rules}>
                     <React.Suspense fallback={<div>Cargando mapa...</div>}>
-                        <div className="h-64">
-                            <LazyMap
-                                onGeometryAdded={(geom) => console.log("Geometría enviada", geom)}
-                                required={true}
-                                initialGeometry={{
-                                    type: "Point",
-                                    coordinates: [-74.0817, 4.6097],
-                                }}
-                                itemId="02b37471d5d84cacbebcccd785460e94"
-                            />
+                        <div className="h-[480px]">
+                            <LazyMap onGeometryAdded={(geom) => setValue({ valor_geom: geom })} required />
                         </div>
-
                     </React.Suspense>
                 </Form.Item>
             );
-
         default:
             return null;
     }

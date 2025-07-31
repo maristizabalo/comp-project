@@ -51,13 +51,14 @@ const FormEntry = () => {
   const handleSubmit = (values) => {
     const response = {
       formulario_id: id,
-      respuestas: [],
+      respuestas_campo: [],
     };
+    console.log("Values actualizando form", values)
 
     formulario.secciones.forEach((seccion) => {
       seccion.campos.forEach((campo) => {
         const valor = values[campo.nombre];
-        response.respuestas.push({
+        response.respuestas_campo.push({
           campo_id: campo.id,
           valor: campo.tipo === "grupo-campos" ? valor || [] : valor ?? null,
         });

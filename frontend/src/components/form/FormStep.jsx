@@ -13,7 +13,7 @@ const FormStep = ({ seccion, form }) => (
         .sort((a, b) => a.orden - b.orden) // Orden ascendente por 'orden'
         .map((campo) => (
           <div key={campo.nombre}>
-            <FieldRenderer campo={campo} from={form}/>
+            <FieldRenderer campo={campo} form={form}/>
           </div>
         ))}
     </div>
