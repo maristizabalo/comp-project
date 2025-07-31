@@ -157,21 +157,27 @@ class FormularioCrearSerializer(serializers.Serializer):
                     ip_modifico=ip
                 )
 
+                campo_orden = 1  # contador para los campos
+
                 for campo_data in campos_data:
                     opciones_data = campo_data.pop('opciones', [])
                     subcampos_data = campo_data.pop('subcampos', [])
 
                     campo = Campo.objects.create(
                         seccion=seccion,
+                        orden=campo_orden,
                         usuario_creo=user.usuario,
                         ip_creo=ip,
                         usuario_modifico=user.usuario,
                         ip_modifico=ip,
                         **campo_data
                     )
+                    campo_orden += 1
 
                     for opcion_data in opciones_data:
                         Opcion.objects.create(campo=campo, **opcion_data)
+
+                    subcampo_orden = 1  # contador para los subcampos
 
                     for subcampo_data in subcampos_data:
                         tipo_nombre = subcampo_data.get("tipo")
@@ -184,7 +190,7 @@ class FormularioCrearSerializer(serializers.Serializer):
                                 tipo=tipo_obj,
                                 obligatorio=False,
                                 principal=False,
-                                orden=0,
+                                orden=subcampo_orden,
                                 seccion=seccion,
                                 campo_padre=campo,
                                 usuario_creo=user.usuario,
@@ -192,6 +198,7 @@ class FormularioCrearSerializer(serializers.Serializer):
                                 usuario_modifico=user.usuario,
                                 ip_modifico=ip
                             )
+                            subcampo_orden += 1
 
             for tipo_permiso in ['LECTURA', 'ESCRITURA', 'REPORTE']:
                 PermisoFormulario.objects.create(
@@ -203,6 +210,7 @@ class FormularioCrearSerializer(serializers.Serializer):
         return formulario
 
 # --- SERIALIZERS PARA CONSULTA (GET) --- #
+
 
 class SubCampoRetrieveSerializer(serializers.ModelSerializer):
     tipo = serializers.CharField(source='tipo.tipo')
@@ -219,11 +227,24 @@ class OpcionRetrieveSerializer(serializers.ModelSerializer):
 class CampoRetrieveSerializer(serializers.ModelSerializer):
     tipo = serializers.CharField(source='tipo.tipo')
     opciones = OpcionRetrieveSerializer(many=True, read_only=True)
-    subcampos = SubCampoRetrieveSerializer(many=True, read_only=True, source='subcampos_directos')
+    subcampos = serializers.SerializerMethodField()
 
     class Meta:
         model = Campo
-        fields = ['id', 'nombre', 'etiqueta', 'tipo', 'obligatorio', 'principal', 'opciones', 'subcampos']
+        fields = ['id', 'nombre', 'etiqueta', 'tipo', 'obligatorio', 'principal', 'opciones', 'subcampos', 'orden']
+
+    def get_subcampos(self, obj):
+        subcampos = obj.subcampos.all()
+        if not subcampos:
+            return None
+        return {
+            "campo_padre": obj.id,
+            "campos": CampoRetrieveSerializer(subcampos, many=True).data
+        }
+
+class SubcampoGroupSerializer(serializers.Serializer):
+    campo_padre = serializers.IntegerField()
+    campos = CampoRetrieveSerializer(many=True)
 
 class SeccionRetrieveSerializer(serializers.ModelSerializer):
     campos = CampoRetrieveSerializer(many=True, read_only=True)

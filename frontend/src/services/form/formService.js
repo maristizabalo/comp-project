@@ -26,5 +26,19 @@ export const formService = {
     }
   },
 
+  //Obtener formulario por id
+  getFormularioById: async (formularioId) => {
+    try {
+      const response = await api.get(`/construccion-formulario/${formularioId}`);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Error al crear el formulario"
+      );
+    }
+  },
+
+
+
 
 };

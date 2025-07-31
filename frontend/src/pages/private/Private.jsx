@@ -6,6 +6,7 @@ import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
 import { fetchTiposCampo } from "../../store/form/tiposCamposSlice";
+import FormEntry from "./form/FormEntry";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -87,6 +88,7 @@ const routeComponents = {
 
   "/formularios": <FormList />,
   "/formularios/crear": <FormCreate />,
+  "/formularios/diligenciar/:id": <FormEntry />,
 };
 
 const Private = () => {

@@ -47,6 +47,7 @@ const AppLayout = ({ children }) => {
 
     "/formularios": "Formularios",
     "/formularios/crear": "Creación de formulario",
+    "/formularios/diligenciar": "Diligenciar formulario",
     
     "/respuestas": "Respuestas",
   };
