@@ -77,15 +77,8 @@ const FieldRenderer = ({ campo, form }) => {
                     name={nombre}
                     label={etiqueta}
                     rules={rules}
-                    getValueProps={(value) => ({
-                        value: value?.valor_texto ?? ""
-                    })}
-                    normalize={(value) => ({
-                        campo: campo.id,
-                        valor_texto: value
-                    })}
                 >
-                    <Input type="text" onChange={(e) => setValue({ valor_texto: e.target.value })} />
+                    <Input type="text"/>
                 </Form.Item>
             );
         case "numero":
@@ -93,27 +86,25 @@ const FieldRenderer = ({ campo, form }) => {
                 <Form.Item name={nombre} label={etiqueta} rules={rules}>
                     <Input
                         type="number"
-                        onChange={(e) => setValue({ valor_numero: parseFloat(e.target.value) })}
                     />
                 </Form.Item>
             );
         case "booleano":
             return (
                 <Form.Item name={nombre} label={etiqueta} valuePropName="checked">
-                    <Switch onChange={(val) => setValue({ valor_booleano: val })} />
+                    <Switch />
                 </Form.Item>
             );
         case "fecha":
             return (
                 <Form.Item name={nombre} label={etiqueta} rules={rules}>
-                    <DatePicker className="w-full" format="YYYY-MM-DD" onChange={(date, dateStr) => setValue({ valor_fecha: dateStr })} />
+                    <DatePicker className="w-full" format="YYYY-MM-DD" />
                 </Form.Item>
             );
         case "seleccion-unica":
             return (
                 <Form.Item name={nombre} label={etiqueta} rules={rules}>
                     <Select
-                        onChange={(val) => setValue({ valor_opcion: val })}
                         options={opciones.map((op) => ({ label: op.valor, value: op.id }))}
                     />
                 </Form.Item>
@@ -123,7 +114,6 @@ const FieldRenderer = ({ campo, form }) => {
                 <Form.Item name={nombre} label={etiqueta} rules={rules}>
                     <Select
                         mode="multiple"
-                        onChange={(vals) => setValue({ valor_opciones: vals })}
                         options={opciones.map((op) => ({ label: op.valor, value: op.id }))}
                     />
                 </Form.Item>

@@ -38,6 +38,18 @@ export const formService = {
     }
   },
 
+  // Crear una nueva respuesta de formulario
+  createRespuestaFormulario: async (payload) => {
+    try {
+      const response = await api.post("/respuesta/", payload);
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.message || "Error al enviar la respuesta del formulario"
+      );
+    }
+  },
+
 
 
 

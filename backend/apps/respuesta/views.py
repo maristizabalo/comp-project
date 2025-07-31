@@ -7,15 +7,41 @@ import pandas as pd
 from rest_framework.permissions import IsAuthenticated
 from utils.permissions import build_check_formulario_permiso, check_user_formulario_permiso
 from io import BytesIO
+from rest_framework.response import Response
+from rest_framework import status
+
+
 
 class RespuestaFormularioView(ListCreateAPIView):
     queryset = RespuestaFormulario.objects.all()
     serializer_class = RespuestaFormularioSerializer
-    permission_classes = [IsAuthenticated, build_check_formulario_permiso('escritura')]
-    
+    permission_classes = [IsAuthenticated, build_check_formulario_permiso('ESCRITURA')]
+
+    def get_user_ip(self):
+        ip_user = (
+            self.request.META.get("X_REAL_IP")
+            or self.request.META.get("HTTP_X_REAL_IP")
+            or self.request.META.get("X_FORWARDED_FOR")
+            or self.request.META.get("HTTP_X_FORWARDED_FOR")
+            or self.request.META.get("REMOTE_ADDR")
+        )
+        if ip_user in ["127.0.0.1", "localhost"]:
+            ip_user = self.request.META.get("REMOTE_ADDR")
+        return ip_user
+
     def create(self, request, *args, **kwargs):
-        formulario_id = request.data.get("formulario")
-        return super().create(request, *args, **kwargs)
+        data = request.data.copy()
+        user = request.user.usuario if hasattr(request.user, 'usuario') else str(request.user)
+        ip_user = self.get_user_ip()
+
+        data["usuario"] = user
+        data["ip"] = ip_user
+
+        serializer = self.get_serializer(data=data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
     queryset = RespuestaFormulario.objects.all()
@@ -23,7 +49,7 @@ class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
 
 class RespuestasFormularioTablaView(ListCreateAPIView):
     serializer_class = RespuestaFormularioTablaSerializer
-    permission_classes = [build_check_formulario_permiso('lectura')]
+    permission_classes = [build_check_formulario_permiso('LECTURA')]
 
     def get_queryset(self):
         formulario_id = self.kwargs['formulario_id']
@@ -32,7 +58,7 @@ class RespuestasFormularioTablaView(ListCreateAPIView):
 
 
 def exportar_respuestas_excel(request, formulario_id):
-    if not check_user_formulario_permiso(request.user, formulario_id, 'lectura'):
+    if not check_user_formulario_permiso(request.user, formulario_id, 'LECTURA'):
         return HttpResponseForbidden("No tienes permiso para exportar este formulario.")
 
     # Obtener los datos en bruto directamente desde el modelo
