@@ -11,7 +11,6 @@ urlpatterns = [
     path('api/permiso/', include('apps.permiso.urls')),
     path('api/area/', include('apps.area.urls')),
     path('api/categoria/', include('apps.categoria.urls')),
-    path('api/modulo/', include('apps.modulo.urls')),
     path('api/formulario/', include('apps.formulario.urls')),
     
     #Gestion de creacion de formularios y respuestas URLs

@@ -55,7 +55,7 @@
     "model": "permiso.permiso",
     "pk": 5,
     "fields": {
-      "nombre": "ADMINISTRAR MODULOS",
+      "nombre": "ADMINISTRAR CATEGORIAS",
       "usuario_creo": "admin",
       "ip_creo": "127.0.0.1",
       "usuario_modifico": "admin",

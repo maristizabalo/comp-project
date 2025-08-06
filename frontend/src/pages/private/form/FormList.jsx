@@ -32,17 +32,17 @@ const FormList = () => {
     const filtered = formularios?.filter(
       (formulario) =>
         formulario.nombre.toLowerCase().includes(lowerValue) ||
-        formulario.modulo?.nombre.toLowerCase().includes(lowerValue)
+        formulario.categoria?.nombre.toLowerCase().includes(lowerValue)
     );
     setFilteredFormularios(filtered);
   }, [searchValue, formularios]);
 
   const groupedByModulo = filteredFormularios?.reduce((acc, formulario) => {
-    const moduloNombre = formulario.modulo?.nombre || "Sin módulo";
-    if (!acc[moduloNombre]) {
-      acc[moduloNombre] = [];
+    const Nombre = formulario.categoria?.nombre || "Sin módulo";
+    if (!acc[Nombre]) {
+      acc[Nombre] = [];
     }
-    acc[moduloNombre].push(formulario);
+    acc[Nombre].push(formulario);
     return acc;
   }, {});
 
@@ -76,10 +76,10 @@ const FormList = () => {
         {!loading &&
           !error &&
           groupedByModulo &&
-          Object.entries(groupedByModulo).map(([modulo, formularios]) => (
-            <div key={modulo} className="flex flex-col gap-4">
+          Object.entries(groupedByModulo).map(([categoria, formularios]) => (
+            <div key={categoria} className="flex flex-col gap-4">
               <div className="flex flex-col">
-                <Title level={4} className="!mb-0 !text-primario">{modulo}</Title>
+                <Title level={4} className="!mb-0 !text-primario">{categoria}</Title>
                 <Paragraph className="text-gray-400 !mb-2">
                   Total: {formularios.length} formularios
                 </Paragraph>

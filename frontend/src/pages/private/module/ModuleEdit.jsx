@@ -11,7 +11,7 @@ const { Title } = Typography;
 const ModuleEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: modulo, loading: loadingModulo, fetchData: fetchModulo } = useFetch();
+  const { data: categoria, loading: loadingModulo, fetchData: fetchModulo } = useFetch();
   const { data: categorias, loading: loadingCategorias, fetchData: fetchCategorias } = useFetch();
   const { loading: loadingUpdate, fetchData: updateModulo } = useFetch();
 
@@ -24,7 +24,7 @@ const ModuleEdit = () => {
     try {
       await updateModulo(() => moduleService.updateModulo(id, values));
       message.success("Módulo actualizado correctamente");
-      navigate("/modulos");
+      navigate("/s");
     } catch (error) {
       message.error(error.message || "Ocurrió un error al actualizar el módulo");
     }
@@ -40,9 +40,9 @@ const ModuleEdit = () => {
         onFinish={handleFinish}
         loadingSubmit={loadingUpdate}
         initialValues={{
-          nombre: modulo?.nombre,
-          descripcion: modulo?.descripcion,
-          categoria_id: modulo?.categoria?.id,
+          nombre: categoria?.nombre,
+          descripcion: categoria?.descripcion,
+          categoria_id: categoria?.categoria?.id,
         }}
       />
     </Card>

@@ -1,6 +1,6 @@
 [
   {
-    "model": "modulo.modulo",
+    "model": "categoria.categoria",
     "pk": 1,
     "fields": {
       "nombre": "Bajo Puentes",
@@ -15,7 +15,7 @@
     }
   },
   {
-    "model": "modulo.modulo",
+    "model": "categoria.categoria",
     "pk": 2,
     "fields": {
       "nombre": "Defensores del Espacio Público",

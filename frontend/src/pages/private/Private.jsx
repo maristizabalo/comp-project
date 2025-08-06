@@ -53,10 +53,6 @@ const routePermissions = {
   "/categorias/crear": "ADMIN_CATEGORIA",
   "/categorias/editar/:id": "ADMIN_CATEGORIA",
 
-  "/modulos": "ADMIN_MODULO",
-  "/modulos/crear": "ADMIN_MODULO",
-  "/modulos/editar/:id": "ADMIN_MODULO",
-
   "/formularios": "ADMIN_FORMULARIO",
   "/formularios/crear": "ADMIN_FORMULARIO",
 
@@ -81,11 +77,7 @@ const routeComponents = {
   "/categorias": <CategoryList />,
   "/categorias/crear": <CategoryCreate />,
   "/categorias/editar/:id": <CategoryEdit />,
-
-  "/modulos": <ModuleList />,
-  "/modulos/crear": <ModuleCreate />,
-  "/modulos/editar/:id": <ModuleEdit />,
-
+  
   "/formularios": <FormList />,
   "/formularios/crear": <FormCreate />,
   "/formularios/diligenciar/:id": <FormEntry />,

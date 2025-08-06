@@ -41,10 +41,6 @@ const AppLayout = ({ children }) => {
     "/categorias/crear": "Creación de categoría",
     "/categorias/editar/": "Edición de categoría",
 
-    "/modulos": "Módulos",
-    "/modulos/crear": "Creación de módulo",
-    "/modulos/editar/": "Edición de módulo",
-
     "/formularios": "Formularios",
     "/formularios/crear": "Creación de formulario",
     "/formularios/diligenciar": "Diligenciar formulario",

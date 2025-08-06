@@ -2,7 +2,7 @@ import { Form, Input, Select, Typography } from "antd";
 const { TextArea } = Input;
 const { Title } = Typography;
 
-const FormHeader = ({ form, modulos = [] }) => {
+const FormHeader = ({ form, s = [] }) => {
   return (
     <div className="flex flex-col gap-4">
       <Title level={3} className="text-primario !mb-2">
@@ -34,13 +34,13 @@ const FormHeader = ({ form, modulos = [] }) => {
 
       <Form.Item
         label="Módulo al que pertenece"
-        name="moduloId"
+        name="Id"
         className="!mb-0"
         rules={[{ required: true, message: "Debes seleccionar un módulo" }]}
       >
         <Select
           placeholder="Selecciona un módulo"
-          options={modulos.map((mod) => ({
+          options={s.map((mod) => ({
             label: mod.nombre,
             value: mod.id,
           }))}

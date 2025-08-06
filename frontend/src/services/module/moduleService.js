@@ -4,7 +4,7 @@ export const moduleService = {
   // Obtener todos los módulos
   getModulos: async () => {
     try {
-      const response = await api.get("/modulo/");
+      const response = await api.get("/categoria/");
       return response.data;
     } catch (error) {
       throw new Error(
@@ -16,7 +16,7 @@ export const moduleService = {
   // Obtener un módulo específico por ID
   getModuloById: async (id) => {
     try {
-      const response = await api.get(`/modulo/${id}/`);
+      const response = await api.get(`/categoria/${id}/`);
       return response.data;
     } catch (error) {
       throw new Error(
@@ -26,9 +26,9 @@ export const moduleService = {
   },
 
   // Crear nuevo módulo
-  createModulo: async (moduloData) => {
+  createModulo: async (Data) => {
     try {
-      const response = await api.post("/modulo/", moduloData);
+      const response = await api.post("/categoria/", Data);
       return response.data;
     } catch (error) {
       throw new Error(
@@ -40,7 +40,7 @@ export const moduleService = {
   // Actualizar módulo
   updateModulo: async (id, updatedData) => {
     try {
-      const response = await api.patch(`/modulo/${id}/`, updatedData);
+      const response = await api.patch(`/categoria/${id}/`, updatedData);
       return response.data;
     } catch (error) {
       throw new Error(

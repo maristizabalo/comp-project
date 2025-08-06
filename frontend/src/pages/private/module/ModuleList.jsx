@@ -9,7 +9,7 @@ const { Title, Paragraph, Text } = Typography;
 
 const ModuleList = () => {
   const navigate = useNavigate();
-  const { loading, error, data: modulos, fetchData } = useFetch();
+  const { loading, error, data: s, fetchData } = useFetch();
   const [filteredModulos, setFilteredModulos] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 
@@ -18,38 +18,38 @@ const ModuleList = () => {
   }, [fetchData]);
 
   useEffect(() => {
-    if (modulos) {
-      setFilteredModulos(modulos);
+    if (s) {
+      setFilteredModulos(s);
     }
-  }, [modulos]);
+  }, [s]);
 
   useEffect(() => {
     if (!searchValue) {
-      setFilteredModulos(modulos);
+      setFilteredModulos(s);
       return;
     }
     const lowerValue = searchValue.toLowerCase();
-    const filtered = modulos?.filter(
-      (modulo) =>
-        modulo.nombre.toLowerCase().includes(lowerValue) ||
-        modulo.categoria?.nombre.toLowerCase().includes(lowerValue)
+    const filtered = s?.filter(
+      (categoria) =>
+        categoria.nombre.toLowerCase().includes(lowerValue) ||
+        categoria.categoria?.nombre.toLowerCase().includes(lowerValue)
     );
     setFilteredModulos(filtered);
-  }, [searchValue, modulos]);
+  }, [searchValue, s]);
 
-  const groupedByCategoria = filteredModulos?.reduce((acc, modulo) => {
-    const categoriaNombre = modulo.categoria?.nombre || "Sin categoría";
+  const groupedByCategoria = filteredModulos?.reduce((acc, categoria) => {
+    const categoriaNombre = categoria.categoria?.nombre || "Sin categoría";
     if (!acc[categoriaNombre]) {
       acc[categoriaNombre] = [];
     }
-    acc[categoriaNombre].push(modulo);
+    acc[categoriaNombre].push(categoria);
     return acc;
   }, {});
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/modulos/crear")}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/s/crear")}>
           Nuevo Módulo
         </Button>
       </div>
@@ -72,26 +72,26 @@ const ModuleList = () => {
         {!loading &&
           !error &&
           groupedByCategoria &&
-          Object.entries(groupedByCategoria).map(([categoria, modulos]) => (
+          Object.entries(groupedByCategoria).map(([categoria, s]) => (
             <div key={categoria} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <Title level={4} className="!mb-0 !text-primario">{categoria}</Title>
-                <Paragraph className="text-gray-400 !mb-2">Total: {modulos.length} módulos</Paragraph>
+                <Paragraph className="text-gray-400 !mb-2">Total: {s.length} módulos</Paragraph>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {modulos.map((modulo) => (
-                    <div key={modulo.id} className="relative rounded-xl shadow-md bg-white p-4 hover:shadow-lg transition-all">
+                  {s.map((categoria) => (
+                    <div key={categoria.id} className="relative rounded-xl shadow-md bg-white p-4 hover:shadow-lg transition-all">
                       <Button
                         icon={<EditOutlined />}
                         shape="circle"
                         size="small"
                         className="absolute right-3 top-3 z-10"
-                        onClick={() => navigate(`/modulos/editar/${modulo.id}`)}
+                        onClick={() => navigate(`/s/editar/${categoria.id}`)}
                       />
                       <div className="flex flex-col gap-2">
-                        <Text className="font-semibold text-base">{modulo.nombre}</Text>
-                        <Paragraph className="text-gray-500 text-sm !mb-1">{modulo.descripcion}</Paragraph>
+                        <Text className="font-semibold text-base">{categoria.nombre}</Text>
+                        <Paragraph className="text-gray-500 text-sm !mb-1">{categoria.descripcion}</Paragraph>
                         <Paragraph className="text-gray-400 text-xs !mb-0">
-                          Creado por: {modulo.usuarioCreo}
+                          Creado por: {categoria.usuarioCreo}
                         </Paragraph>
                       </div>
                     </div>

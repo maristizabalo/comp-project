@@ -26,12 +26,6 @@ export const appRoutes = [
         permission: "ADMIN_CATEGORIA",
       },
       {
-        key: "/modulos",
-        label: "Módulos",
-        icon: AppstoreOutlined,
-        permission: "ADMIN_MODULO",
-      },
-      {
         key: "/formularios",
         label: "Formularios",
         icon: FormOutlined,

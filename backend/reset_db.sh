@@ -13,7 +13,7 @@ else
 fi
 
 echo "Eliminando carpetas de migrations..."
-for app in auth area categoria modulo rol permiso usuario formulario construccion_formulario respuesta; do
+for app in auth area categoria rol permiso usuario formulario construccion_formulario respuesta; do
     rm -rf apps/$app/migrations
     mkdir apps/$app/migrations
     touch apps/$app/migrations/__init__.py
@@ -24,7 +24,6 @@ echo "Ejecutando makemigrations para cada app..."
 python3 manage.py makemigrations auth
 python3 manage.py makemigrations area
 python3 manage.py makemigrations categoria
-python3 manage.py makemigrations modulo
 python3 manage.py makemigrations formulario
 python3 manage.py makemigrations construccion_formulario
 python3 manage.py makemigrations respuesta
@@ -42,7 +41,6 @@ python3 manage.py loaddata fixtures/rol.json
 python3 manage.py loaddata fixtures/usuario.json
 python3 manage.py loaddata fixtures/area.json
 python3 manage.py loaddata fixtures/categoria.json
-python3 manage.py loaddata fixtures/modulo.json
 python3 manage.py loaddata fixtures/tipos_de_dato.json
 
 # echo "Desactivando entorno virtual..."

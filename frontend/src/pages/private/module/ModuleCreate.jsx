@@ -21,7 +21,7 @@ const ModuleCreate = () => {
     try {
       await createModulo(() => moduleService.createModulo(values));
       message.success("Módulo creado correctamente");
-      navigate("/modulos");
+      navigate("/s");
     } catch (error) {
       message.error(error.message || "Ocurrió un error al crear el módulo");
     }

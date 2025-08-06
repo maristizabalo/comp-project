@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Formulario, Seccion
-from apps.modulo.models import Modulo
-from apps.modulo.serializers import ModuloLiteSerializer
+from apps.categoria.models import Categoria
+from apps.categoria.serializers import CategoriaLiteSerializer
 from apps.permiso.models import PermisoFormulario
 
 class FormularioLiteSerializer(serializers.ModelSerializer):
@@ -10,9 +10,9 @@ class FormularioLiteSerializer(serializers.ModelSerializer):
         fields = ['id', 'nombre']
         
 class FormularioSerializer(serializers.ModelSerializer):
-    modulo = ModuloLiteSerializer(read_only=True)
-    modulo_id = serializers.PrimaryKeyRelatedField(
-        queryset=Modulo.objects.all(), source='modulo', write_only=True
+    categoria = CategoriaLiteSerializer(read_only=True)
+    categoria_id = serializers.PrimaryKeyRelatedField(
+        queryset=Categoria.objects.all(), source='categoria', write_only=True
     )
 
     id_padre = FormularioLiteSerializer(read_only=True)
@@ -42,7 +42,7 @@ class FormularioSerializer(serializers.ModelSerializer):
         model = Formulario
         fields = [
             'id', 'nombre', 'descripcion',
-            'modulo', 'modulo_id',
+            'categoria', 'categoria_id',
             'id_padre', 'id_padre_id',
             'usuario_creo', 'ip_creo',
             'usuario_modifico', 'ip_modifico',

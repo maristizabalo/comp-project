@@ -18,7 +18,6 @@ INSTALLED_APPS = [
     'apps.permiso',
     'apps.area',
     'apps.categoria',
-    'apps.modulo',
     'apps.formulario',
     'apps.construccion_formulario',
     'apps.respuesta',
