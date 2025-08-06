@@ -37,7 +37,7 @@ const FormList = () => {
     setFilteredFormularios(filtered);
   }, [searchValue, formularios]);
 
-  const groupedByModulo = filteredFormularios?.reduce((acc, formulario) => {
+  const groupedByCategoria = filteredFormularios?.reduce((acc, formulario) => {
     const Nombre = formulario.categoria?.nombre || "Sin módulo";
     if (!acc[Nombre]) {
       acc[Nombre] = [];
@@ -75,8 +75,8 @@ const FormList = () => {
       <div className="flex flex-col gap-8">
         {!loading &&
           !error &&
-          groupedByModulo &&
-          Object.entries(groupedByModulo).map(([categoria, formularios]) => (
+          groupedByCategoria &&
+          Object.entries(groupedByCategoria).map(([categoria, formularios]) => (
             <div key={categoria} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <Title level={4} className="!mb-0 !text-primario">{categoria}</Title>

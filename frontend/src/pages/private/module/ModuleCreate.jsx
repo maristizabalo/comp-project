@@ -11,7 +11,7 @@ const { Title } = Typography;
 const ModuleCreate = () => {
   const navigate = useNavigate();
   const { data: categorias, loading: loadingCategorias, fetchData: fetchCategorias } = useFetch();
-  const { loading: loadingCreate, fetchData: createModulo } = useFetch();
+  const { loading: loadingCreate, fetchData: createCategoria } = useFetch();
 
   useEffect(() => {
     fetchCategorias(categoryService.getCategorias);
@@ -19,9 +19,9 @@ const ModuleCreate = () => {
 
   const handleFinish = async (values) => {
     try {
-      await createModulo(() => moduleService.createModulo(values));
+      await createCategoria(() => moduleService.createCategoria(values));
       message.success("Módulo creado correctamente");
-      navigate("/s");
+      navigate("/categoria");
     } catch (error) {
       message.error(error.message || "Ocurrió un error al crear el módulo");
     }

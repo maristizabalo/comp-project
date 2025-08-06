@@ -2,7 +2,7 @@ import { api } from "../api";
 
 export const moduleService = {
   // Obtener todos los módulos
-  getModulos: async () => {
+  getCategorias: async () => {
     try {
       const response = await api.get("/categoria/");
       return response.data;
@@ -14,7 +14,7 @@ export const moduleService = {
   },
 
   // Obtener un módulo específico por ID
-  getModuloById: async (id) => {
+  getCategoriaById: async (id) => {
     try {
       const response = await api.get(`/categoria/${id}/`);
       return response.data;
@@ -26,7 +26,7 @@ export const moduleService = {
   },
 
   // Crear nuevo módulo
-  createModulo: async (Data) => {
+  createCategoria: async (Data) => {
     try {
       const response = await api.post("/categoria/", Data);
       return response.data;
@@ -38,7 +38,7 @@ export const moduleService = {
   },
 
   // Actualizar módulo
-  updateModulo: async (id, updatedData) => {
+  updateCategoria: async (id, updatedData) => {
     try {
       const response = await api.patch(`/categoria/${id}/`, updatedData);
       return response.data;

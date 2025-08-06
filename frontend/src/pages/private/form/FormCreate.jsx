@@ -24,10 +24,10 @@ const FormCreate = () => {
     }));
   }, [tiposCampoRaw]);
 
-  const { loading: loadingModulos, data: s, fetchData } = useFetch();
+  const { loading: loadingCategorias, data: categoria, fetchData } = useFetch();
 
   useEffect(() => {
-    fetchData(moduleService.getModulos);
+    fetchData(moduleService.getCategorias);
   }, [fetchData]);
 
   const onFinish = async (values) => {
@@ -42,7 +42,7 @@ const FormCreate = () => {
     }
   };
 
-  if (loadingTipos || loadingModulos) return <Skeleton active />;
+  if (loadingTipos || loadingCategorias) return <Skeleton active />;
 
   return (
     <Card className="bg-white shadow-md rounded-xl p-6">
@@ -52,7 +52,7 @@ const FormCreate = () => {
         onFinish={onFinish}
         className="flex flex-col gap-6"
       >
-        <FormHeader form={form} s={s || []} />
+        <FormHeader form={form} categoria={categoria || []} />
         <SectionList tiposCamposOptions={tiposCamposOptions} />
         <div className="flex justify-end">
           <Button type="primary" htmlType="submit" size="large">

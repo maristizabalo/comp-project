@@ -6,7 +6,7 @@ const SectionList = ({ tiposCamposOptions }) => {
   const form = Form.useFormInstance();
   const secciones = Form.useWatch("secciones", form) || [];
 
-  const mainCount = secciones?.flatMap((s) => s?.campos || [])
+  const mainCount = secciones?.flatMap((categoria) => categoria?.campos || [])
     .filter((c) => c?.principal).length || 0;
 
   return (

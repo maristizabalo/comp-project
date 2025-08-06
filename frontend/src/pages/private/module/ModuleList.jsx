@@ -9,35 +9,35 @@ const { Title, Paragraph, Text } = Typography;
 
 const ModuleList = () => {
   const navigate = useNavigate();
-  const { loading, error, data: s, fetchData } = useFetch();
-  const [filteredModulos, setFilteredModulos] = useState([]);
+  const { loading, error, data: categoria, fetchData } = useFetch();
+  const [filteredCategorias, setFilteredCategorias] = useState([]);
   const [searchValue, setSearchValue] = useState("");
 
   useEffect(() => {
-    fetchData(moduleService.getModulos);
+    fetchData(moduleService.getCategorias);
   }, [fetchData]);
 
   useEffect(() => {
-    if (s) {
-      setFilteredModulos(s);
+    if (categoria) {
+      setFilteredCategorias(categoria);
     }
-  }, [s]);
+  }, [categoria]);
 
   useEffect(() => {
     if (!searchValue) {
-      setFilteredModulos(s);
+      setFilteredCategorias(categoria);
       return;
     }
     const lowerValue = searchValue.toLowerCase();
-    const filtered = s?.filter(
+    const filtered = categoria?.filter(
       (categoria) =>
         categoria.nombre.toLowerCase().includes(lowerValue) ||
         categoria.categoria?.nombre.toLowerCase().includes(lowerValue)
     );
-    setFilteredModulos(filtered);
-  }, [searchValue, s]);
+    setFilteredCategorias(filtered);
+  }, [searchValue, categoria]);
 
-  const groupedByCategoria = filteredModulos?.reduce((acc, categoria) => {
+  const groupedByCategoria = filteredCategorias?.reduce((acc, categoria) => {
     const categoriaNombre = categoria.categoria?.nombre || "Sin categoría";
     if (!acc[categoriaNombre]) {
       acc[categoriaNombre] = [];
@@ -49,7 +49,7 @@ const ModuleList = () => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex justify-between items-center">
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/s/crear")}>
+        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate("/categoria/crear")}>
           Nuevo Módulo
         </Button>
       </div>
@@ -64,7 +64,7 @@ const ModuleList = () => {
       {loading && <Skeleton active />}
       {error && <Paragraph type="danger">{error}</Paragraph>}
 
-      {!loading && !error && (!filteredModulos || filteredModulos.length === 0) && (
+      {!loading && !error && (!filteredCategorias || filteredCategorias.length === 0) && (
         <Empty description="No hay módulos registrados" />
       )}
 
@@ -72,20 +72,20 @@ const ModuleList = () => {
         {!loading &&
           !error &&
           groupedByCategoria &&
-          Object.entries(groupedByCategoria).map(([categoria, s]) => (
+          Object.entries(groupedByCategoria).map(([categoria, categoria]) => (
             <div key={categoria} className="flex flex-col gap-4">
               <div className="flex flex-col">
                 <Title level={4} className="!mb-0 !text-primario">{categoria}</Title>
-                <Paragraph className="text-gray-400 !mb-2">Total: {s.length} módulos</Paragraph>
+                <Paragraph className="text-gray-400 !mb-2">Total: {categoria.length} módulos</Paragraph>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                  {s.map((categoria) => (
+                  {categoria.map((categoria) => (
                     <div key={categoria.id} className="relative rounded-xl shadow-md bg-white p-4 hover:shadow-lg transition-all">
                       <Button
                         icon={<EditOutlined />}
                         shape="circle"
                         size="small"
                         className="absolute right-3 top-3 z-10"
-                        onClick={() => navigate(`/s/editar/${categoria.id}`)}
+                        onClick={() => navigate(`/categoria/editar/${categoria.id}`)}
                       />
                       <div className="flex flex-col gap-2">
                         <Text className="font-semibold text-base">{categoria.nombre}</Text>

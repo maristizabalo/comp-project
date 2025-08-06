@@ -2,7 +2,7 @@ import { Form, Input, Select, Typography } from "antd";
 const { TextArea } = Input;
 const { Title } = Typography;
 
-const FormHeader = ({ form, s = [] }) => {
+const FormHeader = ({ form, categoria = [] }) => {
   return (
     <div className="flex flex-col gap-4">
       <Title level={3} className="text-primario !mb-2">
@@ -40,7 +40,7 @@ const FormHeader = ({ form, s = [] }) => {
       >
         <Select
           placeholder="Selecciona un módulo"
-          options={s.map((mod) => ({
+          options={categoria.map((mod) => ({
             label: mod.nombre,
             value: mod.id,
           }))}

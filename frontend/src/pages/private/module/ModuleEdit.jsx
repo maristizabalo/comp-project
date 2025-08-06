@@ -11,26 +11,26 @@ const { Title } = Typography;
 const ModuleEdit = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: categoria, loading: loadingModulo, fetchData: fetchModulo } = useFetch();
+  const { data: categoria, loading: loadingCategoria, fetchData: fetchCategoria } = useFetch();
   const { data: categorias, loading: loadingCategorias, fetchData: fetchCategorias } = useFetch();
-  const { loading: loadingUpdate, fetchData: updateModulo } = useFetch();
+  const { loading: loadingUpdate, fetchData: updateCategoria } = useFetch();
 
   useEffect(() => {
-    fetchModulo(() => moduleService.getModuloById(id));
+    fetchCategoria(() => moduleService.getCategoriaById(id));
     fetchCategorias(categoryService.getCategorias);
-  }, [id, fetchModulo, fetchCategorias]);
+  }, [id, fetchCategoria, fetchCategorias]);
 
   const handleFinish = async (values) => {
     try {
-      await updateModulo(() => moduleService.updateModulo(id, values));
+      await updateCategoria(() => moduleService.updateCategoria(id, values));
       message.success("Módulo actualizado correctamente");
-      navigate("/s");
+      navigate("/categoria");
     } catch (error) {
       message.error(error.message || "Ocurrió un error al actualizar el módulo");
     }
   };
 
-  if (loadingModulo || loadingCategorias) return <Skeleton active />;
+  if (loadingCategoria || loadingCategorias) return <Skeleton active />;
 
   return (
     <Card className="max-w-xl mx-auto">
