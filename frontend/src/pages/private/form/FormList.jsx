@@ -38,7 +38,7 @@ const FormList = () => {
   }, [searchValue, formularios]);
 
   const groupedByCategoria = filteredFormularios?.reduce((acc, formulario) => {
-    const Nombre = formulario.categoria?.nombre || "Sin módulo";
+    const Nombre = formulario.categoria?.nombre || "Sin categoría";
     if (!acc[Nombre]) {
       acc[Nombre] = [];
     }
@@ -59,7 +59,7 @@ const FormList = () => {
       </div>
 
       <Input
-        placeholder="Buscar por formulario o módulo..."
+        placeholder="Buscar por formulario o categoria..."
         allowClear
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}

@@ -15,7 +15,7 @@ from rest_framework import status
 class RespuestaFormularioView(ListCreateAPIView):
     queryset = RespuestaFormulario.objects.all()
     serializer_class = RespuestaFormularioSerializer
-    permission_classes = [IsAuthenticated, build_check_formulario_permiso('ESCRITURA')]
+    # permission_classes = [IsAuthenticated, build_check_formulario_permiso('ESCRITURA')]
 
     def get_user_ip(self):
         ip_user = (

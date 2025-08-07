@@ -3,6 +3,7 @@ import authReducer from "./auth/authSlice";
 import roleReducer from "./admin/roleSlice";
 import permissionReducer from "./admin/permissionSlice";
 import tiposCampoReducer from "./form/tiposCamposSlice";
+import formEntryReducer from "./form/formEntrySlice"
 
 const adminReducer = combineReducers({
   roles: roleReducer,
@@ -11,6 +12,7 @@ const adminReducer = combineReducers({
 
 const formularioReducer = combineReducers({
   tiposCampo: tiposCampoReducer,
+  formEntry: formEntryReducer
 });
 
 export const store = configureStore({

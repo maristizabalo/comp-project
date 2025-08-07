@@ -4,7 +4,7 @@
     "pk": 1,
     "fields": {
       "nombre": "Administración de Espacios Públicos",
-      "descripcion": "Categoría que agrupa los módulos encargados de la administracion de espacios públicos.",
+      "descripcion": "Categoría que agrupa los formularios encargados de la administracion de espacios públicos.",
       "area": 4,
       "usuario_creo": "localhost",
       "ip_creo": "127.0.0.1",

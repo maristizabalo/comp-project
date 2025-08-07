@@ -1,123 +1,91 @@
-// FormEntry.jsx
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import {
-  Form,
-  Button,
-  Steps,
-  Typography,
-  Divider,
-  Spin,
-  message,
-} from "antd";
+import React, { useEffect, useCallback, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import { Form, Button, Spin, message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
-import { formService } from "../../../services/form/formService";
+import { useDispatch, useSelector } from "react-redux";
+import CustomStepper from "../../../components/form/CustomStepper";
+import SectionCard from "../../../components/form/SectionCard";
 import FormStep from "../../../components/form/FormStep";
+import { formService } from "../../../services/form/formService";
 import { useFetch } from "../../../hooks/use-fetch";
-
-const { Title, Paragraph } = Typography;
+import {
+  setStep,
+  updateSectionData,
+  saveSection,
+  resetFormEntry
+} from "../../../store/form/formEntrySlice";
 
 const FormEntry = () => {
+  // HOOKS: se ejecutan siempre en mismo orden
   const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
+  const { currentStep, sectionsData } = useSelector((state) => state.formulario.formEntry);
   const [formulario, setFormulario] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [currentStep, setCurrentStep] = useState(0);
-  const navigate = useNavigate();
-  const [form] = Form.useForm();
-  const { loading: loadingSubmit, fetchData: createRespuesta } = useFetch();
+  const { loading: loadingSubmit, fetchData } = useFetch();
 
+  // Handler: avanzar
+  const next = useCallback(async () => {
+    try {
+      await form.validateFields();
+      const values = form.getFieldsValue();
+      const seccion = formulario.secciones[currentStep];
+      const respuestas = seccion.campos.flatMap(campo => {
+        const raw = values[campo.nombre];
+        switch (campo.tipo) {
+          case "numero": return [{ campo: campo.id, valor_numero: Number(raw) }];
+          case "booleano": return [{ campo: campo.id, valor_booleano: raw }];
+          case "fecha": return [{ campo: campo.id, valor_fecha: raw.format("YYYY-MM-DD") }];
+          case "seleccion-unica": return [{ campo: campo.id, valor_opcion: raw }];
+          case "seleccion-multiple": return [{ campo: campo.id, valor_opciones: raw }];
+          case "geometrico": return [{ campo: campo.id, valor_geom: raw.valor_geom }];
+          case "grupo-campos":
+            return (raw || []).map(item => ({ campo: campo.id, valor_texto: item.valor }));
+          default: return [{ campo: campo.id, valor_texto: raw }];
+        }
+      });
+      // Guardar estado local y enviar
+      dispatch(updateSectionData({ seccionId: seccion.id, data: values }));
+      await fetchData(() => dispatch(saveSection({ formularioId: id, seccionId: seccion.id, respuestas })));
+      dispatch(setStep(currentStep + 1));
+    } catch (err) {
+      if (err.errorFields) message.warning("Completa los campos obligatorios");
+      else message.error(err.message || "Error al guardar sección");
+    }
+  }, [form, formulario, currentStep, dispatch, id, fetchData]);
 
+  // Handler: retroceder
+  const prev = useCallback(() => {
+    dispatch(setStep(currentStep - 1));
+  }, [currentStep, dispatch]);
+
+  // Efecto: carga inicial del formulario
   useEffect(() => {
-    const loadFormulario = async () => {
+    const load = async () => {
       setLoading(true);
       try {
         const data = await formService.getFormularioById(id);
         setFormulario(data);
+        dispatch(resetFormEntry());
       } catch {
         message.error("Error loading form");
       }
       setLoading(false);
     };
-    loadFormulario();
-  }, [id]);
+    load();
+  }, [id, dispatch]);
 
-  const next = async () => {
-    try {
-      await form.validateFields();
-      setCurrentStep((prev) => prev + 1);
-    } catch {
-      message.warning("Please complete required fields");
-    }
-  };
+  // Efecto: cargar datos previos al cambiar de sección
+  useEffect(() => {
+    if (!formulario) return;
+    const seccion = formulario.secciones[currentStep];
+    const prevData = sectionsData[seccion.id];
+    if (prevData) form.setFieldsValue(prevData);
+  }, [currentStep, sectionsData, formulario, form]);
 
-  const prev = () => setCurrentStep((prev) => prev - 1);
-
-  const handleSubmit = async (values) => {
-    const payload = {
-      formulario: parseInt(id) ,
-      respuestas_campo: [],
-    };
-
-    formulario.secciones.forEach((seccion) => {
-      seccion.campos.forEach((campo) => {
-        const rawValue = values[campo.nombre];
-
-        if (campo.tipo === "grupo-campos") {
-          payload.respuestas_campo.push(...(rawValue || []).map((item) => ({
-            campo: campo.id,
-            valor_texto: item.valor,
-          })));
-        } else if (campo.tipo === "geometrico") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_geom: rawValue.valor_geom,
-          });
-        } else if (campo.tipo === "booleano") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_booleano: rawValue,
-          });
-        } else if (campo.tipo === "numero") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_numero: Number(rawValue),
-          });
-        } else if (campo.tipo === "fecha") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_fecha: rawValue?.format("YYYY-MM-DD"),
-          });
-        } else if (campo.tipo === "seleccion-unica") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_opcion: rawValue,
-          });
-        } else if (campo.tipo === "seleccion-multiple") {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_opciones: rawValue,
-          });
-        } else {
-          payload.respuestas_campo.push({
-            campo: campo.id,
-            valor_texto: rawValue,
-          });
-        }
-      });
-    });
-
-    try {
-      await createRespuesta(() => formService.createRespuestaFormulario(payload));
-      message.success("Formulario respondido correctamente");
-      form.resetFields();
-      navigate("/formularios");
-    } catch (error) {
-      message.error(error.message || "Ocurrió un error al enviar la respuesta");
-    }
-  };
-
-
-
+  // RENDERS CONDICIONALES
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -125,41 +93,28 @@ const FormEntry = () => {
       </div>
     );
   }
-
   if (!formulario) return null;
+
+  // Variables derivadas (después de hooks y condicionales de carga)
+  const totalSections = formulario.secciones.length;
+  const titles = formulario.secciones.map(s => s.nombre);
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
-      <Title level={3}>{formulario.nombre}</Title>
-      <Paragraph>{formulario.descripcion}</Paragraph>
-      <Divider />
-
-      <div className="flex justify-center">
-        <Steps current={currentStep} className="mb-6 w-fit">
-          {formulario.secciones.map((sec) => (
-            <Steps.Step key={sec.nombre} title={sec.nombre} />
-          ))}
-        </Steps>
-      </div>
-
-      <Form form={form} layout="vertical" onFinish={handleSubmit}>
-        <FormStep seccion={formulario.secciones[currentStep]} form={form} />
-
-        <div className="flex justify-between mt-6">
-          {currentStep > 0 && (
-            <Button onClick={prev}>Previous</Button>
-          )}
-          {currentStep < formulario.secciones.length - 1 ? (
-            <Button type="primary" onClick={next}>
-              Next
-            </Button>
-          ) : (
-            <Button type="primary" htmlType="submit">
-              Submit
-            </Button>
-          )}
-        </div>
-      </Form>
+      <CustomStepper total={totalSections} titles={titles} />
+      <SectionCard>
+        <Form form={form} layout="vertical" onFinish={next}>
+          <FormStep seccion={formulario.secciones[currentStep]} form={form} />
+          <div className="flex justify-between mt-6">
+            {currentStep > 0 && <Button onClick={prev}>Previous</Button>}
+            {currentStep < totalSections - 1 ? (
+              <Button type="primary" loading={loadingSubmit} onClick={next}>Next</Button>
+            ) : (
+              <Button type="primary" htmlType="submit" loading={loadingSubmit}>Submit</Button>
+            )}
+          </div>
+        </Form>
+      </SectionCard>
     </div>
   );
 };

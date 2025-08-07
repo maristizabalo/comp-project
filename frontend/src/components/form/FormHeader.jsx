@@ -33,13 +33,13 @@ const FormHeader = ({ form, categoria = [] }) => {
       </Form.Item>
 
       <Form.Item
-        label="Módulo al que pertenece"
-        name="Id"
+        label="Categoría al que pertenece"
+        name="categoriaId"
         className="!mb-0"
-        rules={[{ required: true, message: "Debes seleccionar un módulo" }]}
+        rules={[{ required: true, message: "Debes seleccionar una categoría" }]}
       >
         <Select
-          placeholder="Selecciona un módulo"
+          placeholder="Selecciona una categoría"
           options={categoria.map((mod) => ({
             label: mod.nombre,
             value: mod.id,

@@ -31,7 +31,7 @@ export const normalizeFormularioCreatePayload = (values) => {
   return {
     titulo: values.titulo,
     descripcion: values.descripcion,
-    Id: values.Id,
+    categoriaId: values.categoriaId,
     secciones,
   };
 };
