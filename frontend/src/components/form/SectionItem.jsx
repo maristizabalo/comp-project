@@ -1,3 +1,4 @@
+import React from "react";
 import { Button, Form, Input, Typography } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import FieldItem from "./FieldItem";
@@ -37,7 +38,7 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
                 remove={remove}
                 tiposCamposOptions={tiposCamposOptions}
                 mainCount={mainCount}
-                fieldPath={[section.name, "campos", field.name]} // 👈 Añadido
+                fieldPath={[section.name, "campos", field.name]}
               />
 
             </div>
@@ -58,4 +59,4 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
   </div>
 );
 
-export default SectionItem;
+export default React.memo(SectionItem);

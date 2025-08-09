@@ -1,4 +1,6 @@
-import { Suspense, lazy, useState } from "react";
+// FieldItem.jsx
+import React from "react";
+import { Suspense, lazy } from "react";
 import { Form } from "antd";
 import { TIPOS_CAMPO } from "../../utils/constants";
 
@@ -6,12 +8,13 @@ const FieldControls = lazy(() => import("./FieldControls"));
 const FieldOptions = lazy(() => import("./FieldOptions"));
 const FieldSubFields = lazy(() => import("./FieldSubFields"));
 
-const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => {
-  const [tipoSeleccionado, setTipoSeleccionado] = useState(null);
+const FieldItem = React.memo(function FieldItem({ field, remove, tiposCamposOptions, fieldPath }) {
+  const form = Form.useFormInstance();
+  const tipo = Form.useWatch(["secciones", ...fieldPath, "tipo"], form);
 
   const isOpcionTipo =
-    tipoSeleccionado === TIPOS_CAMPO.SELECCION_UNICA || tipoSeleccionado === TIPOS_CAMPO.SELECCION_MULTIPLE;
-  const isGrupoCampos = tipoSeleccionado === TIPOS_CAMPO.GRUPO_CAMPOS;
+    tipo === TIPOS_CAMPO.SELECCION_UNICA || tipo === TIPOS_CAMPO.SELECCION_MULTIPLE;
+  const isGrupoCampos = tipo === TIPOS_CAMPO.GRUPO_CAMPOS;
 
   return (
     <div className="flex flex-col gap-2 border border-gray-200 rounded-md px-3 py-2 bg-gray-50">
@@ -20,9 +23,7 @@ const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => {
           field={field}
           remove={remove}
           tiposCamposOptions={tiposCamposOptions}
-          mainCount={mainCount}
           isGrupoCampos={isGrupoCampos}
-          onTipoChange={setTipoSeleccionado}
         />
       </Suspense>
 
@@ -39,6 +40,6 @@ const FieldItem = ({ field, remove, tiposCamposOptions, mainCount }) => {
       )}
     </div>
   );
-};
+});
 
 export default FieldItem;

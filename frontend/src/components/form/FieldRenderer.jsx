@@ -1,6 +1,8 @@
 import { Form, Input, Select, DatePicker, Switch, Button } from "antd";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import GroupedFieldInput from "./GroupedFieldInput";
+const LazyMap = React.lazy(() => import("../maps/ArcgisMap"));
+const MemoArcGISMapDraw = React.memo(LazyMap)
 
 const FieldRenderer = ({ campo, form }) => {
     const { id, nombre, tipo, etiqueta, obligatorio, opciones, subcampos } = campo;
@@ -11,6 +13,13 @@ const FieldRenderer = ({ campo, form }) => {
     const rules = obligatorio ? [{ required: true, message: "Campo obligatorio" }] : [];
 
     const setValue = (value) => form.setFieldValue(nombre, { campo: id, ...value });
+
+    
+
+    const handleGeom = useCallback(
+  (geom) => form.setFieldValue(nombre, { valor_geom: geom }),
+  [form, nombre]
+);
 
     if (tipo === "grupo-campos" && subcampos?.campos?.length) {
         return (
@@ -78,7 +87,7 @@ const FieldRenderer = ({ campo, form }) => {
                     label={etiqueta}
                     rules={rules}
                 >
-                    <Input type="text"/>
+                    <Input type="text" />
                 </Form.Item>
             );
         case "numero":
@@ -131,15 +140,27 @@ const FieldRenderer = ({ campo, form }) => {
                 </Form.Item>
             );
         case "geometrico":
-            const LazyMap = React.lazy(() => import("../maps/ArcgisMap"));
+            
             return (
-                <Form.Item name={nombre} label={etiqueta} rules={rules}>
-                    <React.Suspense fallback={<div>Cargando mapa...</div>}>
-                        <div className="h-[480px]">
-                            <LazyMap onGeometryAdded={(geom) => setValue({ valor_geom: geom })} required />
-                        </div>
-                    </React.Suspense>
-                </Form.Item>
+                <div>
+                {/* Item de etiqueta sin controlar por el form: */}
+                    <Form.Item label={etiqueta} shouldUpdate={false}>
+                        <React.Suspense fallback={<div>Cargando mapa...</div>}>
+                            <div className="h-[480px]">
+                                <MemoArcGISMapDraw
+                                    initialGeometry={form.getFieldValue([nombre, 'valor_geom'])}
+                                    onGeometryAdded={handleGeom}
+                                    required
+                                />
+                            </div>
+                        </React.Suspense>
+                    </Form.Item>
+
+                    {/* Campo oculto que sí controla el form: */}
+                    <Form.Item name={[nombre, 'valor_geom']} rules={rules} hidden>
+                        <input type="hidden" />
+                    </Form.Item>
+                </div>
             );
         default:
             return null;

@@ -1,6 +1,6 @@
 import { Form, Input, Select, Button } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import { useState } from "react";
+import React, { useState }  from "react";
 
 const TIPO_SUBCAMPOS_VALIDOS = [
   { value: "texto", label: "Texto" },
@@ -89,4 +89,4 @@ const FieldSubFields = ({ field }) => {
   );
 };
 
-export default FieldSubFields;
+export default React.memo(FieldSubFields);

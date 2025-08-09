@@ -1,9 +1,10 @@
 import { Form, Input, Button, Space } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
+import React from "react";
 
 const FieldOptions = ({ field }) => (
   <div className="pl-3">
-    <Form.List name={[field.name, "opciones"]}>
+    <Form.List name={[field.name, "opciones"]} preserve={false}>
       {(options, { add, remove }) => (
         <div className="flex flex-col gap-2">
           {options.map((opt) => (
@@ -34,4 +35,4 @@ const FieldOptions = ({ field }) => (
   </div>
 );
 
-export default FieldOptions;
+export default React.memo(FieldOptions);
