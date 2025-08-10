@@ -319,3 +319,67 @@ class RespuestaFormularioTablaSerializer(serializers.ModelSerializer):
         return list(resultado.values())[0] if resultado else {}
 
 
+def format_val(rc: RespuestaCampo):
+    """
+    Devuelve una representación legible del valor de un RespuestaCampo.
+    - opción -> etiqueta
+    - geom -> WKT corto
+    - texto/numero/fecha/booleano -> su valor
+    """
+    if rc.valor_opcion_id:
+        return getattr(rc.valor_opcion, "etiqueta", None) or getattr(rc.valor_opcion, "valor", None)
+
+    if rc.valor_geom:
+        try:
+            # WKT compacto: 'POINT(...)', 'LINESTRING(...)', 'POLYGON(...)'
+            return rc.valor_geom.wkt
+        except Exception:
+            return None
+
+    if rc.valor_texto not in (None, ""):
+        return rc.valor_texto
+    if rc.valor_numero is not None:
+        return rc.valor_numero
+    if rc.valor_fecha is not None:
+        # ISO (yyyy-mm-dd)
+        return rc.valor_fecha.isoformat()
+    if rc.valor_booleano is not None:
+        return "Sí" if rc.valor_booleano else "No"
+    return None
+
+
+class RespuestaFormularioRowSerializer(serializers.ModelSerializer):
+    """
+    Serializa UNA respuesta como una fila de tabla con solo los campos principales.
+    Las columnas dinámicas (campos principales) vienen en context['principal_campos'].
+    """
+    class Meta:
+        model = RespuestaFormulario
+        fields = ["id", "usuario", "ip", "fecha_creacion"]  # los “fijos” de la fila
+
+    def to_representation(self, obj):
+        rep = super().to_representation(obj)
+        principal_campos = self.context.get("principal_campos", [])
+        # Mapa: nombre_campo -> [valores...]
+        per_field_values = {c.nombre: [] for c in principal_campos}
+
+        # Solo se prefetch-aron los principales (ver la vista)
+        for rc in obj.respuestas_campo.all():
+            nombre = getattr(rc.campo, "nombre", None)
+            if not nombre or nombre not in per_field_values:
+                continue
+            val = format_val(rc)
+            if val is not None:
+                per_field_values[nombre].append(val)
+
+        # Aplana valores (si hay múltiples, únelos con ' • ')
+        for c in principal_campos:
+            nombre = c.nombre
+            vals = per_field_values.get(nombre, [])
+            if not vals:
+                rep[nombre] = None
+            else:
+                # Si todos son números, puedes dejar lista/número; aquí lo unimos como string amigable
+                rep[nombre] = " • ".join(map(str, vals))
+
+        return rep

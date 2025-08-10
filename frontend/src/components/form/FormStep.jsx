@@ -5,7 +5,7 @@ import FieldRenderer from "./FieldRenderer";
 
 const { Title } = Typography;
 
-const FormStep = ({ seccion, form }) => {
+const FormStep = ({ seccion, form, isView }) => {
   if (!seccion) return null;
   const camposOrdenados = (seccion.campos || [])
     .slice()
@@ -17,7 +17,7 @@ const FormStep = ({ seccion, form }) => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {camposOrdenados.map((campo) => (
           <div key={campo.nombre}>
-            <FieldRenderer campo={campo} form={form} />
+            <FieldRenderer campo={campo} form={form} isView={isView} />
           </div>
         ))}
       </div>

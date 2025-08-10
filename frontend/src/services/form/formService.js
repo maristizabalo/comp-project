@@ -50,7 +50,24 @@ export const formService = {
     }
   },
 
+  getRespuestasTabla: async (formularioId, { page = 1, pageSize = 10 } = {}) => {
+    try {
+      const res = await api.get(`/respuesta/${formularioId}/tabla/`, {
+        params: { page, page_size: pageSize },
+      });
+      return res.data;
+    } catch (e) {
+      throw new Error(e.response?.data?.message || "Error al obtener las respuestas");
+    }
+  },
 
-
-
+  // NUEVO: trae los valores de una respuesta (tipados para hidratar el formulario)
+  getRespuestaDetalle: async (respuestaId) => {
+    try {
+      const res = await api.get(`/respuesta/${respuestaId}/detalle/`);
+      return res.data; // { id, formulario: <id>, valores: { [campo_nombre]: <valor tipado> } }
+    } catch (e) {
+      throw new Error(e.response?.data?.message || "Error al obtener el detalle de la respuesta");
+    }
+  },
 };

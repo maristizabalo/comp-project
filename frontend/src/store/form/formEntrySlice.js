@@ -13,7 +13,7 @@ export const saveSection = createAsyncThunk(
         formulario: Number(formularioId),
         respuestas_campo: respuestas,
         // clave para EDITAR la misma respuesta
-        respuesta_id: respuestaId,
+        respuesta_id: respuestaId ?? null,
       };
 
       const result = await formService.createRespuestaFormulario(payload);

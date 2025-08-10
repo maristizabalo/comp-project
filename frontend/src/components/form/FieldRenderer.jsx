@@ -4,7 +4,7 @@ import GroupedFieldInput from "./GroupedFieldInput";
 const LazyMap = React.lazy(() => import("../maps/ArcgisMap"));
 const MemoArcGISMapDraw = React.memo(LazyMap)
 
-const FieldRenderer = ({ campo, form }) => {
+const FieldRenderer = ({ campo, form, isView }) => {
     const { id, nombre, tipo, etiqueta, obligatorio, opciones, subcampos } = campo;
     const [selected, setSelected] = useState(null);
 
@@ -150,6 +150,7 @@ const FieldRenderer = ({ campo, form }) => {
                                 geometry={watchedGeom}
                                 onGeometryChange={handleGeom}
                                 required={obligatorio}
+                                readOnly={isView}  
                             />
                         </div>
                     </React.Suspense>

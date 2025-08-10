@@ -6,7 +6,6 @@ import { PERMISOS_ADMIN } from "../../utils/constants";
 import { fetchRoles } from "../../store/admin/roleSlice";
 import { fetchPermissions, fetchPermissionsForm } from "../../store/admin/permissionSlice";
 import { fetchTiposCampo } from "../../store/form/tiposCamposSlice";
-import FormEntry from "./form/FormEntry";
 
 const Inicio = lazy(() => import("./Inicio"));
 const UserList = lazy(() => import("./admin/user/UserList"));
@@ -25,12 +24,10 @@ const CategoryList = lazy(() => import("./category/CategoryList"));
 const CategoryCreate = lazy(() => import("./category/CategoryCreate"));
 const CategoryEdit = lazy(() => import("./category/CategoryEdit"));
 
-const ModuleList = lazy(() => import("./module/ModuleList"));
-const ModuleCreate = lazy(() => import("./module/ModuleCreate"));
-const ModuleEdit = lazy(() => import("./module/ModuleEdit"));
-
 const FormList = lazy(() => import("./form/FormList"));
 const FormCreate = lazy(() => import("./form/FormCreate"));
+const FormEntry = lazy(() => import("./form/FormEntry"));
+const FormResponses = lazy(() => import("./form/FormResponses"));
 
 const Unauthorized = lazy(() => import("../../components/layout/Unauthorized"));
 
@@ -81,7 +78,8 @@ const routeComponents = {
   "/formularios": <FormList />,
   "/formularios/crear": <FormCreate />,
   "/formularios/diligenciar/:id": <FormEntry />,
-  // "/formularios/respuestas/:id": <FormResponses />,
+  "/formularios/respuestas/:id": <FormResponses />,
+  "/formularios/:formularioId/respuestas/:respuestaId": <FormEntry />,
 };
 
 const Private = () => {

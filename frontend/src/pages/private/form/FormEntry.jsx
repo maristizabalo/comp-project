@@ -1,6 +1,5 @@
-// src/pages/form/FormEntry.jsx
-import React, { useEffect, useCallback, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { Form, Button, Spin, message } from "antd";
 import { LoadingOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
@@ -13,7 +12,7 @@ import {
   setStep,
   updateSectionData,
   saveSection,
-  resetFormEntry
+  resetFormEntry,
 } from "../../../store/form/formEntrySlice";
 import { serializeValues, hydrateValues } from "../../../utils/formSerialize";
 import dayjs from "dayjs";
@@ -29,9 +28,74 @@ const toRespuestaCampoFromSub = (item) => {
   return { valor_texto: String(v) };
 };
 
+const ensureGeoJSON = (raw) => {
+  if (!raw) return null;
+  if (typeof raw === "string") {
+    try { return JSON.parse(raw); } catch { return null; }
+  }
+  return raw; // ya es objeto
+};
+
+const hydrateFromDetalle = (formulario, detalleValores) => {
+  const init = {};
+  (formulario?.secciones || []).forEach((sec) => {
+    (sec.campos || []).forEach((c) => {
+      const raw = detalleValores?.[c.nombre];
+
+      switch (c.tipo) {
+        case "fecha":
+          init[c.nombre] = raw ? dayjs(raw) : null;
+          break;
+
+        case "seleccion-unica":
+          init[c.nombre] = raw ?? null; // id opción
+          break;
+
+        case "seleccion-multiple":
+          init[c.nombre] = Array.isArray(raw) ? raw : [];
+          break;
+
+        case "geometrico": {
+          const geo = ensureGeoJSON(raw);
+          init[c.nombre] = geo ? { valor_geom: geo } : undefined;
+          break;
+        }
+
+        case "grupo-campos":
+          // el backend envía un array de { nombre, tipo, valor } bajo la clave del padre
+          // lo dejamos tal cual: el Form.List recibirá [{nombre, tipo, valor}, ...]
+          init[c.nombre] = Array.isArray(raw) ? raw.map(item => ({
+            nombre: item.nombre,
+            tipo: item.tipo,
+            valor: item.valor,
+          })) : [];
+          break;
+
+        default:
+          init[c.nombre] = raw ?? (c.tipo === "fecha" ? null : undefined);
+      }
+    });
+  });
+  return init;
+};
 
 const FormEntry = () => {
-  const { id } = useParams();
+  // Rutas soportadas:
+  // - /formularios/diligenciar/:id            -> create
+  // - /formularios/diligenciar/:id?respuestaId=XX -> edit
+  // - /formularios/:formularioId/respuestas/:respuestaId -> view
+  const params = useParams();
+  const [searchParams] = useSearchParams();
+  const formularioId = params.id || params.formularioId;
+  const respuestaIdFromQuery = searchParams.get("respuestaId");
+  const respuestaId = params.respuestaId || respuestaIdFromQuery;
+
+  const mode = useMemo(() => {
+    if (params.respuestaId) return "view";
+    if (respuestaIdFromQuery) return "edit";
+    return "create";
+  }, [params.respuestaId, respuestaIdFromQuery]);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -41,8 +105,10 @@ const FormEntry = () => {
   const [formulario, setFormulario] = useState(null);
   const [loading, setLoading] = useState(true);
   const { loading: loadingSubmit, fetchData } = useFetch();
+  const { fetchData: fetchDetalle, data: detalle } = useFetch();
 
   const next = useCallback(async () => {
+    if (mode === "view") return; // no envía nada en vista
     try {
       await form.validateFields();
       const values = form.getFieldsValue();
@@ -65,14 +131,15 @@ const FormEntry = () => {
           case "seleccion-unica":
             return [{ campo: campo.id, valor_opcion: raw ?? null }];
           case "seleccion-multiple":
-            return [{ campo: campo.id, valor_opciones: Array.isArray(raw) ? raw : [] }];
+            return [
+              {
+                campo: campo.id,
+                valor_opciones: Array.isArray(raw) ? raw : [],
+              },
+            ];
           case "geometrico":
             return [{ campo: campo.id, valor_geom: esriToGeoJSON(raw?.valor_geom) }];
           case "grupo-campos":
-            // return (raw || []).map((item) => ({
-            //   campo: campo.id,
-            //   valor_texto: item?.valor ?? "",
-            // }));
             return (raw || []).map((item) => ({
               campo: campo.id,
               ...toRespuestaCampoFromSub(item),
@@ -82,6 +149,7 @@ const FormEntry = () => {
         }
       });
 
+      // Guardar cache local de la sección
       dispatch(
         updateSectionData({
           seccionId: seccion.id,
@@ -89,9 +157,16 @@ const FormEntry = () => {
         })
       );
 
+      // Enviar al backend (incluye respuesta_id si estamos editando)
       await fetchData(() =>
         dispatch(
-          saveSection({ formularioId: id, seccionId: seccion.id, respuestas })
+          saveSection({
+            formularioId: formularioId,
+            seccionId: seccion.id,
+            respuestas,
+            // 👇 importante: para que el backend edite sobre la misma respuesta
+            respuestaId: mode === "edit" ? Number(respuestaId) : null,
+          })
         )
       );
 
@@ -99,33 +174,39 @@ const FormEntry = () => {
       if (currentStep < lastIndex) {
         dispatch(setStep(currentStep + 1));
       } else {
-        message.success("Formulario enviado");
+        message.success(mode === "edit" ? "Cambios guardados" : "Formulario enviado");
       }
     } catch (err) {
       if (err?.errorFields) message.warning("Completa los campos obligatorios");
       else message.error(err?.message || "Error al guardar sección");
     }
-  }, [form, formulario, currentStep, dispatch, id, fetchData]);
+  }, [mode, form, formulario, currentStep, dispatch, formularioId, respuestaId, fetchData]);
 
   const prev = useCallback(() => {
     if (currentStep > 0) dispatch(setStep(currentStep - 1));
   }, [currentStep, dispatch]);
 
+  // Carga del formulario y (si aplica) detalle de respuesta
   useEffect(() => {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await formService.getFormularioById(id);
+        const data = await formService.getFormularioById(formularioId);
         setFormulario(data);
         dispatch(resetFormEntry());
+
+        if (mode !== "create" && respuestaId) {
+          await fetchDetalle(formService.getRespuestaDetalle, Number(respuestaId));
+        }
       } catch (e) {
         message.error("Error loading form");
       }
       setLoading(false);
     };
     load();
-  }, [id, dispatch]);
+  }, [formularioId, dispatch, mode, respuestaId, fetchDetalle]);
 
+  // Hidratar al entrar a cada sección
   useEffect(() => {
     if (!formulario) return;
     const seccion = formulario.secciones[currentStep];
@@ -133,17 +214,29 @@ const FormEntry = () => {
       form.resetFields();
       return;
     }
+
+    // 1) datos guardados en redux (navegación previa entre pasos)
     const prevPlano = sectionsData[seccion.id];
     if (prevPlano) {
       form.setFieldsValue(hydrateValues(prevPlano, seccion.campos));
-    } else {
-      const init = {};
-      seccion.campos.forEach((c) => {
-        init[c.nombre] = c.tipo === "fecha" ? null : undefined;
-      });
-      form.setFieldsValue(init);
+      return;
     }
-  }, [currentStep, sectionsData, formulario, form]);
+
+    // 2) modo edit/view: usa detalle del backend
+    if ((mode === "edit" || mode === "view") && detalle?.valores) {
+      // Hidrata TODO el form y que AntD reparta
+      const all = hydrateFromDetalle(formulario, detalle.valores);
+      form.setFieldsValue(all);
+      return;
+    }
+
+    // 3) create por defecto
+    const init = {};
+    seccion.campos.forEach((c) => {
+      init[c.nombre] = c.tipo === "fecha" ? null : undefined;
+    });
+    form.setFieldsValue(init);
+  }, [currentStep, sectionsData, formulario, form, mode, detalle]);
 
   if (loading) {
     return (
@@ -161,23 +254,26 @@ const FormEntry = () => {
       ? formulario.secciones[currentStep]
       : null;
 
+  const isView = mode === "view";
+
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <CustomStepper total={totalSections} titles={titles} />
       <SectionCard>
-        <Form form={form} layout="vertical" onFinish={next}>
-          {seccionActual ? (
-            <FormStep seccion={seccionActual} form={form} />
-          ) : null}
+        <Form form={form} layout="vertical" onFinish={next} disabled={isView}>
+          {seccionActual ? <FormStep seccion={seccionActual} form={form} isView={isView} /> : null}
+
           <div className="flex justify-between mt-6">
-            {currentStep > 0 && <Button onClick={prev}>Previous</Button>}
-            {currentStep < totalSections - 1 ? (
+            {currentStep > 0 && !isView && <Button onClick={prev}>Anterior</Button>}
+            {isView ? (
+              <Button onClick={() => window.history.back()}>Volver</Button>
+            ) : currentStep < totalSections - 1 ? (
               <Button type="primary" loading={loadingSubmit} onClick={next}>
-                Next
+                Siguiente
               </Button>
             ) : (
               <Button type="primary" htmlType="submit" loading={loadingSubmit}>
-                Submit
+                {mode === "edit" ? "Guardar cambios" : "Enviar"}
               </Button>
             )}
           </div>
