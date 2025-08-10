@@ -1,5 +1,5 @@
 // GroupedFieldInput.jsx
-import { Form, Input, Select, DatePicker, Switch } from "antd";
+import { Form, Input, Select, DatePicker, Switch, InputNumber } from "antd";
 
 const GroupedFieldInput = ({ field, namePath, tipo }) => {
   const rules = [{ required: field.obligatorio, message: "Campo obligatorio" }];
@@ -14,7 +14,7 @@ const GroupedFieldInput = ({ field, namePath, tipo }) => {
     case "numero":
       return (
         <Form.Item label={field.etiqueta} name={[...namePath, "valor"]} rules={rules}>
-          <Input type="number" placeholder={field.etiqueta} />
+          <InputNumber style={{width: '100%'}} placeholder={field.etiqueta} />
         </Form.Item>
       );
     case "booleano":

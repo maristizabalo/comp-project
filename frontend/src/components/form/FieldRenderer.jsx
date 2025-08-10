@@ -1,4 +1,4 @@
-import { Form, Input, Select, DatePicker, Switch, Button } from "antd";
+import { Form, Input, Select, DatePicker, Switch, Button, InputNumber } from "antd";
 import React, { useCallback, useState } from "react";
 import GroupedFieldInput from "./GroupedFieldInput";
 const LazyMap = React.lazy(() => import("../maps/ArcgisMap"));
@@ -14,12 +14,12 @@ const FieldRenderer = ({ campo, form }) => {
 
     const setValue = (value) => form.setFieldValue(nombre, { campo: id, ...value });
 
-    
+    const watchedGeom = Form.useWatch([nombre, "valor_geom"], form);
 
     const handleGeom = useCallback(
-  (geom) => form.setFieldValue(nombre, { valor_geom: geom }),
-  [form, nombre]
-);
+        (geom) => form.setFieldValue(nombre, { valor_geom: geom }),
+        [form, nombre]
+    );
 
     if (tipo === "grupo-campos" && subcampos?.campos?.length) {
         return (
@@ -44,7 +44,7 @@ const FieldRenderer = ({ campo, form }) => {
                                     onClick={() => {
                                         const campoSeleccionado = subcampos.campos.find((c) => c.nombre === selected);
                                         if (campoSeleccionado) {
-                                            add({ nombre: campoSeleccionado.nombre, valor: "" });
+                                            add({ nombre: campoSeleccionado.nombre, tipo: campoSeleccionado.tipo, valor: null });
                                         }
                                     }}
                                     disabled={!selected}
@@ -93,9 +93,7 @@ const FieldRenderer = ({ campo, form }) => {
         case "numero":
             return (
                 <Form.Item name={nombre} label={etiqueta} rules={rules}>
-                    <Input
-                        type="number"
-                    />
+                    <InputNumber style={{width: '100%'}}/>
                 </Form.Item>
             );
         case "booleano":
@@ -140,24 +138,24 @@ const FieldRenderer = ({ campo, form }) => {
                 </Form.Item>
             );
         case "geometrico":
-            
+
             return (
                 <div>
-                {/* Item de etiqueta sin controlar por el form: */}
-                    <Form.Item label={etiqueta} shouldUpdate={false}>
-                        <React.Suspense fallback={<div>Cargando mapa...</div>}>
-                            <div className="h-[480px]">
-                                <MemoArcGISMapDraw
-                                    initialGeometry={form.getFieldValue([nombre, 'valor_geom'])}
-                                    onGeometryAdded={handleGeom}
-                                    required
-                                />
-                            </div>
-                        </React.Suspense>
-                    </Form.Item>
+                    {/* Etiqueta simple (no bloquees re-render con shouldUpdate={false}) */}
+                    <div className="mb-1 text-sm font-medium text-gray-700">{etiqueta}</div>
 
-                    {/* Campo oculto que sí controla el form: */}
-                    <Form.Item name={[nombre, 'valor_geom']} rules={rules} hidden>
+                    <React.Suspense fallback={<div>Cargando mapa...</div>}>
+                        <div className="h-[480px]">
+                            <MemoArcGISMapDraw
+                                geometry={watchedGeom}
+                                onGeometryChange={handleGeom}
+                                required={obligatorio}
+                            />
+                        </div>
+                    </React.Suspense>
+
+                    {/* Campo oculto controlado por el form */}
+                    <Form.Item name={[nombre, "valor_geom"]} rules={rules} hidden>
                         <input type="hidden" />
                     </Form.Item>
                 </div>

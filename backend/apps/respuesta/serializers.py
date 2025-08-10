@@ -128,6 +128,14 @@ def coerce_geom(value, srid=4326):
     raise serializers.ValidationError("Tipo de geometría no soportado")
 
 class RespuestaCampoSerializer(serializers.ModelSerializer):
+    # DECLARAR valor_opciones para que NO se pierda al validar
+    valor_opciones = serializers.ListField(
+        child=serializers.IntegerField(),
+        required=False,
+        allow_null=True,
+        write_only=True,
+    )
+
     class Meta:
         model = RespuestaCampo
         fields = [
@@ -138,6 +146,7 @@ class RespuestaCampoSerializer(serializers.ModelSerializer):
             "valor_geom",
             "valor_booleano",
             "valor_opcion",
+            "valor_opciones",
         ]
 
 
@@ -159,7 +168,7 @@ class RespuestaFormularioSerializer(serializers.ModelSerializer):
         usuario = validated_data.get("usuario")
         ip = validated_data.get("ip")
 
-        # >>>> Cambio clave: si NO hay respuesta_id => SIEMPRE crear una nueva
+        # Upsert de RespuestaFormulario
         if respuesta_id:
             rid = coerce_pk(respuesta_id)
             respuesta_formulario = (
@@ -167,67 +176,93 @@ class RespuestaFormularioSerializer(serializers.ModelSerializer):
                 .select_for_update()
                 .filter(pk=rid, formulario=formulario)
                 .first()
+            ) or RespuestaFormulario.objects.create(
+                formulario=formulario, usuario=usuario, ip=ip
             )
-            if respuesta_formulario:
-                cambios = []
-                if respuesta_formulario.usuario != usuario:
-                    respuesta_formulario.usuario = usuario; cambios.append("usuario")
-                if respuesta_formulario.ip != ip:
-                    respuesta_formulario.ip = ip; cambios.append("ip")
-                if cambios:
-                    respuesta_formulario.save(update_fields=cambios)
-            else:
-                respuesta_formulario = RespuestaFormulario.objects.create(
-                    formulario=formulario, usuario=usuario, ip=ip
-                )
+            cambios = []
+            if respuesta_formulario.usuario != usuario:
+                respuesta_formulario.usuario = usuario; cambios.append("usuario")
+            if respuesta_formulario.ip != ip:
+                respuesta_formulario.ip = ip; cambios.append("ip")
+            if cambios:
+                respuesta_formulario.save(update_fields=cambios)
         else:
             respuesta_formulario = RespuestaFormulario.objects.create(
                 formulario=formulario, usuario=usuario, ip=ip
             )
 
-        # Upsert de respuestas de campo (igual que ya lo tenías)
+        # AGRUPA por campo_id (por si repites el mismo campo varias veces)
+        groups = {}
         for r in respuestas_data:
             campo_id = coerce_pk(r.get("campo"))
-            valor_texto = r.get("valor_texto")
-            valor_numero = r.get("valor_numero")
-            valor_fecha = r.get("valor_fecha")
-            valor_geom = coerce_geom(r.get("valor_geom")) if r.get("valor_geom") is not None else None
-            valor_booleano = r.get("valor_booleano")
-            valor_opcion_id = coerce_pk(r.get("valor_opcion")) if r.get("valor_opcion") is not None else None
-            valor_opciones = r.get("valor_opciones", None)
+            groups.setdefault(campo_id, []).append(r)
 
-            if valor_opciones is not None:
+        # Procesa cada grupo/campo
+        for campo_id, items in groups.items():
+            # ¿Alguna entrada trae valor_opciones? → selección múltiple
+            has_multi = any("valor_opciones" in i and i["valor_opciones"] is not None for i in items)
+            if has_multi:
+                # reemplaza completamente las filas de ese campo
+                RespuestaCampo.objects.filter(
+                    respuesta_formulario=respuesta_formulario, campo_id=campo_id
+                ).delete()
+
+                bulk = []
+                for i in items:
+                    for opcion in (i.get("valor_opciones") or []):
+                        bulk.append(
+                            RespuestaCampo(
+                                respuesta_formulario=respuesta_formulario,
+                                campo_id=campo_id,
+                                valor_opcion_id=coerce_pk(opcion),
+                            )
+                        )
+                if bulk:
+                    RespuestaCampo.objects.bulk_create(bulk)
+                continue
+
+            # Si hay múltiples entradas simples para el mismo campo → bulk (reemplazo total)
+            if len(items) > 1:
                 RespuestaCampo.objects.filter(
                     respuesta_formulario=respuesta_formulario, campo_id=campo_id
                 ).delete()
                 bulk = []
-                for opcion in (valor_opciones or []):
-                    opcion_id = coerce_pk(opcion)
+                for i in items:
                     bulk.append(
                         RespuestaCampo(
                             respuesta_formulario=respuesta_formulario,
                             campo_id=campo_id,
-                            valor_opcion_id=opcion_id,
+                            valor_texto=i.get("valor_texto"),
+                            valor_numero=i.get("valor_numero"),
+                            valor_fecha=i.get("valor_fecha"),
+                            valor_geom=coerce_geom(i.get("valor_geom")) if i.get("valor_geom") is not None else None,
+                            valor_booleano=i.get("valor_booleano"),
+                            valor_opcion_id=coerce_pk(i.get("valor_opcion")) if i.get("valor_opcion") is not None else None,
                         )
                     )
                 if bulk:
                     RespuestaCampo.objects.bulk_create(bulk)
-            else:
-                defaults = {
-                    "valor_texto": valor_texto,
-                    "valor_numero": valor_numero,
-                    "valor_fecha": valor_fecha,
-                    "valor_geom": valor_geom,
-                    "valor_booleano": valor_booleano,
-                    "valor_opcion_id": valor_opcion_id,
-                }
-                RespuestaCampo.objects.update_or_create(
-                    respuesta_formulario=respuesta_formulario,
-                    campo_id=campo_id,
-                    defaults=defaults,
-                )
+                continue
+
+            # Solo una entrada para el campo → update_or_create
+            i = items[0]
+            defaults = {
+                "valor_texto": i.get("valor_texto"),
+                "valor_numero": i.get("valor_numero"),
+                "valor_fecha": i.get("valor_fecha"),
+                "valor_geom": coerce_geom(i.get("valor_geom")) if i.get("valor_geom") is not None else None,
+                "valor_booleano": i.get("valor_booleano"),
+                "valor_opcion_id": coerce_pk(i.get("valor_opcion")) if i.get("valor_opcion") is not None else None,
+            }
+            RespuestaCampo.objects.update_or_create(
+                respuesta_formulario=respuesta_formulario,
+                campo_id=campo_id,
+                defaults=defaults,
+            )
 
         return respuesta_formulario
+
+
 
 class RespuestaFormularioTablaSerializer(serializers.ModelSerializer):
     datos = serializers.SerializerMethodField()

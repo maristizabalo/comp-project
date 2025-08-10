@@ -19,6 +19,17 @@ import { serializeValues, hydrateValues } from "../../../utils/formSerialize";
 import dayjs from "dayjs";
 import { esriToGeoJSON } from "../../../utils/geometry";
 
+const toRespuestaCampoFromSub = (item) => {
+  const v = item?.valor;
+  const t = (item?.tipo || "").toLowerCase();
+  if (v === undefined || v === null || v === "") return { valor_texto: "" };
+  if (t === "numero") return { valor_numero: Number(v) };
+  if (t === "booleano") return { valor_booleano: !!v };
+  if (t === "fecha") return { valor_fecha: dayjs(v).format("YYYY-MM-DD") };
+  return { valor_texto: String(v) };
+};
+
+
 const FormEntry = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -37,7 +48,6 @@ const FormEntry = () => {
       const values = form.getFieldsValue();
       const seccion = formulario.secciones[currentStep];
 
-      // Construcción de respuestas para API
       const respuestas = seccion.campos.flatMap((campo) => {
         const raw = values[campo.nombre];
         switch (campo.tipo) {
@@ -46,7 +56,6 @@ const FormEntry = () => {
           case "booleano":
             return [{ campo: campo.id, valor_booleano: !!raw }];
           case "fecha":
-            // asegura dayjs -> string
             return [
               {
                 campo: campo.id,
@@ -60,16 +69,19 @@ const FormEntry = () => {
           case "geometrico":
             return [{ campo: campo.id, valor_geom: esriToGeoJSON(raw?.valor_geom) }];
           case "grupo-campos":
+            // return (raw || []).map((item) => ({
+            //   campo: campo.id,
+            //   valor_texto: item?.valor ?? "",
+            // }));
             return (raw || []).map((item) => ({
               campo: campo.id,
-              valor_texto: item?.valor ?? "",
+              ...toRespuestaCampoFromSub(item),
             }));
           default:
             return [{ campo: campo.id, valor_texto: raw ?? "" }];
         }
       });
 
-      // Guarda en Redux de forma serializable
       dispatch(
         updateSectionData({
           seccionId: seccion.id,
@@ -77,7 +89,6 @@ const FormEntry = () => {
         })
       );
 
-      // Envía la sección al backend
       await fetchData(() =>
         dispatch(
           saveSection({ formularioId: id, seccionId: seccion.id, respuestas })
@@ -89,8 +100,6 @@ const FormEntry = () => {
         dispatch(setStep(currentStep + 1));
       } else {
         message.success("Formulario enviado");
-        // ejemplo: navega a una pantalla final
-        // navigate(`/formularios/${id}/finalizado`);
       }
     } catch (err) {
       if (err?.errorFields) message.warning("Completa los campos obligatorios");
@@ -102,7 +111,6 @@ const FormEntry = () => {
     if (currentStep > 0) dispatch(setStep(currentStep - 1));
   }, [currentStep, dispatch]);
 
-  // Carga inicial del formulario
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -118,12 +126,10 @@ const FormEntry = () => {
     load();
   }, [id, dispatch]);
 
-  // Cargar datos previos de Redux al cambiar de sección
   useEffect(() => {
     if (!formulario) return;
     const seccion = formulario.secciones[currentStep];
     if (!seccion) {
-      // fuera de rango (por ejemplo, después del último)
       form.resetFields();
       return;
     }
@@ -131,7 +137,6 @@ const FormEntry = () => {
     if (prevPlano) {
       form.setFieldsValue(hydrateValues(prevPlano, seccion.campos));
     } else {
-      // asegura controlled (DatePicker espera null, no undefined)
       const init = {};
       seccion.campos.forEach((c) => {
         init[c.nombre] = c.tipo === "fecha" ? null : undefined;
