@@ -119,7 +119,6 @@ const FormEntry = () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue();
-      console.log(object)
       const seccion = formulario.secciones[currentStep];
 
       const respuestas = seccion.campos.flatMap((campo) => {
