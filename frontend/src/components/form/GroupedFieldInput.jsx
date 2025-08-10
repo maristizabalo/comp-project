@@ -9,13 +9,13 @@ import { Form, Input, InputNumber, Switch, DatePicker, Select } from "antd";
  *  - namePath: ruta base del item del grupo, p.ej. [nombrePadre, index]
  *  - isView
  */
-function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
+function GroupedFieldInput({ label, tipo, opciones = [], name, restField, isView }) {
   const commonItemProps = { label };
 
   switch ((tipo || "").toLowerCase()) {
     case "numero":
       return (
-        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+        <Form.Item {...commonItemProps} {...restField} name={[name, "valor"]}>
           <InputNumber className="w-full" disabled={isView} />
         </Form.Item>
       );
@@ -24,7 +24,8 @@ function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
       return (
         <Form.Item
           {...commonItemProps}
-          name={[...namePath, "valor"]}
+          {...restField}
+          name={[name, "valor"]}
           valuePropName="checked"
         >
           <Switch disabled={isView} />
@@ -33,14 +34,14 @@ function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
 
     case "fecha":
       return (
-        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+        <Form.Item {...commonItemProps} {...restField} name={[name, "valor"]}>
           <DatePicker className="w-full" format="YYYY-MM-DD" disabled={isView} />
         </Form.Item>
       );
 
     case "seleccion-unica":
       return (
-        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+        <Form.Item {...commonItemProps} {...restField} name={[name, "valor"]}>
           <Select
             disabled={isView}
             options={(opciones || []).map((op) => ({
@@ -53,7 +54,7 @@ function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
 
     case "seleccion-multiple":
       return (
-        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+        <Form.Item {...commonItemProps} {...restField} name={[name, "valor"]}>
           <Select
             mode="multiple"
             disabled={isView}
@@ -68,7 +69,7 @@ function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
     case "texto":
     default:
       return (
-        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+        <Form.Item {...commonItemProps} {...restField} name={[name, "valor"]}>
           <Input disabled={isView} />
         </Form.Item>
       );
