@@ -9,42 +9,44 @@ const MemoArcGISMapDraw = React.memo(LazyMap);
 
 // --- Fila de subcampo (AHORA los hooks viven aquí, no dentro del map) ---
 function SubFieldRow({ form, parentName, fieldMeta, schema, isView, onRemove }) {
-  const { key, name, ...restField } = fieldMeta;
+    const { key, name, ...restField } = fieldMeta;
 
-  const item = Form.useWatch([parentName, name], form); // { nombre, tipo, valor }
-  const subMeta = schema.find((c) => c.nombre === item?.nombre) || {};
-  const etiquetaSub = subMeta.etiqueta || item?.nombre || "";
-  const opcionesSub = subMeta.opciones || [];
+    const item = Form.useWatch([parentName, name], form); // { nombre, tipo, valor }
+    const subMeta = schema.find((c) => c.nombre === item?.nombre) || {};
+    const etiquetaSub = subMeta.etiqueta || item?.nombre || "";
+    const opcionesSub = subMeta.opciones || [];
 
-  // namePath estable por render de fila
-  const namePath = React.useMemo(() => [parentName, name], [parentName, name]);
+    // namePath estable por render de fila
+    const namePath = React.useMemo(() => [parentName, name], [parentName, name]);
 
-  return (
-    <div className="grid grid-cols-12 gap-2 items-start mb-2">
-      <Form.Item {...restField} name={[name, "nombre"]} hidden>
-        <Input type="hidden" />
-      </Form.Item>
-      <Form.Item {...restField} name={[name, "tipo"]} hidden>
-        <Input type="hidden" />
-      </Form.Item>
+    return (
+        <div className="grid grid-cols-12 gap-2 items-start mb-2">
+            <Form.Item {...restField} name={[name, "nombre"]} hidden>
+                <Input type="hidden" />
+            </Form.Item>
+            <Form.Item {...restField} name={[name, "tipo"]} hidden>
+                <Input type="hidden" />
+            </Form.Item>
 
-      <div className="col-span-11">
-        <GroupedFieldInput
-          label={etiquetaSub}
-          tipo={(item?.tipo || "").toLowerCase()}
-          opciones={opcionesSub}
-          namePath={namePath}
-          isView={isView}
-        />
-      </div>
+            <div className="col-span-11">
+                <GroupedFieldInput
+                    label={etiquetaSub}
+                    tipo={(item?.tipo || "").toLowerCase()}
+                    opciones={opcionesSub}
+                    namePath={namePath}
+                    name={name}
+                    restField={restField}
+                    isView={isView}
+                />
+            </div>
 
-      {!isView && (
-        <Button type="text" danger onClick={() => onRemove(name)} className="col-span-1">
-          🗑️
-        </Button>
-      )}
-    </div>
-  );
+            {!isView && (
+                <Button type="text" danger onClick={() => onRemove(name)} className="col-span-1">
+                    🗑️
+                </Button>
+            )}
+        </div>
+    );
 }
 
 const FieldRenderer = ({ campo, form, isView = false }) => {
