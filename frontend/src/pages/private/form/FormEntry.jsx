@@ -36,6 +36,14 @@ const ensureGeoJSON = (raw) => {
   return raw; // ya es objeto
 };
 
+const mapSubcamposByName = (campoPadre) => {
+  const arr = campoPadre?.subcampos?.campos || [];
+  return arr.reduce((acc, sc) => {
+    acc[sc.nombre] = sc; // sc debe traer .id, .nombre, .tipo, .opciones, etc.
+    return acc;
+  }, {});
+};
+
 export const hydrateFromDetalle = (formulario, detalleValores) => {
   const init = {};
   (formulario?.secciones || []).forEach((sec) => {
@@ -111,10 +119,12 @@ const FormEntry = () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue();
+      console.log(object)
       const seccion = formulario.secciones[currentStep];
 
       const respuestas = seccion.campos.flatMap((campo) => {
         const raw = values[campo.nombre];
+        console.log(raw)
         switch (campo.tipo) {
           case "numero":
             return [{ campo: campo.id, valor_numero: Number(raw) }];
@@ -138,11 +148,52 @@ const FormEntry = () => {
             ];
           case "geometrico":
             return [{ campo: campo.id, valor_geom: esriToGeoJSON(raw?.valor_geom) }];
-          case "grupo-campos":
-            return (raw || []).map((item) => ({
-              campo: campo.id,
-              ...toRespuestaCampoFromSub(item),
-            }));
+          case "grupo-campos": {
+            // raw = [{ nombre, tipo, valor }, ...]
+            const items = Array.isArray(raw) ? raw : [];
+            const subMap = mapSubcamposByName(campo); // { subNombre: subMeta(id, tipo, ...) }
+
+            const convert = (item) => {
+              const sub = subMap[item?.nombre];
+              if (!sub) return null; // subcampo ya no existe o nombre no coincide
+
+              const t = String(item?.tipo || sub.tipo || "").toLowerCase();
+              const v = item?.valor;
+
+              // Mapeo tipado por tipo del subcampo
+              if (t === "numero") {
+                return {
+                  campo: sub.id, // 👈 ID del subcampo (no el padre)
+                  valor_numero: v === "" || v == null ? null : Number(v),
+                };
+              }
+
+              if (t === "booleano") {
+                return { campo: sub.id, valor_booleano: !!v };
+              }
+
+              if (t === "fecha") {
+                return {
+                  campo: sub.id,
+                  valor_fecha: v ? dayjs(v).format("YYYY-MM-DD") : null,
+                };
+              }
+
+              if (t === "seleccion-unica") {
+                return { campo: sub.id, valor_opcion: v ?? null };
+              }
+
+              if (t === "seleccion-multiple") {
+                const ids = Array.isArray(v) ? v : [];
+                return { campo: sub.id, valor_opciones: ids };
+              }
+
+              // texto (default)
+              return { campo: sub.id, valor_texto: v == null ? "" : String(v) };
+            };
+
+            return items.map(convert).filter(Boolean);
+          }
           default:
             return [{ campo: campo.id, valor_texto: raw ?? "" }];
         }

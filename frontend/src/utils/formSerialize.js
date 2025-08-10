@@ -9,36 +9,77 @@ import dayjs from "dayjs";
  */
 export function serializeValues(values, campos) {
   const out = {};
+
   for (const campo of campos) {
     const raw = values?.[campo.nombre];
-    switch (campo.tipo) {
-      case "fecha":
-        // raw puede ser dayjs, string o null
+    const tipo = (campo.tipo || "").toLowerCase();
+
+    switch (tipo) {
+      case "fecha": {
         out[campo.nombre] = raw ? dayjs(raw).format("YYYY-MM-DD") : null;
         break;
-      case "numero":
+      }
+
+      case "numero": {
         out[campo.nombre] =
           raw === "" || raw === null || raw === undefined ? null : Number(raw);
         break;
-      case "booleano":
+      }
+
+      case "booleano": {
         out[campo.nombre] = !!raw;
         break;
-      case "seleccion-multiple":
+      }
+
+      case "seleccion-multiple": {
         out[campo.nombre] = Array.isArray(raw) ? raw : raw ? [raw] : [];
         break;
-      case "grupo-campos":
-        // asume array de objetos simples
-        out[campo.nombre] = Array.isArray(raw) ? raw : [];
+      }
+
+      case "grupo-campos": {
+        // Esperamos un array de items: { nombre, tipo, valor }
+        const items = Array.isArray(raw) ? raw : [];
+        out[campo.nombre] = items.map((item) => {
+          const itTipo = (item?.tipo || "").toLowerCase();
+          let valor = item?.valor;
+
+          if (itTipo === "fecha") {
+            valor = valor ? dayjs(valor).format("YYYY-MM-DD") : null;
+          } else if (itTipo === "numero") {
+            valor =
+              valor === "" || valor === null || valor === undefined
+                ? null
+                : Number(valor);
+          } else if (itTipo === "booleano") {
+            valor = !!valor;
+          } else if (itTipo === "seleccion-multiple") {
+            valor = Array.isArray(valor) ? valor : valor ? [valor] : [];
+          } else {
+            // texto / seleccion-unica / otros
+            valor = valor ?? null;
+          }
+
+          return {
+            nombre: item?.nombre ?? "",
+            tipo: itTipo,
+            valor,
+          };
+        });
         break;
-      case "geometrico":
-        // asegúrate de extraer solo lo serializable si usas mapas
-        // por ejemplo { valor_geom: 'WKT...'} o GeoJSON plano
-        out[campo.nombre] = raw?.valor_geom ? { valor_geom: raw.valor_geom } : null;
+      }
+
+      case "geometrico": {
+        // Guarda solo el GeoJSON (lo que pinta tu mapa)
+        out[campo.nombre] = raw?.valor_geom ?? null;
         break;
-      default:
+      }
+
+      default: {
         out[campo.nombre] = raw ?? null;
+      }
     }
   }
+
   return out;
 }
 
@@ -49,13 +90,55 @@ export function serializeValues(values, campos) {
  */
 export function hydrateValues(plano, campos) {
   const out = {};
+
   for (const campo of campos) {
     const raw = plano?.[campo.nombre];
-    if (campo.tipo === "fecha") {
+    const tipo = (campo.tipo || "").toLowerCase();
+
+    if (tipo === "fecha") {
       out[campo.nombre] = raw ? dayjs(raw, "YYYY-MM-DD") : null;
-    } else {
-      out[campo.nombre] = raw;
+      continue;
     }
+
+    if (tipo === "grupo-campos") {
+      const items = Array.isArray(raw) ? raw : [];
+      out[campo.nombre] = items.map((item) => {
+        const itTipo = (item?.tipo || "").toLowerCase();
+        let valor = item?.valor;
+
+        if (itTipo === "fecha") {
+          valor = valor ? dayjs(valor, "YYYY-MM-DD") : null;
+        } else if (itTipo === "numero") {
+          valor =
+            valor === "" || valor === null || valor === undefined
+              ? null
+              : Number(valor);
+        } else if (itTipo === "booleano") {
+          valor = !!valor;
+        } else if (itTipo === "seleccion-multiple") {
+          valor = Array.isArray(valor) ? valor : valor ? [valor] : [];
+        } else {
+          valor = valor ?? null;
+        }
+
+        return {
+          nombre: item?.nombre ?? "",
+          tipo: itTipo,
+          valor,
+        };
+      });
+      continue;
+    }
+
+    if (tipo === "geometrico") {
+      // El Mapa espera { valor_geom: <GeoJSON> }
+      out[campo.nombre] = raw ? { valor_geom: raw } : null;
+      continue;
+    }
+
+    // Resto
+    out[campo.nombre] = raw;
   }
+
   return out;
 }

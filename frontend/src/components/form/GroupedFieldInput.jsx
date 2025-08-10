@@ -1,64 +1,66 @@
-// src/components/form/GroupedFieldInput.jsx
 import React from "react";
-import { Form, Input, InputNumber, Select, DatePicker, Switch } from "antd";
-import dayjs from "dayjs";
+import { Form, Input, InputNumber, Switch, DatePicker, Select } from "antd";
 
 /**
- * Renderiza el control del subcampo dentro de un grupo.
- * - namePath: ruta base del item -> [padreNombre, index]
- *   Este componente escribe/lee en [...namePath, 'valor']
- * - tipo: 'texto' | 'numero' | 'booleano' | 'fecha' | 'seleccion-unica' | 'seleccion-multiple'
- * - opciones: [{id, valor, etiqueta}] (solo para select)
- * - label: etiqueta visible
- * - isView: deshabilitar controles
+ * Props:
+ *  - label
+ *  - tipo: 'texto' | 'numero' | 'booleano' | 'fecha' | 'seleccion-unica' | 'seleccion-multiple'
+ *  - opciones: [{ id, valor, etiqueta }]
+ *  - namePath: ruta base del item del grupo, p.ej. [nombrePadre, index]
+ *  - isView
  */
-const GroupedFieldInput = ({ namePath, tipo, opciones = [], label, isView = false }) => {
-  const valueName = [...namePath, "valor"];
+function GroupedFieldInput({ label, tipo, opciones = [], namePath, isView }) {
+  const commonItemProps = { label };
 
   switch ((tipo || "").toLowerCase()) {
     case "numero":
       return (
-        <Form.Item name={valueName} label={label}>
-          <InputNumber disabled={isView} className="w-full" />
+        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
+          <InputNumber className="w-full" disabled={isView} />
         </Form.Item>
       );
 
     case "booleano":
       return (
-        <Form.Item name={valueName} label={label} valuePropName="checked">
+        <Form.Item
+          {...commonItemProps}
+          name={[...namePath, "valor"]}
+          valuePropName="checked"
+        >
           <Switch disabled={isView} />
         </Form.Item>
       );
 
     case "fecha":
       return (
-        <Form.Item
-          name={valueName}
-          label={label}
-          getValueProps={(v) => ({ value: v ? dayjs(v) : null })}
-          getValueFromEvent={(d) => (d ? d.format("YYYY-MM-DD") : null)}
-        >
+        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
           <DatePicker className="w-full" format="YYYY-MM-DD" disabled={isView} />
         </Form.Item>
       );
 
     case "seleccion-unica":
       return (
-        <Form.Item name={valueName} label={label}>
+        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
           <Select
             disabled={isView}
-            options={(opciones || []).map((op) => ({ label: op.valor, value: op.id }))}
+            options={(opciones || []).map((op) => ({
+              label: op.etiqueta ?? op.valor,
+              value: op.id,
+            }))}
           />
         </Form.Item>
       );
 
     case "seleccion-multiple":
       return (
-        <Form.Item name={valueName} label={label}>
+        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
           <Select
             mode="multiple"
             disabled={isView}
-            options={(opciones || []).map((op) => ({ label: op.valor, value: op.id }))}
+            options={(opciones || []).map((op) => ({
+              label: op.etiqueta ?? op.valor,
+              value: op.id,
+            }))}
           />
         </Form.Item>
       );
@@ -66,11 +68,11 @@ const GroupedFieldInput = ({ namePath, tipo, opciones = [], label, isView = fals
     case "texto":
     default:
       return (
-        <Form.Item name={valueName} label={label}>
+        <Form.Item {...commonItemProps} name={[...namePath, "valor"]}>
           <Input disabled={isView} />
         </Form.Item>
       );
   }
-};
+}
 
-export default React.memo(GroupedFieldInput);
+export default GroupedFieldInput;
