@@ -12,6 +12,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from django.db import transaction
 from django.db.models import Prefetch
+import json
 
 
 
@@ -209,12 +210,25 @@ class RespuestasFormularioPrincipalTablaView(ListCreateAPIView):
         data["columns"] = columns
         return Response(data)
 
-def extract_val(rc):
-    """
-    Devuelve el valor *tipado* para un RespuestaCampo.
-    - multi-select lo manejamos fuera (porque son varias filas)
-    - geom -> GeoJSON (objeto)
-    """
+
+def _as_geojson_obj(geom):
+    if not geom:
+        return None
+    # Intenta dict primero (GEOSGeometry.json en versiones recientes puede devolver str o dict según driver)
+    try:
+        val = geom.json
+        if isinstance(val, str):
+            return json.loads(val)
+        return val
+    except Exception:
+        try:
+            s = geom.geojson  # string
+            return json.loads(s)
+        except Exception:
+            return None
+
+def _value_from_rc(rc):
+    """ Extrae valor tipado de una fila (NO multiselect). """
     if rc.valor_fecha is not None:
         return rc.valor_fecha.isoformat()
     if rc.valor_numero is not None:
@@ -222,104 +236,159 @@ def extract_val(rc):
     if rc.valor_booleano is not None:
         return rc.valor_booleano
     if rc.valor_opcion_id is not None:
-        return rc.valor_opcion_id  # simple (single select)
+        return rc.valor_opcion_id
     if rc.valor_geom:
-        try:
-            return rc.valor_geom.json  # <- objeto dict (no string)
-        except Exception:
-            try:
-                return rc.valor_geom.geojson  # fallback string (front hará JSON.parse)
-            except Exception:
-                return None
+        return _as_geojson_obj(rc.valor_geom)
     return rc.valor_texto
 
 class RespuestaFormularioDetalleView(RetrieveUpdateAPIView):
-    queryset = (RespuestaFormulario.objects
+    """
+    Devuelve:
+    {
+      "id": <int>,
+      "formulario": <int>,
+      "valores": {
+        "<campo_raiz>": <valor | [ids]>,
+        "<grupo_padre>": [ { "nombre": <sub_nombre>, "tipo": <str>, "valor": <tipado|[ids]> }, ... ]
+      }
+    }
+    """
+    queryset = (
+        RespuestaFormulario.objects
         .all()
+        .select_related("formulario")
         .prefetch_related(
             Prefetch(
-                'respuestas_campo',
-                queryset=RespuestaCampo.objects.select_related('campo', 'campo__tipo', 'campo__campo_padre', 'valor_opcion')
-            )
-        ))
+                "formulario__secciones__campos",
+                # Cargamos subcampos y tipo para conocer jerarquía/orden
+                queryset=None,
+            ),
+            Prefetch(
+                "respuestas_campo",
+                queryset=RespuestaCampo.objects.select_related(
+                    "campo", "campo__tipo", "campo__campo_padre", "campo__seccion", "valor_opcion"
+                ).order_by("id")
+            ),
+        )
+    )
 
     def get(self, request, *args, **kwargs):
-        obj = self.get_object()
+        resp = self.get_object()
 
-        # Agrupar por campo.nombre (simples) y por padre.nombre (grupo-campos)
-        simples = {}      # { campo_nombre: valor | [ids] }
-        grupos = {}       # { padre_nombre: [ {nombre, tipo, valor}, ... ] }
+        # ===== 1) Construir índices de estructura =====
+        # campo_index: id -> { nombre, tipo, padre_id, orden }
+        campo_index = {}
+        # parent_ids: ids de campos que son PADRE (tienen subcampos)
+        parent_ids = set()
+        # group_defs: padre_id -> { nombre: <str>, subcampos: [(id, nombre, tipo, orden), ...] }
+        group_defs = {}
 
-        # Estructuras auxiliares para multi-select
-        acumulador_opciones = {}  # { campo_nombre: [ids ...] }
-        acumulador_sub_opciones = {}  # { padre_nombre: { sub_nombre: [ids ...] } }
+        # Recorremos la estructura del formulario:
+        for seccion in resp.formulario.secciones.all().prefetch_related("campos__subcampos", "campos__tipo"):
+            for campo in seccion.campos.all().select_related("tipo", "campo_padre"):
+                tipo_str = (campo.tipo.tipo or "").lower()
+                padre_id = campo.campo_padre_id
+                campo_index[campo.id] = {
+                    "nombre": campo.nombre,
+                    "tipo": tipo_str,
+                    "padre_id": padre_id,
+                    "orden": campo.orden,
+                }
+                # Si este campo tiene subcampos, es un PADRE
+                if campo.subcampos.exists():
+                    parent_ids.add(campo.id)
+                    group_defs.setdefault(campo.id, {"nombre": campo.nombre, "subcampos": []})
 
-        for rc in obj.respuestas_campo.all():
-            campo = rc.campo
-            nombre = campo.nombre
-            tipo_str = (campo.tipo.tipo or "").lower()
-            padre = campo.campo_padre  # None si es campo raíz
+        # Llenar subcampos en group_defs y ordenarlos
+        for seccion in resp.formulario.secciones.all().prefetch_related("campos__tipo", "campos__campo_padre"):
+            for sub in seccion.campos.all().select_related("tipo", "campo_padre"):
+                if sub.campo_padre_id:
+                    padre_id = sub.campo_padre_id
+                    if padre_id in group_defs:
+                        group_defs[padre_id]["subcampos"].append(
+                            (sub.id, sub.nombre, (sub.tipo.tipo or "").lower(), sub.orden)
+                        )
+        for padre_id in group_defs:
+            group_defs[padre_id]["subcampos"].sort(key=lambda x: x[3])  # orden
 
-            # ¿esta fila es una opción (select)? Si hay múltiples filas para el mismo campo con valor_opcion, es multi-select
-            if rc.valor_opcion_id:
-                if padre is None:
-                    # raíz multi-select
-                    acumulador_opciones.setdefault(nombre, []).append(rc.valor_opcion_id)
-                else:
-                    # subcampo multi-select
-                    padre_nombre = padre.nombre
-                    sub_nombre = nombre
-                    acumulador_sub_opciones.setdefault(padre_nombre, {}).setdefault(sub_nombre, []).append(rc.valor_opcion_id)
+        # ===== 2) Recoger respuestas y agrupar =====
+        simples = {}      # { campo_raiz_nombre: valor | [ids] }
+        grupos = {}       # { grupo_nombre: { sub_nombre: valor | [ids] } }
+
+        root_multi = {}   # { campo_raiz_nombre: [ids] }
+        sub_multi = {}    # { grupo_nombre: { sub_nombre: [ids] } }
+
+        for rc in resp.respuestas_campo.all():
+            meta = campo_index.get(rc.campo_id)
+            if not meta:
                 continue
 
-            # no opción: valor simple
-            val = extract_val(rc)
+            c_nombre = meta["nombre"]
+            c_tipo   = meta["tipo"]
+            padre_id = meta["padre_id"]
 
-            if padre is None:
-                # campo raíz
-                # si ya había algo y no es lista, respétalo (solo tomamos el primero para simples)
-                simples.setdefault(nombre, val)
+            # Si este campo es un PADRE (grupo), IGNORAR cualquier valor directo (clave del bug que viste)
+            if rc.campo_id in parent_ids:
+                continue
+
+            # Multiselect -> acumular ids
+            if rc.valor_opcion_id:
+                if padre_id is None:
+                    root_multi.setdefault(c_nombre, []).append(rc.valor_opcion_id)
+                else:
+                    grupo_nombre = group_defs.get(padre_id, {}).get("nombre")
+                    if not grupo_nombre:
+                        continue
+                    sub_multi.setdefault(grupo_nombre, {}).setdefault(c_nombre, []).append(rc.valor_opcion_id)
+                continue
+
+            # Valor simple tipado
+            val = _value_from_rc(rc)
+
+            if padre_id is None:
+                # raíz simple: tomar el primero
+                if c_nombre not in simples:
+                    simples[c_nombre] = val
             else:
-                # subcampo
-                padre_nombre = padre.nombre
-                grupos.setdefault(padre_nombre, []).append({
-                    "nombre": nombre,
-                    "tipo": tipo_str,
-                    "valor": val,
-                })
+                grupo_nombre = group_defs.get(padre_id, {}).get("nombre")
+                if not grupo_nombre:
+                    continue
+                grupos.setdefault(grupo_nombre, {})
+                if c_nombre not in grupos[grupo_nombre]:
+                    grupos[grupo_nombre][c_nombre] = val
 
-        # cierra los multi-select raíz como arrays
-        for nombre, ids in acumulador_opciones.items():
+        # Cerrar multiselect de raíces
+        for nombre, ids in root_multi.items():
             simples[nombre] = ids
 
-        # cierra los multi-select de subcampos: crea un item por subcampo con 'valor' = array
-        for padre_nombre, submap in acumulador_sub_opciones.items():
-            grupos.setdefault(padre_nombre, [])
+        # Cerrar multiselect de subcampos
+        for gnombre, submap in sub_multi.items():
+            grupos.setdefault(gnombre, {})
             for sub_nombre, ids in submap.items():
-                # Si ya existía un item de ese subcampo (por valor simple), lo pisamos con array (preferimos arrays en multi)
-                # (o podrías fusionar)
-                # buscar si existe y reemplazar
-                replaced = False
-                for item in grupos[padre_nombre]:
-                    if item["nombre"] == sub_nombre:
-                        item["valor"] = ids
-                        replaced = True
-                        break
-                if not replaced:
-                    grupos[padre_nombre].append({
-                        "nombre": sub_nombre,
-                        "tipo": "seleccion-multiple",  # o el tipo real si lo necesitas
-                        "valor": ids,
-                    })
+                grupos[gnombre][sub_nombre] = ids
 
-        # Combina: para el front es más simple si TODO está bajo una sola clave `valores`
-        # - claves raíz -> simples[nombre]
-        # - claves de grupo -> array de objetos [{nombre, tipo, valor}, ...]
-        valores = {**simples, **grupos}
+        # ===== 3) Armar payload final (ordenado) =====
+        valores = {**simples}
+        for padre_id, info in group_defs.items():
+            gnombre = info["nombre"]
+            if gnombre not in grupos:
+                continue
+            submap = grupos[gnombre]
+            arr = []
+            for (sid, sname, stipo, sorden) in info["subcampos"]:
+                if sname in submap:
+                    arr.append({
+                        "nombre": sname,
+                        "tipo": stipo,
+                        "valor": submap[sname],
+                    })
+            if arr:
+                valores[gnombre] = arr
 
         data = {
-            "id": obj.id,
-            "formulario": obj.formulario_id,
+            "id": resp.id,
+            "formulario": resp.formulario_id,
             "valores": valores,
         }
         return Response(data)
+  

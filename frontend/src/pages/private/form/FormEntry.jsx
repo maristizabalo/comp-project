@@ -36,7 +36,7 @@ const ensureGeoJSON = (raw) => {
   return raw; // ya es objeto
 };
 
-const hydrateFromDetalle = (formulario, detalleValores) => {
+export const hydrateFromDetalle = (formulario, detalleValores) => {
   const init = {};
   (formulario?.secciones || []).forEach((sec) => {
     (sec.campos || []).forEach((c) => {
@@ -48,7 +48,7 @@ const hydrateFromDetalle = (formulario, detalleValores) => {
           break;
 
         case "seleccion-unica":
-          init[c.nombre] = raw ?? null; // id opción
+          init[c.nombre] = raw ?? null;
           break;
 
         case "seleccion-multiple":
@@ -56,14 +56,13 @@ const hydrateFromDetalle = (formulario, detalleValores) => {
           break;
 
         case "geometrico": {
-          const geo = ensureGeoJSON(raw);
-          init[c.nombre] = geo ? { valor_geom: geo } : undefined;
+          const gj = ensureGeoJSON(raw);
+          init[c.nombre] = gj ? { valor_geom: gj } : undefined;
           break;
         }
 
         case "grupo-campos":
-          // el backend envía un array de { nombre, tipo, valor } bajo la clave del padre
-          // lo dejamos tal cual: el Form.List recibirá [{nombre, tipo, valor}, ...]
+          // backend ya manda array [{nombre, tipo, valor}, ...]
           init[c.nombre] = Array.isArray(raw) ? raw.map(item => ({
             nombre: item.nombre,
             tipo: item.tipo,
