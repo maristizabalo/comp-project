@@ -31,3 +31,6 @@ class RespuestaCampo(models.Model):
 
     class Meta:
         db_table = 'RESPUESTA_CAMPO'
+        indexes = [
+            models.Index(fields=["respuesta_formulario", "campo"]),
+        ]

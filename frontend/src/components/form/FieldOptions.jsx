@@ -1,6 +1,7 @@
+// src/components/form/FieldOptions.jsx
+import React from "react";
 import { Form, Input, Button, Space } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
-import React from "react";
 
 const FieldOptions = ({ field }) => (
   <div className="pl-3">

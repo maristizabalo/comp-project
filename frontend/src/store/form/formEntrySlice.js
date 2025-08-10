@@ -1,53 +1,83 @@
+// src/store/form/formEntrySlice.js
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { formService } from "../../services/form/formService";
 
 export const saveSection = createAsyncThunk(
   "formEntry/saveSection",
-  async ({ formularioId, seccionId, respuestas }, thunkAPI) => {
-    // Construye payload con sección individual para API existente
-    const payload = {
-      formulario: Number(formularioId),
-      respuestas_campo: respuestas
-    };
-    return await formService.createRespuestaFormulario(payload);
+  async ({ formularioId, seccionId, respuestas }, { getState, rejectWithValue }) => {
+    try {
+      const state = getState();
+      const respuestaId = state.formulario.formEntry.respuestaId || null;
+
+      const payload = {
+        formulario: Number(formularioId),
+        respuestas_campo: respuestas,
+        // clave para EDITAR la misma respuesta
+        respuesta_id: respuestaId,
+      };
+
+      const result = await formService.createRespuestaFormulario(payload);
+      // el backend devuelve { id, formulario, usuario, ip, fecha_creacion, ... }
+      return { seccionId, result, respuestaId: result.id };
+    } catch (e) {
+      return rejectWithValue(e?.message || "Error al guardar sección");
+    }
   }
 );
 
-const formEntrySlice = createSlice({
+const initialState = {
+  currentStep: 0,
+  sectionsData: {},
+  sectionStatus: {},
+  sectionError: {},
+  // almacena el id devuelto por el backend para reusarlo
+  respuestaId: null,
+};
+
+const slice = createSlice({
   name: "formEntry",
-  initialState: {
-    currentStep: 0,
-    sectionsData: {},   // { [seccionId]: values }
-    status: "idle",
-    error: null,
-  },
+  initialState,
   reducers: {
     setStep(state, action) {
       state.currentStep = action.payload;
     },
     updateSectionData(state, action) {
       const { seccionId, data } = action.payload;
-      state.sectionsData[seccionId] = data;
+      state.sectionsData[seccionId] = { ...(state.sectionsData[seccionId] || {}), ...data };
     },
-    resetFormEntry(state) {
-      state.currentStep = 0;
-      state.sectionsData = {};
-      state.status = "idle";
-      state.error = null;
-    }
+    resetFormEntry() {
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(saveSection.pending, (state) => { state.status = "loading"; })
-      .addCase(saveSection.fulfilled, (state) => {
-        state.status = "succeeded";
+      .addCase(saveSection.pending, (state, action) => {
+        const { seccionId } = action.meta.arg || {};
+        if (seccionId != null) {
+          state.sectionStatus[seccionId] = "loading";
+          state.sectionError[seccionId] = null;
+        }
+      })
+      .addCase(saveSection.fulfilled, (state, action) => {
+        const { seccionId, respuestaId } = action.payload || {};
+        if (seccionId != null) {
+          state.sectionStatus[seccionId] = "succeeded";
+          state.sectionError[seccionId] = null;
+        }
+        if (respuestaId) {
+          state.respuestaId = respuestaId; // conservar para los próximos saves
+        }
       })
       .addCase(saveSection.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.error.message;
+        const { seccionId } = action.meta.arg || {};
+        if (seccionId != null) {
+          state.sectionStatus[seccionId] = "failed";
+          state.sectionError[seccionId] =
+            action.payload || action.error?.message || "Error al guardar sección";
+        }
       });
-  }
+  },
 });
 
-export const { setStep, updateSectionData, resetFormEntry } = formEntrySlice.actions;
-export default formEntrySlice.reducer;
+export const { setStep, updateSectionData, resetFormEntry } = slice.actions;
+export default slice.reducer;

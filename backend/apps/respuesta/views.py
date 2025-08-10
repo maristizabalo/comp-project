@@ -9,6 +9,7 @@ from utils.permissions import build_check_formulario_permiso, check_user_formula
 from io import BytesIO
 from rest_framework.response import Response
 from rest_framework import status
+from django.db import transaction
 
 
 
@@ -29,19 +30,28 @@ class RespuestaFormularioView(ListCreateAPIView):
             ip_user = self.request.META.get("REMOTE_ADDR")
         return ip_user
 
+    @transaction.atomic
     def create(self, request, *args, **kwargs):
         data = request.data.copy()
-        user = request.user.usuario if hasattr(request.user, 'usuario') else str(request.user)
+
+        # Identidad de quien responde
+        user = request.user.usuario if hasattr(request.user, "usuario") else str(request.user)
         ip_user = self.get_user_ip()
 
+        # Enriquecer payload
         data["usuario"] = user
         data["ip"] = ip_user
 
-        serializer = self.get_serializer(data=data)
+        # Pasamos request al serializer (lo usamos para leer respuesta_id)
+        serializer = self.get_serializer(data=data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
+        # El create del serializer hace upsert
+        instancia = serializer.save()
+
+        # Devolvemos el id de la respuesta para que frontend lo reuse
+        response_data = self.get_serializer(instancia).data
+        return Response(response_data, status=status.HTTP_201_CREATED)
 
 class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
     queryset = RespuestaFormulario.objects.all()

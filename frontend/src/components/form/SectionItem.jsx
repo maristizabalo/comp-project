@@ -1,3 +1,4 @@
+// src/components/form/SectionItem.jsx
 import React from "react";
 import { Button, Form, Input, Typography } from "antd";
 import { DeleteOutlined, PlusOutlined } from "@ant-design/icons";
@@ -5,10 +6,12 @@ import FieldItem from "./FieldItem";
 
 const { Title } = Typography;
 
-const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
+const SectionItem = ({ section, remove, tiposCamposOptions }) => (
   <div className="relative border-t-8 border-t-red-500 border-b-4 border-b-gray-400 rounded-lg shadow-md p-6 bg-white mb-10">
     <div className="flex justify-between items-center mb-4">
-      <Title level={5} className="text-primario !mb-0">Sección</Title>
+      <Title level={5} className="text-primario !mb-0">
+        Sección
+      </Title>
       <Button
         danger
         icon={<DeleteOutlined />}
@@ -28,7 +31,7 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
       </Form.Item>
     </div>
 
-    <Form.List name={[section.name, "campos"]}>
+    <Form.List name={[section.name, "campos"]} preserve={false}>
       {(fields, { add, remove }) => (
         <div className="flex flex-col gap-4">
           {fields.map((field) => (
@@ -37,10 +40,8 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
                 field={field}
                 remove={remove}
                 tiposCamposOptions={tiposCamposOptions}
-                mainCount={mainCount}
-                fieldPath={[section.name, "campos", field.name]}
+                fieldPath={[section.name, "campos", field.name]} // 👈 clave para useWatch
               />
-
             </div>
           ))}
 
@@ -52,7 +53,6 @@ const SectionItem = ({ section, remove, tiposCamposOptions, mainCount }) => (
           >
             Añadir campo
           </Button>
-
         </div>
       )}
     </Form.List>

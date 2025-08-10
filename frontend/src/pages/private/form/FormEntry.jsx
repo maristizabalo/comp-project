@@ -1,3 +1,4 @@
+// src/pages/form/FormEntry.jsx
 import React, { useEffect, useCallback, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Form, Button, Spin, message } from "antd";
@@ -14,54 +15,94 @@ import {
   saveSection,
   resetFormEntry
 } from "../../../store/form/formEntrySlice";
+import { serializeValues, hydrateValues } from "../../../utils/formSerialize";
+import dayjs from "dayjs";
+import { esriToGeoJSON } from "../../../utils/geometry";
 
 const FormEntry = () => {
-  // HOOKS: se ejecutan siempre en mismo orden
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form] = Form.useForm();
-  const { currentStep, sectionsData } = useSelector((state) => state.formulario.formEntry);
+  const { currentStep, sectionsData } = useSelector(
+    (state) => state.formulario.formEntry
+  );
   const [formulario, setFormulario] = useState(null);
   const [loading, setLoading] = useState(true);
   const { loading: loadingSubmit, fetchData } = useFetch();
 
-  // Handler: avanzar
   const next = useCallback(async () => {
     try {
       await form.validateFields();
       const values = form.getFieldsValue();
       const seccion = formulario.secciones[currentStep];
-      const respuestas = seccion.campos.flatMap(campo => {
+
+      // Construcción de respuestas para API
+      const respuestas = seccion.campos.flatMap((campo) => {
         const raw = values[campo.nombre];
         switch (campo.tipo) {
-          case "numero": return [{ campo: campo.id, valor_numero: Number(raw) }];
-          case "booleano": return [{ campo: campo.id, valor_booleano: raw }];
-          case "fecha": return [{ campo: campo.id, valor_fecha: raw.format("YYYY-MM-DD") }];
-          case "seleccion-unica": return [{ campo: campo.id, valor_opcion: raw }];
-          case "seleccion-multiple": return [{ campo: campo.id, valor_opciones: raw }];
-          case "geometrico": return [{ campo: campo.id, valor_geom: raw.valor_geom }];
+          case "numero":
+            return [{ campo: campo.id, valor_numero: Number(raw) }];
+          case "booleano":
+            return [{ campo: campo.id, valor_booleano: !!raw }];
+          case "fecha":
+            // asegura dayjs -> string
+            return [
+              {
+                campo: campo.id,
+                valor_fecha: raw ? dayjs(raw).format("YYYY-MM-DD") : null,
+              },
+            ];
+          case "seleccion-unica":
+            return [{ campo: campo.id, valor_opcion: raw ?? null }];
+          case "seleccion-multiple":
+            return [{ campo: campo.id, valor_opciones: Array.isArray(raw) ? raw : [] }];
+          case "geometrico":
+            return [{ campo: campo.id, valor_geom: esriToGeoJSON(raw?.valor_geom) }];
           case "grupo-campos":
-            return (raw || []).map(item => ({ campo: campo.id, valor_texto: item.valor }));
-          default: return [{ campo: campo.id, valor_texto: raw }];
+            return (raw || []).map((item) => ({
+              campo: campo.id,
+              valor_texto: item?.valor ?? "",
+            }));
+          default:
+            return [{ campo: campo.id, valor_texto: raw ?? "" }];
         }
       });
-      // Guardar estado local y enviar
-      dispatch(updateSectionData({ seccionId: seccion.id, data: values }));
-      await fetchData(() => dispatch(saveSection({ formularioId: id, seccionId: seccion.id, respuestas })));
-      dispatch(setStep(currentStep + 1));
+
+      // Guarda en Redux de forma serializable
+      dispatch(
+        updateSectionData({
+          seccionId: seccion.id,
+          data: serializeValues(values, seccion.campos),
+        })
+      );
+
+      // Envía la sección al backend
+      await fetchData(() =>
+        dispatch(
+          saveSection({ formularioId: id, seccionId: seccion.id, respuestas })
+        )
+      );
+
+      const lastIndex = formulario.secciones.length - 1;
+      if (currentStep < lastIndex) {
+        dispatch(setStep(currentStep + 1));
+      } else {
+        message.success("Formulario enviado");
+        // ejemplo: navega a una pantalla final
+        // navigate(`/formularios/${id}/finalizado`);
+      }
     } catch (err) {
-      if (err.errorFields) message.warning("Completa los campos obligatorios");
-      else message.error(err.message || "Error al guardar sección");
+      if (err?.errorFields) message.warning("Completa los campos obligatorios");
+      else message.error(err?.message || "Error al guardar sección");
     }
   }, [form, formulario, currentStep, dispatch, id, fetchData]);
 
-  // Handler: retroceder
   const prev = useCallback(() => {
-    dispatch(setStep(currentStep - 1));
+    if (currentStep > 0) dispatch(setStep(currentStep - 1));
   }, [currentStep, dispatch]);
 
-  // Efecto: carga inicial del formulario
+  // Carga inicial del formulario
   useEffect(() => {
     const load = async () => {
       setLoading(true);
@@ -69,7 +110,7 @@ const FormEntry = () => {
         const data = await formService.getFormularioById(id);
         setFormulario(data);
         dispatch(resetFormEntry());
-      } catch {
+      } catch (e) {
         message.error("Error loading form");
       }
       setLoading(false);
@@ -77,15 +118,28 @@ const FormEntry = () => {
     load();
   }, [id, dispatch]);
 
-  // Efecto: cargar datos previos al cambiar de sección
+  // Cargar datos previos de Redux al cambiar de sección
   useEffect(() => {
     if (!formulario) return;
     const seccion = formulario.secciones[currentStep];
-    const prevData = sectionsData[seccion.id];
-    if (prevData) form.setFieldsValue(prevData);
+    if (!seccion) {
+      // fuera de rango (por ejemplo, después del último)
+      form.resetFields();
+      return;
+    }
+    const prevPlano = sectionsData[seccion.id];
+    if (prevPlano) {
+      form.setFieldsValue(hydrateValues(prevPlano, seccion.campos));
+    } else {
+      // asegura controlled (DatePicker espera null, no undefined)
+      const init = {};
+      seccion.campos.forEach((c) => {
+        init[c.nombre] = c.tipo === "fecha" ? null : undefined;
+      });
+      form.setFieldsValue(init);
+    }
   }, [currentStep, sectionsData, formulario, form]);
 
-  // RENDERS CONDICIONALES
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -95,22 +149,31 @@ const FormEntry = () => {
   }
   if (!formulario) return null;
 
-  // Variables derivadas (después de hooks y condicionales de carga)
   const totalSections = formulario.secciones.length;
-  const titles = formulario.secciones.map(s => s.nombre);
+  const titles = formulario.secciones.map((s) => s.nombre);
+  const seccionActual =
+    currentStep >= 0 && currentStep < totalSections
+      ? formulario.secciones[currentStep]
+      : null;
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
       <CustomStepper total={totalSections} titles={titles} />
       <SectionCard>
         <Form form={form} layout="vertical" onFinish={next}>
-          <FormStep seccion={formulario.secciones[currentStep]} form={form} />
+          {seccionActual ? (
+            <FormStep seccion={seccionActual} form={form} />
+          ) : null}
           <div className="flex justify-between mt-6">
             {currentStep > 0 && <Button onClick={prev}>Previous</Button>}
             {currentStep < totalSections - 1 ? (
-              <Button type="primary" loading={loadingSubmit} onClick={next}>Next</Button>
+              <Button type="primary" loading={loadingSubmit} onClick={next}>
+                Next
+              </Button>
             ) : (
-              <Button type="primary" htmlType="submit" loading={loadingSubmit}>Submit</Button>
+              <Button type="primary" htmlType="submit" loading={loadingSubmit}>
+                Submit
+              </Button>
             )}
           </div>
         </Form>

@@ -106,7 +106,7 @@ const FieldRenderer = ({ campo, form }) => {
             );
         case "fecha":
             return (
-                <Form.Item name={nombre} label={etiqueta} rules={rules}>
+                <Form.Item name={nombre} label={etiqueta} rules={rules} initialValue={null}>
                     <DatePicker className="w-full" format="YYYY-MM-DD" />
                 </Form.Item>
             );
