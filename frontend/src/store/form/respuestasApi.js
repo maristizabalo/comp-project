@@ -4,15 +4,21 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const respuestasApi = createApi({
   reducerPath: 'respuestasApi',
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_API_URL,
+    baseUrl: import.meta.env.VITE_API_URL, // debe terminar en /
     prepareHeaders: (headers) => {
       const tk = localStorage.getItem('tk');
       if (tk) headers.set('Authorization', `Bearer ${tk}`);
       return headers;
-    }
+    },
   }),
   tagTypes: ['Respuesta'],
   endpoints: (builder) => ({
+    // Detalle para ver/editar
+    getRespuestaDetalle: builder.query({
+      query: (id) => `respuestas/${id}/detalle/`,
+      providesTags: (res, err, id) => [{ type: 'Respuesta', id }],
+    }),
+    // (opcional) metadata básica
     getRespuesta: builder.query({
       query: (id) => `respuestas/${id}/`,
       providesTags: (res, err, id) => [{ type: 'Respuesta', id }],
@@ -33,6 +39,7 @@ export const respuestasApi = createApi({
 });
 
 export const {
+  useGetRespuestaDetalleQuery,
   useGetRespuestaQuery,
   useCreateRespuestaMutation,
   useUpdateRespuestaMutation,

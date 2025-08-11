@@ -79,7 +79,7 @@ const routeComponents = {
   "/formularios/crear": <FormCreate />,
   "/formularios/diligenciar/:id": <FormEntry />,
   "/formularios/respuestas/:id": <FormResponses />,
-  "/formularios/:formularioId/respuestas/:respuestaId": <FormEntry />,
+  "/formularios/:formularioId/respuestas/:respuestaId": <FormEntry  />,
 };
 
 const Private = () => {
