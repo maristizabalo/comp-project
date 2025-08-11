@@ -158,6 +158,117 @@ class RespuestaFormularioSerializer(serializers.ModelSerializer):
         fields = ["id", "formulario", "usuario", "ip", "fecha_creacion", "respuestas_campo"]
         read_only_fields = ["id", "fecha_creacion"]
 
+    # ----------------- Helpers -----------------
+    def _expand_item_to_rows(self, item):
+        """
+        Convierte un item del payload en una o varias filas RespuestaCampo (diccionarios).
+        Soporta:
+          - {"campo": <id>, "valor_texto"/"valor_numero"/"valor_fecha"/"valor_booleano": ...}
+          - {"campo": <id>, "valor_opcion": <id>}               # select única
+          - {"campo": <id>, "valor_opciones": [<id>, ...]}       # select múltiple
+          - {"campo": <id>, "valor_geom": GeoJSON|WKT|GEOS}      # geometrías
+        Retorna: [ { "campo_id": ..., "valor_texto": ..., "valor_numero": ..., "valor_fecha": ..., "valor_booleano": ..., "valor_opcion_id": ..., valor_geom": GEOSGeometry|None } ]
+        Solo define la columna que corresponda; el resto va en None.
+        """
+        campo_id = coerce_pk(item.get("campo"))
+        if not campo_id:
+            raise serializers.ValidationError("Cada respuesta debe incluir 'campo'.")
+
+        rows = []
+        # Múltiple selección
+        if "valor_opciones" in item and item["valor_opciones"] is not None:
+            for oid in item["valor_opciones"]:
+                rows.append({"campo_id": campo_id, "valor_opcion_id": coerce_pk(oid, Opcion)})
+            return rows
+
+        # Selección única
+        if "valor_opcion" in item and item["valor_opcion"] is not None:
+            rows.append({"campo_id": campo_id, "valor_opcion_id": coerce_pk(item["valor_opcion"], Opcion)})
+            return rows
+
+        # Geometría
+        if "valor_geom" in item and item["valor_geom"] is not None:
+            rows.append({"campo_id": campo_id, "valor_geom": coerce_geom(item["valor_geom"])})
+            return rows
+
+        # Valor tipado
+        r = {"campo_id": campo_id}
+        if item.get("valor_booleano", None) is not None:
+            r["valor_booleano"] = item["valor_booleano"]
+        elif item.get("valor_numero", None) is not None:
+            r["valor_numero"] = item["valor_numero"]
+        elif item.get("valor_fecha", None) is not None:
+            r["valor_fecha"] = item["valor_fecha"]
+        else:
+            # default a texto (incluye None)
+            r["valor_texto"] = item.get("valor_texto")
+        rows.append(r)
+        return rows
+
+    def _replace_all_campos(self, instance, items):
+        # Construir filas
+        rows = []
+        for it in (items or []):
+            rows.extend(self._expand_item_to_rows(it))
+
+        # Reemplazo atómico
+        with transaction.atomic():
+            RespuestaCampo.objects.filter(respuesta_formulario=instance).delete()
+            objs = [RespuestaCampo(respuesta_formulario=instance, **row) for row in rows]
+            if objs:
+                RespuestaCampo.objects.bulk_create(objs, batch_size=500)
+        return instance
+
+    # ----------------- Create / Update -----------------
+    @transaction.atomic
+    def create(self, validated_data):
+        """
+        POST:
+        - Si viene respuesta_id en request.data → actualiza (replace-all) esa respuesta (compatibilidad hacia atrás).
+        - Si no viene → crea una nueva RespuestaFormulario y sus RespuestaCampo.
+        """
+        request = self.context.get("request")
+        respuesta_id = request.data.get("respuesta_id") if request and hasattr(request, "data") else None
+
+        respuestas_data = validated_data.pop("respuestas_campo", [])
+        if respuesta_id:
+            # Modo actualización vía POST (legacy): reemplazar todo
+            try:
+                instance = RespuestaFormulario.objects.get(pk=coerce_pk(respuesta_id, RespuestaFormulario))
+            except RespuestaFormulario.DoesNotExist:
+                raise serializers.ValidationError("respuesta_id no existe")
+            # Actualizar encabezado si viene 'formulario', 'usuario', 'ip'
+            for k, v in validated_data.items():
+                setattr(instance, k, v)
+            instance.save()
+            return self._replace_all_campos(instance, respuestas_data)
+
+        # Modo creación normal
+        instance = RespuestaFormulario.objects.create(**validated_data)
+        return self._replace_all_campos(instance, respuestas_data)
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        """
+        PUT/PATCH:
+        - Reemplaza todos los RespuestaCampo con lo enviado.
+        - Si 'respuestas_campo' no viene en PATCH, solo actualiza encabezado.
+        """
+        respuestas_data = validated_data.pop("respuestas_campo", None)
+        for k, v in validated_data.items():
+            setattr(instance, k, v)
+        instance.save()
+
+        if respuestas_data is not None:
+            self._replace_all_campos(instance, respuestas_data)
+        return instance
+    respuestas_campo = RespuestaCampoSerializer(many=True, write_only=True)
+
+    class Meta:
+        model = RespuestaFormulario
+        fields = ["id", "formulario", "usuario", "ip", "fecha_creacion", "respuestas_campo"]
+        read_only_fields = ["id", "fecha_creacion"]
+
     @transaction.atomic
     def create(self, validated_data):
         request = self.context.get("request")

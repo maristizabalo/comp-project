@@ -57,8 +57,8 @@ class RespuestaFormularioView(ListCreateAPIView):
         return Response(response_data, status=status.HTTP_201_CREATED)
 
 class RespuestaFormularioDetailView(RetrieveUpdateAPIView):
-    queryset = RespuestaFormulario.objects.all()
-    serializer_class = RespuestaFormularioSerializer
+     queryset = RespuestaFormulario.objects.all()
+     serializer_class = RespuestaFormularioSerializer
 
 class RespuestasFormularioTablaView(ListCreateAPIView):
     serializer_class = RespuestaFormularioTablaSerializer
